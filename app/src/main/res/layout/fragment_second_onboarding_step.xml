@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightBlue"
-    app:layoutDescription="@xml/activity_onboarding_scene"
-    tools:context=".presentation.activities.onboardingActivity.OnboardingActivity">
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    tools:background="@color/lightBlue">
 
     <TextView
         android:id="@+id/headerText"
@@ -24,16 +12,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/onboardingHeaderLeftMargin"
+        android:layout_marginTop="@dimen/onboardingHeaderTopMargin"
         android:layout_marginEnd="@dimen/onboardingHeaderRightMargin"
-        android:layout_marginBottom="16dp"
-        android:text="@string/hi"
+        android:text="@string/experienceHowSoftwareIsMade"
         android:textAlignment="center"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/bodyText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bodyText"
@@ -41,13 +27,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/onboardingBodyLeftMargin"
+        android:layout_marginTop="@dimen/onboardingBodyTopMargin"
         android:layout_marginEnd="@dimen/onboardingBodyRightMargin"
-        android:text="@string/codedAllowsYouToBuildYourFirstProgramsFromBlocksOfCode"
+        android:text="@string/soYouCanTakeControlOfYourOwnTechnology"
         android:textAlignment="center"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerText" />
-
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

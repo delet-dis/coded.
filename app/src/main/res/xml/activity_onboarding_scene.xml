@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/onboardingHidingGreeting"
+        motion:constraintSetStart="@id/onboardingShowingGreeting"
+        motion:duration="600"
+        motion:motionInterpolator="easeInOut">
+       <KeyFrameSet>
+       </KeyFrameSet>
+        <OnSwipe />
+    </Transition>
+
+    <ConstraintSet android:id="@+id/onboardingShowingGreeting">
+        <Constraint
+            android:id="@+id/viewPager"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:visibility="invisible" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/onboardingHidingGreeting">
+        <Constraint
+            android:id="@+id/headerText"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            motion:layout_constraintBottom_toTopOf="@+id/bodyText"
+            android:layout_marginEnd="@dimen/onboardingHeaderRightMargin"
+            android:layout_marginStart="@dimen/onboardingHeaderLeftMargin"
+            motion:layout_constraintVertical_chainStyle="packed"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/bodyText"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="@dimen/onboardingBodyRightMargin"
+            motion:layout_constraintTop_toBottomOf="@+id/headerText"
+            android:layout_marginStart="@dimen/onboardingBodyLeftMargin"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/viewPager"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/viewPager"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" />
+    </ConstraintSet>
+</MotionScene>

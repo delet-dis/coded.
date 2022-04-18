@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="onboardingHeaderTopMargin">40dp</dimen>
+    <dimen name="onboardingHeaderLeftMargin">44dp</dimen>
+    <dimen name="onboardingHeaderRightMargin">44dp</dimen>
+
+    <dimen name="onboardingBodyTopMargin">30dp</dimen>
+    <dimen name="onboardingBodyLeftMargin">48dp</dimen>
+    <dimen name="onboardingBodyRightMargin">48dp</dimen>
+</resources>

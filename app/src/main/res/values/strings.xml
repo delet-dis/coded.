@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">coded.</string>
+    <string name="exploreCodingInBiteSizedPieces">Explore coding in bite-sized pieces</string>
+    <string name="learnRealProgrammingInAWayYouCanUnderstand">learn real programming in a way you can understand</string>
+    <string name="experienceHowSoftwareIsMade">Experience how software is made</string>
+    <string name="soYouCanTakeControlOfYourOwnTechnology">so you can take control of your own technology</string>
+    <string name="experimentAndLearn">Experiment and learn</string>
+    <string name="thereAreNoMistakesJustOpportunitiesToExplore">there are no mistakes, just opportunities to explore</string>
+    <string name="hi">Hi</string>
+    <string name="codedAllowsYouToBuildYourFirstProgramsFromBlocksOfCode">coded. allows you to build your first programs from blocks of code</string>
 </resources>
