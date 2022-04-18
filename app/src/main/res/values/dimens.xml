@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="onboardingHeaderTopMargin">50dp</dimen>
+    <dimen name="onboardingHeaderLeftMargin">44dp</dimen>
+    <dimen name="onboardingHeaderRightMargin">44dp</dimen>
+
+    <dimen name="onboardingBodyTopMargin">30dp</dimen>
+    <dimen name="onboardingBodyLeftMargin">48dp</dimen>
+    <dimen name="onboardingBodyRightMargin">48dp</dimen>
+
+    <dimen name="onboardingNextButtonBottomMargin">45dp</dimen>
+    <dimen name="onboardingNextButtonLeftMargin">45dp</dimen>
+    <dimen name="onboardingNextButtonRightMargin">45dp</dimen>
+    <dimen name="onboardingNextButtonHeight">65dp</dimen>
+    <dimen name="onboardingNextButtonMaxWidth">300dp</dimen>
+
+    <dimen name="onboardingButtonsSpacing">20dp</dimen>
+</resources>

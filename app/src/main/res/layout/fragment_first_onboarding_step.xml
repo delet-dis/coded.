@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/lightBlue">
+
+    <TextView
+        android:id="@+id/headerText"
+        style="@style/boldText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/onboardingHeaderLeftMargin"
+        android:layout_marginTop="@dimen/onboardingHeaderTopMargin"
+        android:layout_marginEnd="@dimen/onboardingHeaderRightMargin"
+        android:text="@string/exploreCodingInBiteSizedPieces"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/bodyText"
+        style="@style/semiBoldText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/onboardingBodyLeftMargin"
+        android:layout_marginTop="@dimen/onboardingBodyTopMargin"
+        android:layout_marginEnd="@dimen/onboardingBodyRightMargin"
+        android:text="@string/learnRealProgrammingInAWayYouCanUnderstand"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerText" />
+</androidx.constraintlayout.widget.ConstraintLayout>

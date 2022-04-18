@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "234702193919",
+    "project_id": "coded-e8590",
+    "storage_bucket": "coded-e8590.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234702193919:android:b88275d52a36a88c7df8ca",
+        "android_client_info": {
+          "package_name": "com.hits.coded"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "234702193919-f7ass9cjio1i6t4n0r9g294dk0hf0qta.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYtjDn8bYTIKiP17dtb4noeVrqGckt_GA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "234702193919-f7ass9cjio1i6t4n0r9g294dk0hf0qta.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
