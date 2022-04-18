@@ -35,4 +35,15 @@
         <item name="android:autoSizeMinTextSize" tools:targetApi="o">10sp</item>
         <item name="android:autoSizeTextType" tools:targetApi="o">uniform</item>
     </style>
+
+    <style name="translucentButtonWrapper">
+        <item name="android:maxWidth">@dimen/onboardingNextButtonMaxWidth</item>
+        <item name="android:layout_height">@dimen/onboardingNextButtonHeight</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@android:color/transparent</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="cardCornerRadius">50dp</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+    </style>
 </resources>
