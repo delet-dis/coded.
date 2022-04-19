@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.hits.coded.databinding.FragmentSecondOnboardingStepBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SecondOnboardingStepFragment: Fragment() {
     private lateinit var binding: FragmentSecondOnboardingStepBinding
 
