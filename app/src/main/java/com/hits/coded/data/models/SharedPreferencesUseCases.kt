@@ -5,5 +5,5 @@ import com.hits.coded.domain.useCases.sharedPreferences.CheckIsOnboardingPassedU
 
 data class SharedPreferencesUseCases(
     val changeOnboardingPassedStateUseCase: ChangeOnboardingPassedStateUseCase,
-    val checkIsOnboardingPassedUseCase: CheckIsOnboardingPassedUseCase
+    val checkIsOnboardingPassedUseCase: CheckIsOnboardingPassedUseCase,
 )

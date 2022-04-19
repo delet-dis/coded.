@@ -9,7 +9,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SharedPreferencesRepositoryImplementation @Inject constructor(@ApplicationContext private val context: Context) :
+class SharedPreferencesRepositoryImplementation
+@Inject constructor(@ApplicationContext private val context: Context) :
     SharedPreferencesRepository() {
 
     override fun getSharedPreferences(): SharedPreferences =
