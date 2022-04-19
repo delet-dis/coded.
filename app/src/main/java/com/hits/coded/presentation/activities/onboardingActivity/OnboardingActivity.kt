@@ -1,5 +1,6 @@
 package com.hits.coded.presentation.activities.onboardingActivity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.RadioButton
 import android.widget.TextView
@@ -9,6 +10,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.viewpager2.widget.ViewPager2
 import com.hits.coded.R
 import com.hits.coded.databinding.ActivityOnboardingBinding
+import com.hits.coded.presentation.activities.editorActivity.EditorActivity
 import com.hits.coded.presentation.activities.onboardingActivity.fragmentStateAdapters.OnboardingViewPagerAdapter
 import com.hits.coded.presentation.activities.onboardingActivity.viewModel.OnboardingActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +25,8 @@ class OnboardingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         initBinding()
+
+        checkIsOnboardingPassed()
 
         initViewPager()
 
@@ -127,9 +131,19 @@ class OnboardingActivity : AppCompatActivity() {
                 viewPager.adapter?.let { adapter ->
                     if (viewPager.currentItem < adapter.itemCount - 1) {
                         viewPager.setCurrentItem(viewPager.currentItem + 1, true)
+                    } else {
+                        viewModel.setOnboardingPassed()
+                        checkIsOnboardingPassed()
                     }
                 }
             }
+        }
+    }
+
+    private fun checkIsOnboardingPassed() {
+        if (viewModel.isOnboardingPassed) {
+            startActivity(Intent(this, EditorActivity::class.java))
+            finish()
         }
     }
 }
