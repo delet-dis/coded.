@@ -1,12 +1,10 @@
 package com.hits.coded.presentation.activities.onboardingActivity.viewModel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hits.coded.data.models.OnboardingScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -20,8 +18,6 @@ class OnboardingActivityViewModel @Inject constructor(
     private val _isAvailableToHideGreeting = MutableLiveData(false)
     val isAvailableToHideGreeting: LiveData<Boolean>
         get() = _isAvailableToHideGreeting
-
-    val numberOfOnboardingScreens = OnboardingScreens.values().size
 
     private val _currentlyDisplayingOnboardingScreenNumber = MutableLiveData(0)
     val currentlyDisplayingOnboardingScreenNumber: LiveData<Int>

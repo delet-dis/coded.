@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.hits.coded.databinding.FragmentFirstOnboardingStepBinding
-import com.hits.coded.databinding.FragmentSecondOnboardingStepBinding
 import com.hits.coded.databinding.FragmentThirdOnboardingStepBinding
 
 class ThirdOnboardingStepFragment: Fragment() {
