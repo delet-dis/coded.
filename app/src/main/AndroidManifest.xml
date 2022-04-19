@@ -11,9 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Coded">
         <activity
+            android:name=".presentation.activities.editorActivity.EditorActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.activities.onboardingActivity.OnboardingActivity"
-            android:exported="true"
-            android:configChanges="screenSize|orientation">
+            android:configChanges="screenSize|orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,4 +24,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
