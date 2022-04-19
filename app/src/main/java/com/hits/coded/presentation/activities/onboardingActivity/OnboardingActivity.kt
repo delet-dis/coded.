@@ -1,14 +1,11 @@
 package com.hits.coded.presentation.activities.onboardingActivity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.view.get
-import androidx.core.view.marginLeft
 import androidx.viewpager2.widget.ViewPager2
 import com.hits.coded.R
 import com.hits.coded.databinding.ActivityOnboardingBinding

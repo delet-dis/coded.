@@ -12,7 +12,8 @@
         android:theme="@style/Theme.Coded">
         <activity
             android:name=".presentation.activities.onboardingActivity.OnboardingActivity"
-            android:exported="true" >
+            android:exported="true"
+            android:configChanges="screenSize|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
