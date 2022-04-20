@@ -5,6 +5,6 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
 
 abstract class ExpressionBlockBase : BlockBase() {
     abstract val expressionBlockType: ExpressionBlockType
-    abstract val leftSide: Any
-    abstract val rightSide: Any
+    abstract val leftSide: Any?
+    abstract val rightSide: Any?
 }
