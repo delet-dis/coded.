@@ -1,4 +1,4 @@
-package com.hits.coded.data.models.codeBlocks
+package com.hits.coded.data.models.codeBlocks.types
 
 enum class BlockType {
     VARIABLE,

@@ -1,4 +1,4 @@
-package com.hits.coded.data.models.codeBlocks.subBlocks
+package com.hits.coded.data.models.codeBlocks.types.subBlocks
 
 enum class VariableBlockType {
     VARIABLE_GET,
