@@ -4,5 +4,4 @@ enum class VariableType {
     STRING,
     DOUBLE,
     INT,
-    ARRAY,
 }
