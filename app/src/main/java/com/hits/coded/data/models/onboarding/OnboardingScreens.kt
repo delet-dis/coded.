@@ -1,4 +1,4 @@
-package com.hits.coded.data.models
+package com.hits.coded.data.models.onboarding
 
 import androidx.fragment.app.Fragment
 import com.hits.coded.presentation.activities.onboardingActivity.fragments.FirstOnboardingStepFragment

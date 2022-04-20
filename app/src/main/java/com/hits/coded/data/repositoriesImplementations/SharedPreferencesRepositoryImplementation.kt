@@ -1,6 +1,5 @@
 package com.hits.coded.data.repositoriesImplementations
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import com.hits.coded.domain.repositories.SharedPreferencesRepository
@@ -16,7 +15,6 @@ class SharedPreferencesRepositoryImplementation
     override fun getSharedPreferences(): SharedPreferences =
         context.getSharedPreferences(SETTINGS_NAME, Context.MODE_PRIVATE)
 
-    @SuppressLint("CommitPrefEdits")
     override fun <T> updateSharedPreferencesValueByKey(key: String, value: T) {
         val sharedPreferencesEditor = getSharedPreferences().edit()
         when (value) {
