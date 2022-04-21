@@ -42,7 +42,7 @@ class OnboardingActivity : AppCompatActivity() {
         initNextButtonWrapperOnClick()
     }
 
-    override fun onBackPressed() {
+    override fun onBackPressed() =
         with(binding.viewPager) {
             if (currentItem == 0) {
                 super.onBackPressed()
@@ -50,7 +50,6 @@ class OnboardingActivity : AppCompatActivity() {
                 currentItem -= 1
             }
         }
-    }
 
     private fun initBinding() {
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
@@ -62,7 +61,7 @@ class OnboardingActivity : AppCompatActivity() {
         binding.viewPager.adapter = OnboardingViewPagerAdapter(this@OnboardingActivity)
     }
 
-    private fun initNavigationToOnboarding() {
+    private fun initNavigationToOnboarding() =
         with(viewModel) {
             initGreetingHideCountdown()
 
@@ -72,9 +71,8 @@ class OnboardingActivity : AppCompatActivity() {
                 }
             }
         }
-    }
 
-    private fun initRadioDots() {
+    private fun initRadioDots() =
         binding.viewPager.adapter?.let {
             for (i in 1..it.itemCount) {
                 val radioButton = RadioButton(this).apply {
@@ -96,9 +94,8 @@ class OnboardingActivity : AppCompatActivity() {
                 binding.radioGroup.addView(radioButton)
             }
         }
-    }
 
-    private fun initViewPagerListener() {
+    private fun initViewPagerListener() =
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -106,9 +103,8 @@ class OnboardingActivity : AppCompatActivity() {
                 viewModel.setCurrentlyDisplayingOnboardingScreenNumber(position)
             }
         })
-    }
 
-    private fun initViewPagerCurrentPageObserver() {
+    private fun initViewPagerCurrentPageObserver() =
         viewModel.currentlyDisplayingOnboardingScreenNumber.observe(this) {
             with(binding.radioGroup) {
                 check(getChildAt(it).id)
@@ -124,9 +120,8 @@ class OnboardingActivity : AppCompatActivity() {
                 }
             }
         }
-    }
 
-    private fun initNextButtonWrapperOnClick() {
+    private fun initNextButtonWrapperOnClick() =
         with(binding) {
             nextButtonWrapper.setOnClickListener {
                 viewPager.adapter?.let { adapter ->
@@ -139,7 +134,6 @@ class OnboardingActivity : AppCompatActivity() {
                 }
             }
         }
-    }
 
     private fun checkIsOnboardingPassed() {
         if (viewModel.isOnboardingPassed) {

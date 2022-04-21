@@ -25,6 +25,8 @@ class EditorActivity : AppCompatActivity() {
 
         initIsBarsCollapsedObserver()
 
+        initScrollableLayoutDimensions()
+
         binding.collapseButton.setOnClickListener {
             viewModel.collapseBars()
         }
@@ -40,7 +42,7 @@ class EditorActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    private fun initSystemBarsDimensionChangesListener() {
+    private fun initSystemBarsDimensionChangesListener() =
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _: View?, insets: WindowInsetsCompat ->
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             val navigationBarHeight =
@@ -51,7 +53,6 @@ class EditorActivity : AppCompatActivity() {
 
             WindowInsetsCompat.CONSUMED
         }
-    }
 
     private fun changeTopBarHeight(statusBarHeight: Int) {
         val openedTopBarHeight = resources.getDimension(R.dimen.openedTopBarHeight).toInt()
@@ -93,7 +94,7 @@ class EditorActivity : AppCompatActivity() {
         binding.topBarContentLayout.transitionToState(R.id.topBarProjectNameDisplaying)
     }
 
-    private fun initIsBarsCollapsedObserver() {
+    private fun initIsBarsCollapsedObserver() =
         viewModel.isBarsCollapsed.observe(this) {
             if (it) {
                 collapseBars()
@@ -101,5 +102,12 @@ class EditorActivity : AppCompatActivity() {
                 openBars()
             }
         }
-    }
+
+    private fun initScrollableLayoutDimensions() =
+        with(resources.displayMetrics) {
+            binding.zoomLayout.layoutParams.apply {
+                height = heightPixels
+                width = widthPixels
+            }
+        }
 }
