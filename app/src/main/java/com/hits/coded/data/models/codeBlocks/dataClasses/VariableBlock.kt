@@ -4,7 +4,7 @@ import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.VariableBlockBase
 import com.hits.coded.data.models.codeBlocks.types.BlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableType
+import com.hits.coded.data.models.types.VariableType
 
 data class VariableBlock(
     override val variableBlockType: VariableBlockType,
