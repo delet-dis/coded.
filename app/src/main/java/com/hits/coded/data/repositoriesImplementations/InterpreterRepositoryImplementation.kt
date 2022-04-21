@@ -43,14 +43,45 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     }
 
     override fun InterpreteVariableBlocks(variable: VariableBlock) {
-        TODO("Not yet implemented")
+        if(variable.nestedBlocks!=null){
+            for(nestedBlock in variable.nestedBlocks){
+                when(nestedBlock.type){
+                    BlockType.VARIABLE->InterpreteVariableBlocks(nestedBlock as VariableBlock)
+                    BlockType.CONDITION->InterpreteConditionBlocks(nestedBlock as ConditionBlock)
+                    BlockType.LOOP->InterpreteLoopBlocks(nestedBlock as LoopBlock)
+                    BlockType.EXPRESSION->InterpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                }
+            }
+        }
+        //Variable actions function
     }
 
     override fun InterpreteExpressionBlocks(expression: ExpressionBlock): Any {
-        TODO("Not yet implemented")
+        if(expression.nestedBlocks!=null){
+            for(nestedBlock in expression.nestedBlocks){
+                when(nestedBlock.type){
+                    BlockType.VARIABLE->InterpreteVariableBlocks(nestedBlock as VariableBlock)
+                    BlockType.CONDITION->InterpreteConditionBlocks(nestedBlock as ConditionBlock)
+                    BlockType.LOOP->InterpreteLoopBlocks(nestedBlock as LoopBlock)
+                    BlockType.EXPRESSION->InterpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                }
+            }
+        }
+        //variable action function
+        return 0
     }
 
     override fun InterpreteIOBlocks(IO: IOBlock) {
-        TODO("Not yet implemented")
+        if(IO.nestedBlocks!=null){
+            for(nestedBlock in IO.nestedBlocks){
+                when(nestedBlock.type){
+                    BlockType.VARIABLE->InterpreteVariableBlocks(nestedBlock as VariableBlock)
+                    BlockType.CONDITION->InterpreteConditionBlocks(nestedBlock as ConditionBlock)
+                    BlockType.LOOP->InterpreteLoopBlocks(nestedBlock as LoopBlock)
+                    BlockType.EXPRESSION->InterpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                }
+            }
+        }
+        //IO action function
     }
 }
