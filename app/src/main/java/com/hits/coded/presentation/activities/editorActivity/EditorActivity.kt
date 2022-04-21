@@ -17,7 +17,7 @@ class EditorActivity : AppCompatActivity() {
 
         initBinding()
 
-        recalculateBarsHeights()
+        initSystemBarsDimensionChangesListener()
     }
 
     private fun initBinding() {
@@ -26,28 +26,36 @@ class EditorActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    private fun recalculateBarsHeights() {
+    private fun initSystemBarsDimensionChangesListener() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _: View?, insets: WindowInsetsCompat ->
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             val navigationBarHeight =
                 insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
 
-            recalculateTopBarHeight(statusBarHeight)
-            recalculateBottomBarHeight(navigationBarHeight)
+            changeTopBarHeight(statusBarHeight)
+            changeBottomBarHeight(navigationBarHeight)
 
             WindowInsetsCompat.CONSUMED
         }
     }
 
-    private fun recalculateTopBarHeight(statusBarHeight: Int) {
-        val recalculatedHeight =
-            resources.getDimension(R.dimen.openedTopBarHeight) + statusBarHeight
-        binding.topBarWrapper.layoutParams.height = recalculatedHeight.toInt()
+    private fun changeTopBarHeight(statusBarHeight: Int) {
+        val openedTopBarHeight = resources.getDimension(R.dimen.openedTopBarHeight).toInt()
+        val recalculatedBarHeight = openedTopBarHeight + statusBarHeight
+
+        with(binding){
+            topBarWrapper.layoutParams.height = recalculatedBarHeight
+            topBarContentLayout.layoutParams.height = openedTopBarHeight
+        }
     }
 
-    private fun recalculateBottomBarHeight(bottomBarHeight: Int) {
-        val recalculatedHeight =
-            resources.getDimension(R.dimen.openedBottomBarHeight) + bottomBarHeight
-        binding.bottomBarWrapper.layoutParams.height = recalculatedHeight.toInt()
+    private fun changeBottomBarHeight(bottomBarHeight: Int) {
+        val openedBottomBarHeight = resources.getDimension(R.dimen.openedBottomBarHeight).toInt()
+        val recalculatedHeight = openedBottomBarHeight + bottomBarHeight
+        
+        with(binding){
+            bottomBarWrapper.layoutParams.height = recalculatedHeight
+            bottomBarContentLayout.layoutParams.height = openedBottomBarHeight
+        }
     }
 }
