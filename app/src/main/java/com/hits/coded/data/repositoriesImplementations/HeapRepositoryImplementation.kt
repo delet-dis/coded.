@@ -1,29 +1,24 @@
 package com.hits.coded.data.repositoriesImplementations
 
-import android.os.Build
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableType
 import com.hits.coded.domain.repositories.HeapRepository
+import javax.inject.Singleton
 
-class HeapRepositoryImplementation(): HeapRepository() {
-    override var hashMap: HashMap<String, StoredVariable> = HashMap<String, StoredVariable>()
-    override fun addVariable(variableName: String, type: VariableType, isArray: Boolean) {
-        var newValue: StoredVariable
-        when (type) {
-            VariableType.STRING -> newValue = StoredVariable(type, isArray, "")
-            VariableType.DOUBLE -> newValue = StoredVariable(type, isArray, 0.0)
-            VariableType.INT -> newValue = StoredVariable(type, isArray, 0)
-        }
-        hashMap.put(variableName, newValue)
+@Singleton
+class HeapRepositoryImplementation : HeapRepository() {
+    override var hashMap: HashMap<String, StoredVariable> = HashMap()
+
+    override fun addVariable(variableToAdd: StoredVariable) {
+        hashMap[variableToAdd.name] = variableToAdd
     }
 
-    override fun findVariable(variableName: String): StoredVariable? {
+    override fun getVariable(variableName: String): StoredVariable? {
         return hashMap[variableName]
     }
 
-    override fun reAssign(variableName: String, newValue: StoredVariable) {
-        if(hashMap[variableName]!!.type == newValue.type){
-         hashMap[variableName]=newValue
+    override fun reAssignVariable(variableToReAssign: StoredVariable, newVariable: StoredVariable) {
+        hashMap[variableToReAssign.name]?.let {
+            hashMap[variableToReAssign.name] = newVariable
         }
     }
 }
