@@ -52,7 +52,7 @@ class EditorActivity : AppCompatActivity() {
     private fun changeBottomBarHeight(bottomBarHeight: Int) {
         val openedBottomBarHeight = resources.getDimension(R.dimen.openedBottomBarHeight).toInt()
         val recalculatedHeight = openedBottomBarHeight + bottomBarHeight
-        
+
         with(binding){
             bottomBarWrapper.layoutParams.height = recalculatedHeight
             bottomBarContentLayout.layoutParams.height = openedBottomBarHeight
