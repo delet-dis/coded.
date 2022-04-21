@@ -17,7 +17,8 @@
     <dimen name="onboardingButtonsSpacing">20dp</dimen>
 
     <dimen name="openedTopBarHeight">50dp</dimen>
-    <dimen name="collapsedTopBarHeight">35dp</dimen>
+    <dimen name="collapsedTopBarHeight">25dp</dimen>
 
     <dimen name="openedBottomBarHeight">60dp</dimen>
+    <dimen name="collapsedBottomBarHeight">0dp</dimen>
 </resources>
