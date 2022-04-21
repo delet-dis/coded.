@@ -5,6 +5,7 @@
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/lightBlue"
     app:layoutDescription="@xml/activity_onboarding_scene"
     tools:context=".presentation.activities.onboardingActivity.OnboardingActivity">
@@ -75,14 +76,12 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/buttonBackgroundImage"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/onboarding_button_translucent_background"
+            android:id="@+id/backgroundImage"
+            style="@style/translucentBackground"
             tools:ignore="ImageContrastCheck" />
 
         <TextView
+            android:id="@+id/buttonText"
             style="@style/buttonBoldText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

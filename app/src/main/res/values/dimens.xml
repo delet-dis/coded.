@@ -15,4 +15,9 @@
     <dimen name="onboardingNextButtonMaxWidth">300dp</dimen>
 
     <dimen name="onboardingButtonsSpacing">20dp</dimen>
+
+    <dimen name="openedTopBarHeight">50dp</dimen>
+    <dimen name="collapsedTopBarHeight">35dp</dimen>
+
+    <dimen name="openedBottomBarHeight">60dp</dimen>
 </resources>

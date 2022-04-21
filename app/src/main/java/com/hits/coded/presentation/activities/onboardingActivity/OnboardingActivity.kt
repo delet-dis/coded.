@@ -15,6 +15,7 @@ import com.hits.coded.presentation.activities.onboardingActivity.fragmentStateAd
 import com.hits.coded.presentation.activities.onboardingActivity.viewModel.OnboardingActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class OnboardingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOnboardingBinding

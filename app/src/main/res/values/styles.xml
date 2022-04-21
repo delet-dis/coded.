@@ -46,4 +46,18 @@
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:clickable">true</item>
     </style>
+
+    <style name="translucentBackground">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="contentDescription">@string/buttonBackgroundImage</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="srcCompat">@drawable/onboarding_button_translucent_background</item>
+    </style>
+
+    <style name="translucentBarWrapper">
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@android:color/transparent</item>
+        <item name="android:layout_width">0dp</item>
+    </style>
 </resources>
