@@ -15,4 +15,8 @@ class EditorActivityViewModel @Inject constructor() : ViewModel() {
     fun collapseBars() = _isBarsCollapsed.postValue(true)
 
     fun openBars() = _isBarsCollapsed.postValue(false)
+
+    fun toggleBars() = _isBarsCollapsed.value?.let {
+        _isBarsCollapsed.postValue(!it)
+    }
 }

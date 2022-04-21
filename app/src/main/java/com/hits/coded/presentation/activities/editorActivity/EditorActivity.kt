@@ -27,13 +27,7 @@ class EditorActivity : AppCompatActivity() {
 
         initScrollableLayoutDimensions()
 
-        binding.collapseButton.setOnClickListener {
-            viewModel.collapseBars()
-        }
-
-        binding.openButton.setOnClickListener {
-            viewModel.openBars()
-        }
+        initBarsStateChangingBasedOnFieldClick()
     }
 
     private fun initBinding() {
@@ -104,10 +98,22 @@ class EditorActivity : AppCompatActivity() {
         }
 
     private fun initScrollableLayoutDimensions() =
-        with(resources.displayMetrics) {
-            binding.zoomLayout.layoutParams.apply {
-                height = heightPixels
-                width = widthPixels
+        with(binding) {
+            with(resources.displayMetrics) {
+                zoomLayout.layoutParams.apply {
+                    height = heightPixels * 4
+                    width = widthPixels * 4
+                }
+
+                fieldLayout.layoutParams.apply {
+                    height = heightPixels * 4
+                    width = widthPixels * 4
+                }
             }
+        }
+
+    private fun initBarsStateChangingBasedOnFieldClick() =
+        binding.fieldLayout.setOnClickListener {
+            viewModel.toggleBars()
         }
 }
