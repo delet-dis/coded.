@@ -36,6 +36,15 @@
         <item name="android:autoSizeTextType" tools:targetApi="o">uniform</item>
     </style>
 
+    <style name="boldTextMinimized">
+        <item name="android:fontFamily">@font/rubik_bold</item>
+        <item name="android:textSize">30sp</item>
+
+        <item name="android:autoSizeMaxTextSize" tools:targetApi="o">30sp</item>
+        <item name="android:autoSizeMinTextSize" tools:targetApi="o">15sp</item>
+        <item name="android:autoSizeTextType" tools:targetApi="o">uniform</item>
+    </style>
+
     <style name="translucentButtonWrapper">
         <item name="android:maxWidth">@dimen/onboardingNextButtonMaxWidth</item>
         <item name="android:layout_height">@dimen/onboardingNextButtonHeight</item>
@@ -65,5 +74,13 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">2dp</item>
         <item name="background">@color/gray</item>
+    </style>
+
+    <style name="bottomSheetBackground" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottom_sheet_background</item>
+    </style>
+
+    <style name="bottomSheetFragment" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/bottomSheetBackground</item>
     </style>
 </resources>

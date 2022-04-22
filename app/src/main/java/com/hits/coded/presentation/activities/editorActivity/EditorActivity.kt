@@ -8,9 +8,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
 import com.hits.coded.databinding.ActivityEditorBinding
+import com.hits.coded.presentation.activities.editorActivity.fragments.ItemsPickingBottomSheetFragment
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class EditorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditorBinding
 
@@ -28,6 +30,8 @@ class EditorActivity : AppCompatActivity() {
         initScrollableLayoutDimensions()
 
         initBarsStateChangingBasedOnFieldClick()
+
+        ItemsPickingBottomSheetFragment().show(supportFragmentManager, "tag")
     }
 
     private fun initBinding() {

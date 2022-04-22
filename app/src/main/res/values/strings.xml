@@ -12,4 +12,6 @@
     <string name="buttonBackgroundImage">Background image</string>
     <string name="imReady">I\'m ready!</string>
     <string name="project">Project</string>
+    <string name="chooseTheComponentYouWant">Choose the component you want…</string>
+    <string name="close">Close</string>
 </resources>
