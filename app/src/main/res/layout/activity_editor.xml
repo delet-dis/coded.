@@ -71,6 +71,7 @@
             <ImageView
                 android:id="@+id/backgroundTopImage"
                 style="@style/translucentBackground"
+                android:contentDescription="@string/buttonBackgroundImage"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -80,18 +81,18 @@
                 android:id="@+id/topBarContentLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                app:layoutDescription="@xml/activity_editor_xml_top_bar_content_layout_scene"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layoutDescription="@xml/activity_editor_xml_top_bar_content_layout_scene">
+                app:layout_constraintStart_toStartOf="parent">
 
                 <TextView
                     android:id="@+id/projectName"
                     style="@style/boldText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
                     android:text="@string/project"
+                    android:textAlignment="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -99,6 +100,7 @@
             </androidx.constraintlayout.motion.widget.MotionLayout>
 
             <View
+                android:id="@+id/topSeparator"
                 style="@style/separator"
                 android:background="@color/gray"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -124,6 +126,7 @@
             <ImageView
                 android:id="@+id/backgroundBottomImage"
                 style="@style/translucentBackground"
+                android:contentDescription="@string/buttonBackgroundImage"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -137,20 +140,60 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/textView2"
-                    style="@style/semiBoldText"
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/leftGuideline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Test"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.1" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/rightGuideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.9" />
+
+                <ImageButton
+                    android:id="@+id/menuButton"
+                    style="@style/bottomBarButton"
+                    android:layout_width="wrap_content"
+                    android:background="@null"
+                    android:contentDescription="@string/console"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintStart_toEndOf="@id/leftGuideline"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_menu" />
+
+                <ImageButton
+                    android:id="@+id/consoleButton"
+                    style="@style/bottomBarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:contentDescription="@string/menu"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/startButton"
+                    app:layout_constraintStart_toEndOf="@+id/menuButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_console" />
+
+                <ImageButton
+                    android:id="@+id/startButton"
+                    style="@style/bottomBarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/bottomSheetContentHorizontalMargin"
+                    android:background="@null"
+                    android:contentDescription="@string/start"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/rightGuideline"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_start" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
-                android:id="@+id/view2"
+                android:id="@+id/bottomSeparator"
                 style="@style/separator"
                 android:background="@color/gray"
                 app:layout_constraintEnd_toEndOf="parent"

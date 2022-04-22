@@ -1,5 +1,6 @@
 package com.hits.coded.presentation.activities.editorActivity
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -18,6 +19,8 @@ class EditorActivity : AppCompatActivity() {
 
     private val viewModel: EditorActivityViewModel by viewModels()
 
+    private lateinit var bottomSheetFragment: ItemsPickingBottomSheetFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,7 +34,9 @@ class EditorActivity : AppCompatActivity() {
 
         initBarsStateChangingBasedOnFieldClick()
 
-        ItemsPickingBottomSheetFragment().show(supportFragmentManager, "tag")
+        initBottomSheet()
+
+        initBottomBarButtonsOnClicks()
     }
 
     private fun initBinding() {
@@ -120,4 +125,29 @@ class EditorActivity : AppCompatActivity() {
         binding.fieldLayout.setOnClickListener {
             viewModel.toggleBars()
         }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        viewModel.hideBars()
+    }
+
+    private fun initBottomSheet() {
+        bottomSheetFragment = ItemsPickingBottomSheetFragment()
+    }
+
+    private fun showBottomSheet() {
+        bottomSheetFragment.show(supportFragmentManager, BOTTOM_SHEET_TAG)
+    }
+
+    private fun initBottomBarButtonsOnClicks() =
+        with(binding) {
+            menuButton.setOnClickListener {
+                showBottomSheet()
+            }
+        }
+
+    private companion object {
+        const val BOTTOM_SHEET_TAG = "bottom_sheet"
+    }
 }

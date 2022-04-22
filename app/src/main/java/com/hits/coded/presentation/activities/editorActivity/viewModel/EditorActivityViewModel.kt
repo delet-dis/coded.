@@ -12,6 +12,8 @@ class EditorActivityViewModel @Inject constructor() : ViewModel() {
     val isBarsCollapsed: LiveData<Boolean>
         get() = _isBarsCollapsed
 
+    fun hideBars() = _isBarsCollapsed.postValue(true)
+
     fun toggleBars() = _isBarsCollapsed.value?.let {
         _isBarsCollapsed.postValue(!it)
     }
