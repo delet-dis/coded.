@@ -2,9 +2,16 @@ package com.hits.coded.data.repositoriesImplementations
 
 import com.hits.coded.data.models.codeBlocks.dataClasses.*
 import com.hits.coded.data.models.codeBlocks.types.BlockType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
+import com.hits.coded.data.models.heap.dataClasses.StoredVariable
+import com.hits.coded.data.models.heap.useCases.HeapUseCases
+import com.hits.coded.data.modules.HeapModule
+import com.hits.coded.domain.repositories.HeapRepository
 import com.hits.coded.domain.repositories.InterpreterRepository
+import com.hits.coded.domain.useCases.heap.ReAssignVariableUseCase
 
 class InterpreterRepositoryImplementation : InterpreterRepository() {
     override fun InterpreteConditionBlocks(condition: ConditionBlock) {
@@ -50,28 +57,51 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     override fun InterpreteLoopBlocks(loop: LoopBlock) {
         if (loop.nestedBlocks != null) {
             //while (function(loop))
-                for (nestedBlock in loop.nestedBlocks) {
-                    when (nestedBlock.type) {
-                        BlockType.VARIABLE -> InterpreteVariableBlocks(nestedBlock as VariableBlock)
-                        BlockType.CONDITION -> InterpreteConditionBlocks(nestedBlock as ConditionBlock)
-                        BlockType.LOOP -> InterpreteLoopBlocks(nestedBlock as LoopBlock)
-                        BlockType.EXPRESSION -> InterpreteExpressionBlocks(nestedBlock as ExpressionBlock)
-                    }
+            for (nestedBlock in loop.nestedBlocks) {
+                when (nestedBlock.type) {
+                    BlockType.VARIABLE -> InterpreteVariableBlocks(nestedBlock as VariableBlock)
+                    BlockType.CONDITION -> InterpreteConditionBlocks(nestedBlock as ConditionBlock)
+                    BlockType.LOOP -> InterpreteLoopBlocks(nestedBlock as LoopBlock)
+                    BlockType.EXPRESSION -> InterpreteExpressionBlocks(nestedBlock as ExpressionBlock)
                 }
+            }
         }
     }
 
-    override fun InterpreteVariableBlocks(variable: VariableBlock) {
+    override fun InterpreteVariableBlocks(variable: VariableBlock): StoredVariable? {
+        when (variable.variableBlockType) {
+            VariableBlockType.VARIABLE_CHANGE ->
+                variable.variableToChange?.let {
+                    HeapRepositoryImplementation().reAssignVariable(
+                        it,
+                        variable.variableParams
+                    )
+                }
 
-        //Variable actions function
+            VariableBlockType.VARIABLE_GET -> return HeapRepositoryImplementation().getVariable(variable.variableParams.name)
+            VariableBlockType.VARIABLE_SET -> HeapRepositoryImplementation().addVariable(variable.variableParams)
+        }
+        return null
     }
 
     override fun InterpreteExpressionBlocks(expression: ExpressionBlock): Any {
-        //expression action function
+        when(expression.expressionBlockType){
+            ExpressionBlockType.PLUS-> return (expression.leftSide as Double+expression.rightSide as Double)
+
+        }
         return 0
     }
 
     override fun InterpreteIOBlocks(IO: IOBlock) {
         //IO action function
     }
+}
+fun convertAnyToDouble(value:Any):Double? {
+    when(value){
+        is Double -> return value
+        is ExpressionBlock -> return InterpreterRepositoryImplementation().InterpreteExpressionBlocks(value) as Double
+        is VariableBlock -> return InterpreterRepositoryImplementation().InterpreteVariableBlocks(value)!!.value as Double
+        is String ->return null
+    }
+    return null
 }
