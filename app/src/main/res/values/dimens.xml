@@ -21,4 +21,6 @@
 
     <dimen name="openedBottomBarHeight">60dp</dimen>
     <dimen name="collapsedBottomBarHeight">0dp</dimen>
+
+    <dimen name="bottomSheetContentHorizontalMargin">15dp</dimen>
 </resources>

@@ -8,7 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
 import com.hits.coded.databinding.ActivityEditorBinding
-import com.hits.coded.presentation.activities.editorActivity.fragments.ItemsPickingBottomSheetFragment
+import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.ItemsPickingBottomSheetFragment
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

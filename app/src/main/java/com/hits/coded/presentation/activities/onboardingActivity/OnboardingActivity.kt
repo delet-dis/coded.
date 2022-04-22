@@ -58,7 +58,8 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private fun initViewPager() {
-        binding.viewPager.adapter = OnboardingViewPagerAdapter(this@OnboardingActivity)
+        binding.viewPager.adapter =
+            OnboardingViewPagerAdapter(this@OnboardingActivity, viewModel.getOnboardingScreens())
     }
 
     private fun initNavigationToOnboarding() =
