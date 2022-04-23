@@ -7,7 +7,7 @@ import com.hits.coded.data.models.types.VariableType
 abstract class VariableBlockBase : BlockBase() {
     abstract val variableBlockType: VariableBlockType
     abstract val variableName: String
-    abstract val variableType: VariableType
-    abstract val variableValue: Any
-    abstract val isArray: Boolean
+    abstract val variableType: VariableType?
+    abstract val variableValue: Any?
+    abstract val isArray: Boolean?
 }

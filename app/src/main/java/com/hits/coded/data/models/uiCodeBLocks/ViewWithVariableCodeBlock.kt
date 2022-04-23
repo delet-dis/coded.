@@ -1,7 +1,7 @@
 package com.hits.coded.data.models.uiCodeBLocks
 
-import com.hits.coded.presentation.views.codeBlocks.UIVariableBlock
+import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 
 interface ViewWithVariableCodeBlock {
-    fun setVariableBlock(blockUI: UIVariableBlock)
+    fun setVariableBlock(block: VariableBlock)
 }

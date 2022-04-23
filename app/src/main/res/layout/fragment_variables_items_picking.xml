@@ -20,8 +20,17 @@
         style="@style/bottomSheetBoldText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Variables list"
+        android:text="@string/variablesList"
         android:textColor="@color/blueThird"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/variablesActions" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/variablesRecycler"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="@dimen/bottomSheetElementsSpacing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/variablesList" />
 </androidx.constraintlayout.widget.ConstraintLayout>

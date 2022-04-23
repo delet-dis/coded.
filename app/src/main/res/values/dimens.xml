@@ -23,4 +23,6 @@
     <dimen name="collapsedBottomBarHeight">0dp</dimen>
 
     <dimen name="bottomSheetContentHorizontalMargin">15dp</dimen>
+
+    <dimen name="bottomSheetElementsSpacing">20dp</dimen>
 </resources>
