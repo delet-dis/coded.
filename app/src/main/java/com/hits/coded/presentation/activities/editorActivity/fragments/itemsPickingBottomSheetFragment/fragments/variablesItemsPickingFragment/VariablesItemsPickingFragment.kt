@@ -34,7 +34,9 @@ class VariablesItemsPickingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
+            viewModel.variablesList.observe(viewLifecycleOwner) {
 
+            }
         }
     }
 }

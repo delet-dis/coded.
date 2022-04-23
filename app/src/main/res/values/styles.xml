@@ -45,6 +45,15 @@
         <item name="android:autoSizeTextType" tools:targetApi="o">uniform</item>
     </style>
 
+    <style name="bottomSheetBoldText">
+        <item name="android:fontFamily">@font/rubik_semi_bold</item>
+        <item name="android:textSize">24sp</item>
+
+        <item name="android:autoSizeMaxTextSize" tools:targetApi="o">24sp</item>
+        <item name="android:autoSizeMinTextSize" tools:targetApi="o">12sp</item>
+        <item name="android:autoSizeTextType" tools:targetApi="o">uniform</item>
+    </style>
+
     <style name="translucentButtonWrapper">
         <item name="android:maxWidth">@dimen/onboardingNextButtonMaxWidth</item>
         <item name="android:layout_height">@dimen/onboardingNextButtonHeight</item>
@@ -99,7 +108,7 @@
     </style>
 
     <style name="bottomBarButton">
-        <item name="tint">@color/lightBlue</item>
+        <item name="tint">@color/blueFirst</item>
         <item name="background">@null</item>
         <item name="android:layout_height">30dp</item>
     </style>
