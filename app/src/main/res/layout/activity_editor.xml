@@ -22,9 +22,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:maxZoom="8"
+        app:maxZoom="6"
         app:maxZoomType="zoom"
-        app:minZoom="3"
+        app:minZoom="2"
         app:minZoomType="zoom"
         app:oneFingerScrollEnabled="true"
         app:overPinchable="true"
@@ -37,16 +37,6 @@
         app:twoFingersScrollEnabled="true"
         app:verticalPanEnabled="true"
         app:zoomEnabled="true">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/fieldLayout"
-            android:layout_width="match_parent"
-            android:layout_marginLeft="@dimen/editorLayoutLeftAndRightMargin"
-            android:layout_marginRight="@dimen/editorLayoutLeftAndRightMargin"
-            android:layout_marginTop="@dimen/editorLayoutTopAndBottomMargin"
-            android:layout_marginBottom="@dimen/editorLayoutTopAndBottomMargin"
-            android:layout_height="match_parent"
-            android:background="@drawable/ic_console" />
 
     </com.otaliastudios.zoom.ZoomLayout>
 

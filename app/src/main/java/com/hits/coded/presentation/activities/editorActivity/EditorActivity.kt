@@ -5,14 +5,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
 import com.hits.coded.databinding.ActivityEditorBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.ItemsPickingBottomSheetFragment
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
-import com.hits.coded.presentation.views.codeBlocks.UIVariableCreationBlock
+import com.hits.coded.presentation.views.codeField.CodeField
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -24,6 +23,8 @@ class EditorActivity : AppCompatActivity() {
 
     private lateinit var bottomSheetFragment: ItemsPickingBottomSheetFragment
 
+    private lateinit var codeField: CodeField
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -33,6 +34,8 @@ class EditorActivity : AppCompatActivity() {
 
         initIsBarsCollapsedObserver()
 
+        initCodeField()
+
         initScrollableLayoutDimensions()
 
         initBarsStateChangingBasedOnFieldClick()
@@ -40,24 +43,6 @@ class EditorActivity : AppCompatActivity() {
         initBottomSheet()
 
         initBottomBarButtonsOnClicks()
-
-        val block = UIVariableCreationBlock(this)
-
-        binding.fieldLayout.addView(UIVariableCreationBlock(this))
-
-        val layoutParams = ConstraintLayout.LayoutParams(
-            ConstraintLayout.LayoutParams.WRAP_CONTENT,
-            ConstraintLayout.LayoutParams.WRAP_CONTENT
-        )
-
-        layoutParams.apply {
-            topToTop = binding.fieldLayout.id
-            bottomToBottom = binding.fieldLayout.id
-            startToStart = binding.fieldLayout.id
-            endToEnd = binding.fieldLayout.id
-        }
-
-        block.layoutParams = layoutParams
     }
 
     private fun initBinding() {
@@ -127,6 +112,12 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
+    private fun initCodeField() {
+        codeField = CodeField(this)
+
+        binding.zoomLayout.addView(codeField)
+    }
+
     private fun initScrollableLayoutDimensions() =
         with(binding) {
             with(resources.displayMetrics) {
@@ -135,7 +126,7 @@ class EditorActivity : AppCompatActivity() {
                     width = widthPixels
                 }
 
-                fieldLayout.layoutParams.apply {
+                codeField.layoutParams.apply {
                     height = heightPixels * 3
                     width = widthPixels * 3
                 }
@@ -143,7 +134,7 @@ class EditorActivity : AppCompatActivity() {
         }
 
     private fun initBarsStateChangingBasedOnFieldClick() =
-        binding.fieldLayout.setOnClickListener {
+        codeField.setOnClickListener {
             viewModel.toggleBars()
         }
 

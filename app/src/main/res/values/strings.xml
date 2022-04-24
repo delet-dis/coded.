@@ -20,7 +20,7 @@
     <string name="loops">Loops</string>
     <string name="actions">Actions</string>
     <string name="menu">Menu</string>
-    <string name="start">Start</string>
+    <string name="start">start</string>
     <string name="console">Console</string>
     <string name="variablesActions">Variables actions</string>
     <string name="createVariable">create variable</string>

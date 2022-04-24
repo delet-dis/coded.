@@ -1,25 +1,27 @@
-package com.hits.coded.presentation.views.codeBlocks
+package com.hits.coded.presentation.views.codeBlocks.actions
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hits.coded.R
-import com.hits.coded.databinding.ViewVariableCreateBlockBinding
+import com.hits.coded.databinding.ViewActionStartBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-class UIVariableCreationBlock @JvmOverloads constructor(
+@AndroidEntryPoint
+class UIActionStartBlock constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
-    private val binding: ViewVariableCreateBlockBinding
+    private val binding: ViewActionStartBinding
 
     init {
         inflate(
             context,
-            R.layout.view_variable_create_block,
+            R.layout.view_action_start,
             this
         ).also { view ->
-            binding = ViewVariableCreateBlockBinding.bind(view)
+            binding = ViewActionStartBinding.bind(view)
         }
     }
 }
