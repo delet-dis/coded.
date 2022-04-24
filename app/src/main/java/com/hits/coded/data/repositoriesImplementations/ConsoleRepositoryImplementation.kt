@@ -1,12 +1,15 @@
 package com.hits.coded.data.repositoriesImplementations
 
+import android.util.Log
 import com.hits.coded.domain.repositories.ConsoleRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.single
-import kotlin.collections.ArrayDeque
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ConsoleRepositoryImplementation : ConsoleRepository() {
+@Singleton
+class ConsoleRepositoryImplementation @Inject constructor() : ConsoleRepository() {
     private var _buffer: MutableStateFlow<ArrayDeque<String>> = MutableStateFlow(ArrayDeque(100))
     override val buffer: Flow<ArrayDeque<String>>
         get() = _buffer
@@ -33,6 +36,9 @@ class ConsoleRepositoryImplementation : ConsoleRepository() {
             _buffer.value.removeLast()
         }
         _buffer.value.addFirst(input + "\n")
+
+        Log.d("CONSOLE_DEBUG", _buffer.value.toString())
+
         _buffer.emit(_buffer.value)
     }
 

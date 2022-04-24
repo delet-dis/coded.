@@ -4,18 +4,18 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hits.coded.data.models.console.ConsoleUseCases
-import com.hits.coded.data.repositoriesImplementations.ConsoleRepositoryImplementation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class EditorActivityViewModel : ViewModel() {
-    val c = ConsoleRepositoryImplementation()
+@HiltViewModel
+class EditorActivityViewModel @Inject constructor(private val consoleUseCases: ConsoleUseCases) :
+    ViewModel() {
 
-    init {
+    init{
         viewModelScope.launch {
-            c.buffer.collect {
+            consoleUseCases.getBufferUseCase.getBuffer().collect {
                 Log.d("CONSOLE_DEBUG", it.size.toString())
             }
         }
@@ -23,7 +23,7 @@ class EditorActivityViewModel : ViewModel() {
 
     fun writeSmthToConsole() {
         viewModelScope.launch {
-            c.writeToConsole("Smth")
+            consoleUseCases.writeToConsoleUseCase.writeToConsole("Smth")
         }
     }
 }

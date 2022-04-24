@@ -5,7 +5,7 @@ import com.hits.coded.domain.useCases.console.*
 data class ConsoleUseCases(
     val checkIsInputAvailableUseCase: CheckIsInputAvailableUseCase,
     val clearConsoleUseCase: ClearConsoleUseCase,
-    val GetBufferUseCase: GetBufferUseCase,
+    val getBufferUseCase: GetBufferUseCase,
     val readFromConsoleUseCase: ReadFromConsoleUseCase,
     val writeToConsoleUseCase: WriteToConsoleUseCase
 )
