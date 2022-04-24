@@ -5,13 +5,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
 import com.hits.coded.databinding.ActivityEditorBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.ItemsPickingBottomSheetFragment
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
+import com.hits.coded.presentation.views.codeBlocks.UIVariableCreationBlock
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class EditorActivity : AppCompatActivity() {
@@ -37,6 +40,24 @@ class EditorActivity : AppCompatActivity() {
         initBottomSheet()
 
         initBottomBarButtonsOnClicks()
+
+        val block = UIVariableCreationBlock(this)
+
+        binding.fieldLayout.addView(UIVariableCreationBlock(this))
+
+        val layoutParams = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        layoutParams.apply {
+            topToTop = binding.fieldLayout.id
+            bottomToBottom = binding.fieldLayout.id
+            startToStart = binding.fieldLayout.id
+            endToEnd = binding.fieldLayout.id
+        }
+
+        block.layoutParams = layoutParams
     }
 
     private fun initBinding() {
@@ -110,13 +131,13 @@ class EditorActivity : AppCompatActivity() {
         with(binding) {
             with(resources.displayMetrics) {
                 zoomLayout.layoutParams.apply {
-                    height = heightPixels * 4
-                    width = widthPixels * 4
+                    height = heightPixels
+                    width = widthPixels
                 }
 
                 fieldLayout.layoutParams.apply {
-                    height = heightPixels * 4
-                    width = widthPixels * 4
+                    height = heightPixels * 3
+                    width = widthPixels * 3
                 }
             }
         }

@@ -1,15 +1,12 @@
 package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragments.variablesItemsPickingFragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.hits.coded.databinding.FragmentVariablesItemsPickingBinding
-import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragments.variablesItemsPickingFragment.recyclerViewAdapters.VariablesListAdapter
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragments.variablesItemsPickingFragment.viewModels.VariablesItemsPickingFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,35 +34,7 @@ class VariablesItemsPickingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
-            initVariablesRecycler()
 
-            initCreatedVariablesObserver()
         }
-    }
-
-    private fun initVariablesRecycler() {
-        val layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-
-        binding.variablesRecycler.layoutManager = layoutManager
-    }
-
-    private fun initCreatedVariablesObserver() {
-        viewModel.variablesList.observe(viewLifecycleOwner) {
-            requireActivity().runOnUiThread {
-                binding.variablesRecycler.adapter = VariablesListAdapter(it,
-                    {
-                        Log.d("click", "click: " + it.variableName)
-                    },
-                    {
-                        Log.d("click", "longClick: " + it.variableName)
-                    },
-                    {
-                        Log.d("click", "add")
-                    })
-            }
-        }
-
-        viewModel.addVariable("test")
     }
 }

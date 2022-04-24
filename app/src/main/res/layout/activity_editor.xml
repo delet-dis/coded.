@@ -41,18 +41,12 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fieldLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="40dp"
-                android:layout_height="200dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/variable_call" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_marginLeft="@dimen/editorLayoutLeftAndRightMargin"
+            android:layout_marginRight="@dimen/editorLayoutLeftAndRightMargin"
+            android:layout_marginTop="@dimen/editorLayoutTopAndBottomMargin"
+            android:layout_marginBottom="@dimen/editorLayoutTopAndBottomMargin"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_console" />
 
     </com.otaliastudios.zoom.ZoomLayout>
 

@@ -23,6 +23,7 @@
     <string name="start">Start</string>
     <string name="console">Console</string>
     <string name="variablesActions">Variables actions</string>
-    <string name="createVariable">Create variable</string>
+    <string name="createVariable">create variable</string>
     <string name="variablesList">Variables list</string>
+    <string name="variableName">name</string>
 </resources>

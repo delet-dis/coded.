@@ -25,4 +25,9 @@
     <dimen name="bottomSheetContentHorizontalMargin">15dp</dimen>
 
     <dimen name="bottomSheetElementsSpacing">20dp</dimen>
+
+    <dimen name="variableBlockMaxWidth">200dp</dimen>
+
+    <dimen name="editorLayoutLeftAndRightMargin">20dp</dimen>
+    <dimen name="editorLayoutTopAndBottomMargin">50dp</dimen>
 </resources>

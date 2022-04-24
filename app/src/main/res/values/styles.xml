@@ -112,4 +112,10 @@
         <item name="background">@null</item>
         <item name="android:layout_height">30dp</item>
     </style>
+
+    <style name="variableNameEditText">
+        <item name="fontFamily">@font/rubik_bold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="background">@null</item>
+    </style>
 </resources>
