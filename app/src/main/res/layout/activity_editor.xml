@@ -6,4 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".presentation.activities.editorActivity.EditorActivity">
 
+    <Button
+        android:id="@+id/writeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="124dp"
+        android:layout_marginBottom="200dp"
+        android:text="WriteJibberish"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
