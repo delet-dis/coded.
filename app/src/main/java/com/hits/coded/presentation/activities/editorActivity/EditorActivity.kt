@@ -19,8 +19,15 @@ class EditorActivity : AppCompatActivity() {
         initBinding()
 
         binding.writeButton.setOnClickListener {
-            Log.d("CONSOLE_DEBUG", "click!")
             viewModel.writeSmthToConsole()
+        }
+
+        binding.clearButton.setOnClickListener {
+            viewModel.clearConsole()
+        }
+
+        binding.readButton.setOnClickListener {
+            viewModel.readFromConsole()
         }
     }
 
