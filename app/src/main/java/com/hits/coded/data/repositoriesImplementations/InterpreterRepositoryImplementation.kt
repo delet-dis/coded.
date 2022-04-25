@@ -12,21 +12,35 @@ import com.hits.coded.data.models.types.VariableType
 import com.hits.coded.domain.repositories.InterpreterRepository
 
 class InterpreterRepositoryImplementation : InterpreterRepository() {
+    override fun interpreteStartBlock(start: StartBlock) {
+        for (nestedBlock in start.nestedBlocks!!) {
+            when (nestedBlock.type) {
+                BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
+                BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
+                BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
+                BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+            }
+        }
+        throw Exception()
+    }
+
     override fun interpreteConditionBlocks(condition: ConditionBlock):Boolean {
         var ConditionIsTrue: Boolean = false
+        var leftSideType: VariableType? =getTypeOfAny(condition.leftSide)
+        var rightSideType:VariableType?=getTypeOfAny(condition.rightSide)
         if (condition.logicalOperator != null) {
             when (condition.logicalOperator.logicalOperatorType) {
 
-                LogicalOperatorType.AND -> if (condition.rightSide != null) {
+                LogicalOperatorType.AND -> if (condition.rightSide != null && leftSideType==VariableType.BOOLEAN && rightSideType==VariableType.BOOLEAN) {
                     ConditionIsTrue =
                         (convertAnyToBoolean(condition.leftSide) as Boolean && convertAnyToBoolean(
                             condition.rightSide
                         ) as Boolean)
                 }
-                LogicalOperatorType.NOT -> ConditionIsTrue =
+                LogicalOperatorType.NOT ->if(leftSideType==VariableType.BOOLEAN) ConditionIsTrue =
                     !(convertAnyToBoolean(condition.leftSide) as Boolean)
 
-                LogicalOperatorType.OR -> if (condition.rightSide != null) {
+                LogicalOperatorType.OR -> if (condition.rightSide != null && leftSideType==VariableType.BOOLEAN && rightSideType==VariableType.BOOLEAN) {
                     ConditionIsTrue =
                         (convertAnyToBoolean(condition.leftSide) as Boolean || convertAnyToBoolean(
                             condition.rightSide
@@ -195,11 +209,12 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         return null
     }
 
-    private fun getTypeOfAny(value: Any): VariableType? {
+    private fun getTypeOfAny(value: Any?): VariableType? {
         when (value) {
             is String -> return VariableType.STRING
             is Double -> return VariableType.DOUBLE
             is Int -> return VariableType.INT
+            is Boolean -> return  VariableType.BOOLEAN
             is ExpressionBlock -> return getTypeOfAny(interpreteExpressionBlocks(value))
             is VariableBlock -> return getTypeOfAny(interpreteVariableBlocks(value)!!.value)
         }
