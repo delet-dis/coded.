@@ -2,7 +2,10 @@ package com.hits.coded.presentation.activities.editorActivity
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -116,20 +119,28 @@ class EditorActivity : AppCompatActivity() {
         codeField = CodeField(this)
 
         binding.zoomLayout.addView(codeField)
+
+        codeField.layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
     }
 
     private fun initScrollableLayoutDimensions() =
         with(binding) {
             with(resources.displayMetrics) {
-                zoomLayout.layoutParams.apply {
-                    height = heightPixels
-                    width = widthPixels
-                }
-
                 codeField.layoutParams.apply {
                     height = heightPixels * 3
                     width = widthPixels * 3
                 }
+
+                Log.d("test", "------------------------------")
+
+                Log.d("test", "codeFieldHeight: ${codeField.layoutParams.height}")
+                Log.d("test", "codeFieldWidth: ${codeField.layoutParams.width}")
+
+                Log.d("test", "zoomLayoutWidth: ${zoomLayout.layoutParams.width}")
+                Log.d("test", "zoomLayoutHeight: ${zoomLayout.layoutParams.height}")
             }
         }
 
@@ -140,6 +151,8 @@ class EditorActivity : AppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+
+        initScrollableLayoutDimensions()
 
         viewModel.hideBars()
     }
