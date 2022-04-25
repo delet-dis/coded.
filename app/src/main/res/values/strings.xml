@@ -11,4 +11,9 @@
     <string name="whatSMore">what\'s more?</string>
     <string name="buttonBackgroundImage">Background image</string>
     <string name="imReady">I\'m ready!</string>
+
+    <string name="typeMismatchError">Ouch! You can\'t use variable of this type here!</string>
+    <string name="arrayOutOFBoundError">Eh? Check indices of the array</string>
+    <string name="divisionByZeroError">Oops! Division by zero!</string>
+
 </resources>
