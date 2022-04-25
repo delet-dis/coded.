@@ -16,7 +16,7 @@ class ConsoleRepositoryImplementation @Inject constructor() : ConsoleRepository(
     private val _bufferValue: ArrayDeque<String> = ArrayDeque(100)
 
     private var _buffer: MutableSharedFlow<ArrayDeque<String>> =
-        MutableSharedFlow(1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+        MutableSharedFlow(1, 0, BufferOverflow.DROP_OLDEST)
     override val buffer: Flow<ArrayDeque<String>>
         get() = _buffer
 
