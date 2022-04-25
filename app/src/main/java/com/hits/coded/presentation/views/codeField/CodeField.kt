@@ -4,9 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
+import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableCreationBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,21 +37,20 @@ class CodeField constructor(
         startBlock = UIActionStartBlock(context)
 
         addBlock(startBlock)
+
+        addBlock(UIVariableCreationBlock(context))
     }
 
     fun addBlock(view: View) {
-        val addingViewLayoutParams =
-            LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-
-        addingViewLayoutParams.apply {
-            bottomToBottom = binding.fieldLayout.id
-            startToStart = binding.fieldLayout.id
-            endToEnd = binding.fieldLayout.id
-            leftToLeft = binding.fieldLayout.id
-        }
-
-        view.layoutParams = addingViewLayoutParams
+        view.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
 
         binding.fieldLayout.addView(view)
+
+        view.updateLayoutParams<LayoutParams> {
+            topToTop = R.id.fieldLayout
+            bottomToBottom = R.id.fieldLayout
+            leftToLeft = R.id.fieldLayout
+            rightToRight = R.id.fieldLayout
+        }
     }
 }
