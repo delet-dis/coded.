@@ -7,8 +7,8 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
 
 data class ExpressionBlock(
     override val expressionBlockType: ExpressionBlockType,
-    override val type: BlockType,
     override val leftSide: Any,
     override val rightSide: Any,
+    override val type: BlockType = BlockType.EXPRESSION,
     override val nestedBlocks: Array<BlockBase>? = null
 ):ExpressionBlockBase()
