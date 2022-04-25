@@ -2,7 +2,6 @@ package com.hits.coded.presentation.activities.editorActivity
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -126,23 +125,14 @@ class EditorActivity : AppCompatActivity() {
         )
     }
 
-    private fun initScrollableLayoutDimensions() =
-        with(binding) {
-            with(resources.displayMetrics) {
-                codeField.layoutParams.apply {
-                    height = heightPixels * 3
-                    width = widthPixels * 3
-                }
-
-                Log.d("test", "------------------------------")
-
-                Log.d("test", "codeFieldHeight: ${codeField.layoutParams.height}")
-                Log.d("test", "codeFieldWidth: ${codeField.layoutParams.width}")
-
-                Log.d("test", "zoomLayoutWidth: ${zoomLayout.layoutParams.width}")
-                Log.d("test", "zoomLayoutHeight: ${zoomLayout.layoutParams.height}")
+    private fun initScrollableLayoutDimensions() {
+        with(resources.displayMetrics) {
+            codeField.layoutParams.apply {
+                height = heightPixels * 3
+                width = widthPixels * 3
             }
         }
+    }
 
     private fun initBarsStateChangingBasedOnFieldClick() =
         codeField.setOnClickListener {
