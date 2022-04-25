@@ -4,6 +4,7 @@ import com.hits.coded.data.models.interpreter.InterpreterUseCases
 import com.hits.coded.data.repositoriesImplementations.InterpreterRepositoryImplementation
 import com.hits.coded.domain.repositories.InterpreterRepository
 import com.hits.coded.domain.useCases.interpreter.*
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,6 +14,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class InterpretatorModule {
+    @Binds
     abstract fun bindInterpretatorRepository(interpretatorRepository: InterpreterRepositoryImplementation): InterpreterRepository
 
     companion object {
