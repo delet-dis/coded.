@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.data.models.codeField.CodeFieldInterface
+import com.hits.coded.data.models.uiCodeBLocks.UICodeBlockHandlesDragNDropInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
 import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableCreationBlock
@@ -19,7 +20,8 @@ class CodeField constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr), CodeFieldInterface {
+) : ConstraintLayout(context, attrs, defStyleAttr), CodeFieldInterface,
+    UICodeBlockHandlesDragNDropInterface {
     private val binding: ViewCodeFieldBinding
 
     init {
@@ -32,8 +34,15 @@ class CodeField constructor(
         }
         initDragNDropListener()
 
+        val firstBlock = UIVariableCreationBlock(context)
+        firstBlock.tag = "treter"
+
+        val secondBlock = UIVariableCreationBlock(context)
+        secondBlock.tag = "treter"
+
         addBlock(UIActionStartBlock(context))
-        addBlock(UIVariableCreationBlock(context))
+        addBlock(firstBlock)
+        addBlock(secondBlock)
     }
 
     override fun addBlock(viewToAdd: View) {
@@ -53,6 +62,8 @@ class CodeField constructor(
         binding.fieldLayout.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
+            val itemParent = draggableItem.parent as ViewGroup
+
             when (dragEvent.action) {
                 DragEvent.ACTION_DRAG_STARTED,
                 DragEvent.ACTION_DRAG_ENTERED,
@@ -63,8 +74,7 @@ class CodeField constructor(
                     draggableItem.x = dragEvent.x - (draggableItem.width / 2)
                     draggableItem.y = dragEvent.y - (draggableItem.height / 2)
 
-                    val parent = draggableItem.parent as ViewGroup
-                    parent.removeView(draggableItem)
+                    itemParent.removeView(draggableItem)
 
                     this.addView(draggableItem)
 
@@ -72,7 +82,8 @@ class CodeField constructor(
                 }
 
                 DragEvent.ACTION_DRAG_ENDED -> {
-                    draggableItem.visibility = View.VISIBLE
+                    draggableItem.post { draggableItem.visibility = VISIBLE }
+
                     this.invalidate()
                     true
                 }

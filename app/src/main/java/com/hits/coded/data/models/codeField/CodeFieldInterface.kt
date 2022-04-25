@@ -4,5 +4,4 @@ import android.view.View
 
 interface CodeFieldInterface {
     fun addBlock(viewToAdd: View)
-    fun initDragNDropListener()
 }
