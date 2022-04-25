@@ -6,6 +6,7 @@ import com.hits.coded.data.models.codeBlocks.types.BlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
 
 data class ExpressionBlock(
+    override val id: Int,
     override val expressionBlockType: ExpressionBlockType,
     override val leftSide: Any,
     override val rightSide: Any,

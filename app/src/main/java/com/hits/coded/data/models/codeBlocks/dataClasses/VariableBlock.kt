@@ -8,6 +8,7 @@ import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.types.VariableType
 
 data class VariableBlock(
+    override val id: Int,
     override val variableBlockType: VariableBlockType,
     override val variableParams: StoredVariable,
     override val type: BlockType = BlockType.VARIABLE,

@@ -8,6 +8,7 @@ import com.hits.coded.data.models.codeBlocks.types.BlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.ConditionBlockType
 
 data class ConditionBlock(
+    override val id: Int,
     override val conditionBlockType: ConditionBlockType,
     override val leftSide: Any,
     override val rightSide: Any?,
