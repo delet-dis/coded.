@@ -121,9 +121,6 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 ExpressionBlockType.DIVIDE -> return (convertAnyToDouble(expression.leftSide) as Double / convertAnyToDouble(
                     expression.rightSide
                 ) as Double)
-                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> return (convertAnyToDouble(expression.leftSide) as Double % convertAnyToDouble(
-                    expression.rightSide
-                ) as Double)
                 ExpressionBlockType.MINUS -> return (convertAnyToDouble(expression.leftSide) as Double - convertAnyToDouble(
                     expression.rightSide
                 ) as Double)
