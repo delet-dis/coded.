@@ -7,5 +7,5 @@ class InterpreteConditionBlockUseCase(
     private val interpriterRepository: InterpreterRepository
 ) {
     fun interpreteConditionBlock(condition: ConditionBlock) =
-        interpriterRepository.InterpreteConditionBlocks(condition)
+        interpriterRepository.interpreteConditionBlocks(condition)
 }

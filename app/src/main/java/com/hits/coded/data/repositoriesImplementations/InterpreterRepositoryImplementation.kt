@@ -1,5 +1,6 @@
 package com.hits.coded.data.repositoriesImplementations
 
+import com.hits.coded.data.models.codeBlocks.bases.subBlocks.condition.ConditionBlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.*
 import com.hits.coded.data.models.codeBlocks.types.BlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
@@ -7,16 +8,11 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.types.VariableType
-import com.hits.coded.data.modules.HeapModule
-import com.hits.coded.domain.repositories.HeapRepository
 import com.hits.coded.domain.repositories.InterpreterRepository
-import com.hits.coded.domain.useCases.heap.ReAssignVariableUseCase
-import com.hits.coded.domain.useCases.interpreter.InterpreteVariableBlockUseCase
 
 class InterpreterRepositoryImplementation : InterpreterRepository() {
-    override fun InterpreteConditionBlocks(condition: ConditionBlock) {
+    override fun interpreteConditionBlocks(condition: ConditionBlock):Boolean {
         var ConditionIsTrue: Boolean = false
         if (condition.logicalOperator != null) {
             when (condition.logicalOperator.logicalOperatorType) {
@@ -67,31 +63,33 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             if (condition.nestedBlocks != null) {
                 for (nestedBlock in condition.nestedBlocks) {
                     when (nestedBlock.type) {
-                        BlockType.VARIABLE -> InterpreteVariableBlocks(nestedBlock as VariableBlock)
-                        BlockType.CONDITION -> InterpreteConditionBlocks(nestedBlock as ConditionBlock)
-                        BlockType.LOOP -> InterpreteLoopBlocks(nestedBlock as LoopBlock)
-                        BlockType.EXPRESSION -> InterpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                        BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
+                        BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
+                        BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
+                        BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                    }
+                }
+            }
+        }
+        return ConditionIsTrue
+    }
+
+    override fun interpreteLoopBlocks(loop: LoopBlock) {
+        if (loop.nestedBlocks != null) {
+            while (interpreteConditionBlocks(loop.conditionBlock as ConditionBlock)) {
+                for (nestedBlock in loop.nestedBlocks) {
+                    when (nestedBlock.type) {
+                        BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
+                        BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
+                        BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
+                        BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
                     }
                 }
             }
         }
     }
 
-    override fun InterpreteLoopBlocks(loop: LoopBlock) {
-        if (loop.nestedBlocks != null) {
-            //while (function(loop))
-            for (nestedBlock in loop.nestedBlocks) {
-                when (nestedBlock.type) {
-                    BlockType.VARIABLE -> InterpreteVariableBlocks(nestedBlock as VariableBlock)
-                    BlockType.CONDITION -> InterpreteConditionBlocks(nestedBlock as ConditionBlock)
-                    BlockType.LOOP -> InterpreteLoopBlocks(nestedBlock as LoopBlock)
-                    BlockType.EXPRESSION -> InterpreteExpressionBlocks(nestedBlock as ExpressionBlock)
-                }
-            }
-        }
-    }
-
-    override fun InterpreteVariableBlocks(variable: VariableBlock): StoredVariable? {
+    override fun interpreteVariableBlocks(variable: VariableBlock): StoredVariable? {
         when (variable.variableBlockType) {
             VariableBlockType.VARIABLE_CHANGE ->
                 variable.variableToChange?.let {
@@ -109,7 +107,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         return null
     }
 
-    override fun InterpreteExpressionBlocks(expression: ExpressionBlock): Any {
+    override fun interpreteExpressionBlocks(expression: ExpressionBlock): Any {
         val leftSideType: VariableType? = getTypeOfAny(expression.leftSide)
         val rightSideType: VariableType? = getTypeOfAny(expression.rightSide)
         if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
@@ -156,15 +154,15 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         return 0
     }
 
-    override fun InterpreteIOBlocks(IO: IOBlock) {
+    override fun interpreteIOBlocks(IO: IOBlock) {
         //IO action function
     }
 
     private fun convertAnyToDouble(value: Any): Double? {
         when (value) {
             is Double -> return value
-            is ExpressionBlock -> return InterpreteExpressionBlocks(value) as Double
-            is VariableBlock -> return InterpreteVariableBlocks(value)!!.value as Double
+            is ExpressionBlock -> return interpreteExpressionBlocks(value) as Double
+            is VariableBlock -> return interpreteVariableBlocks(value)!!.value as Double
             is String -> return value.toDouble()
         }
         return null
@@ -174,8 +172,8 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         when (value) {
             is Double -> return value.toInt()
             is Int -> return value
-            is ExpressionBlock -> return InterpreteExpressionBlocks(value) as Int
-            is VariableBlock -> return InterpreteVariableBlocks(value)!!.value as Int
+            is ExpressionBlock -> return interpreteExpressionBlocks(value) as Int
+            is VariableBlock -> return interpreteVariableBlocks(value)!!.value as Int
             is String -> return value.toInt()
         }
         return null
@@ -184,8 +182,8 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     private fun convertAnyToBoolean(value: Any): Boolean? {
         when (value) {
             is Boolean -> return value
-            is ExpressionBlock -> return InterpreteExpressionBlocks(value) as Boolean
-            is VariableBlock -> return InterpreteVariableBlocks(value)!!.value as Boolean
+            is ExpressionBlock -> return interpreteExpressionBlocks(value) as Boolean
+            is VariableBlock -> return interpreteVariableBlocks(value)!!.value as Boolean
             is String -> return value.toBoolean()
         }
         return null
@@ -193,8 +191,8 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
 
     private fun convertAnyToString(value: Any): String? {
         when (value) {
-            is ExpressionBlock -> return if (getTypeOfAny(value)==VariableType.STRING) InterpreteExpressionBlocks(value) as String else null
-            is VariableBlock -> return if(value.variableParams.type==VariableType.STRING) InterpreteVariableBlocks(value)!!.value as String else null
+            is ExpressionBlock -> return if (getTypeOfAny(value)==VariableType.STRING) interpreteExpressionBlocks(value) as String else null
+            is VariableBlock -> return if(value.variableParams.type==VariableType.STRING) interpreteVariableBlocks(value)!!.value as String else null
             is String -> return value
         }
         return null
@@ -205,8 +203,8 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             is String -> return VariableType.STRING
             is Double -> return VariableType.DOUBLE
             is Int -> return VariableType.INT
-            is ExpressionBlock -> return getTypeOfAny(InterpreteExpressionBlocks(value))
-            is VariableBlock -> return getTypeOfAny(InterpreteVariableBlocks(value)!!.value)
+            is ExpressionBlock -> return getTypeOfAny(interpreteExpressionBlocks(value))
+            is VariableBlock -> return getTypeOfAny(interpreteVariableBlocks(value)!!.value)
         }
         return null
     }

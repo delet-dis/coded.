@@ -6,5 +6,5 @@ import com.hits.coded.domain.repositories.InterpreterRepository
 class InterpreteExpressionBlockUseCase(
     private val interpreterRepository: InterpreterRepository
     ) {
-    fun interpreteExpressionBlock(expression:ExpressionBlock)=interpreterRepository.InterpreteExpressionBlocks(expression)
+    fun interpreteExpressionBlock(expression:ExpressionBlock)=interpreterRepository.interpreteExpressionBlocks(expression)
 }

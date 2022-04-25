@@ -6,5 +6,5 @@ import com.hits.coded.domain.repositories.InterpreterRepository
 class InterpreteLoopBlockUseCase(
     private val interpreterRepository: InterpreterRepository
     ) {
-    fun interpreteLoopBlock(loop:LoopBlock)=interpreterRepository.InterpreteLoopBlocks(loop)
+    fun interpreteLoopBlock(loop:LoopBlock)=interpreterRepository.interpreteLoopBlocks(loop)
 }
