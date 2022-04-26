@@ -7,6 +7,7 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.sharedTypes.VariableType
 
 data class VariableBlock(
+    override val id: Int,
     override val variableBlockType: VariableBlockType,
     override var variableName: String? = null,
     override val variableType: VariableType? = null,
