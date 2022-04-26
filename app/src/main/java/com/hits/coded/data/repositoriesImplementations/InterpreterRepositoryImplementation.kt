@@ -156,21 +156,28 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             VariableBlockType.VARIABLE_CHANGE ->
                 variable.variableToChange?.let {
                     variable.variableParams?.let {
-                        HeapRepositoryImplementation().reAssignVariable(
-                            it.name,
-                            variable.variableParams
-                        )
+                        if (it.name != null && variable.variableParams != null) {
+                            HeapRepositoryImplementation().reAssignVariable(
+                                it.name!!,
+                                variable.variableParams!!
+                            )
+                        }
                     }
                 }
 
             VariableBlockType.VARIABLE_GET -> return variable.variableParams?.let {
-                HeapRepositoryImplementation().getVariable(
-                    it.name
-                )
+                it.name?.let { it1 ->
+                    HeapRepositoryImplementation().getVariable(
+                        it1
+                    )
+                }
             }
             VariableBlockType.VARIABLE_SET -> variable.variableParams?.let {
-                HeapRepositoryImplementation().addVariable(
-                    it.name)
+                it.name?.let { it1 ->
+                    HeapRepositoryImplementation().addVariable(
+                        it1
+                    )
+                }
             }
         }
         return null

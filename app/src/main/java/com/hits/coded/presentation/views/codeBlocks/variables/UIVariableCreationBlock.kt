@@ -8,6 +8,7 @@ import com.hits.coded.R
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
+import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInterface
 import com.hits.coded.databinding.ViewVariableCreateBlockBinding
@@ -41,7 +42,11 @@ class UIVariableCreationBlock @JvmOverloads constructor(
     }
 
     private fun initVariableNameChangeListener() = binding.variableName.addTextChangedListener {
-        _block.variableName = it?.toString()
+        val variableParams = StoredVariable().apply {
+            name = it?.toString()
+        }
+
+        _block.variableParams = variableParams
     }
 
     private companion object {
