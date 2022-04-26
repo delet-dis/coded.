@@ -11,4 +11,19 @@
     <string name="whatSMore">what\'s more?</string>
     <string name="buttonBackgroundImage">Background image</string>
     <string name="imReady">I\'m ready!</string>
+    <string name="project">Project</string>
+    <string name="chooseTheComponentToAdd">Choose the component to add</string>
+    <string name="close">Close</string>
+    <string name="componentType">Component type</string>
+    <string name="variables">Variables</string>
+    <string name="logic">Logic</string>
+    <string name="loops">Loops</string>
+    <string name="actions">Actions</string>
+    <string name="menu">Menu</string>
+    <string name="start">start</string>
+    <string name="console">Console</string>
+    <string name="variablesActions">Variables actions</string>
+    <string name="createVariable">create variable</string>
+    <string name="variablesList">Variables list</string>
+    <string name="variableName">name</string>
 </resources>

@@ -8,12 +8,12 @@ import com.hits.coded.data.models.codeBlocks.types.BlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.ConditionBlockType
 
 data class ConditionBlock(
-    override val id: Int,
     override val conditionBlockType: ConditionBlockType,
     override val type: BlockType,
     override val leftSide: Any,
     override val rightSide: Any?,
+    override val id: Int? = null,
     override val logicalOperator: LogicalOperatorBase?,
     override val mathematicalOperator: MathematicalOperatorBase?,
-    override val nestedBlocks: Array<BlockBase>? = null
+    override var nestedBlocks: Array<BlockBase>? = null
 ) : ConditionBlockBase()

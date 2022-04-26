@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@color/lightBlue">
+    tools:background="@color/blueFirst">
 
     <TextView
         android:id="@+id/headerText"
