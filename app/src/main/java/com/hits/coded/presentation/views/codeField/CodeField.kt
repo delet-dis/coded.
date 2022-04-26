@@ -71,12 +71,7 @@ class CodeField constructor(
                 DragEvent.ACTION_DRAG_EXITED -> true
 
                 DragEvent.ACTION_DROP -> {
-                    draggableItem.x = dragEvent.x - (draggableItem.width / 2)
-                    draggableItem.y = dragEvent.y - (draggableItem.height / 2)
-
-                    itemParent.removeView(draggableItem)
-
-                    this.addView(draggableItem)
+                    handleDropEvent(itemParent, draggableItem, dragEvent)
 
                     true
                 }
@@ -92,4 +87,18 @@ class CodeField constructor(
             }
         }
     }
+
+    private fun handleDropEvent(
+        itemParent: ViewGroup,
+        draggableItem: View,
+        dragEvent: DragEvent
+    ) =
+        with(binding) {
+            draggableItem.x = dragEvent.x - (draggableItem.width / 2)
+            draggableItem.y = dragEvent.y - (draggableItem.height / 2)
+
+            itemParent.removeView(draggableItem)
+
+            addView(draggableItem)
+        }
 }

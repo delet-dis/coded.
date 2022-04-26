@@ -31,4 +31,5 @@
     <string name="createVariable">create variable</string>
     <string name="variablesList">Variables list</string>
     <string name="variableName">name</string>
+    <string name="variableCall">Variable call</string>
 </resources>

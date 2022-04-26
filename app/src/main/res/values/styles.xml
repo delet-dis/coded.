@@ -124,4 +124,11 @@
     <style name="variableNameCard">
         <item name="cardCornerRadius">30dp</item>
     </style>
+
+    <style name="bottomSheetItemsList">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:divider">@drawable/linear_layout_divider</item>
+        <item name="android:showDividers">middle|beginning|end</item>
+    </style>
 </resources>

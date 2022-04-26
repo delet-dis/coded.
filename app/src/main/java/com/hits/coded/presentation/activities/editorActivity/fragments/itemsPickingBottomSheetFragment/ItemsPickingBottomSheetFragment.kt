@@ -108,12 +108,19 @@ class ItemsPickingBottomSheetFragment : BottomSheetDialogFragment(),
         }
 
     override fun initDragNDropListener() {
-        binding.viewPager.setOnDragListener { view, dragEvent ->
+        binding.root.setOnDragListener { view, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             when (dragEvent.action) {
                 DragEvent.ACTION_DRAG_EXITED -> {
                     dismiss()
+
+                    val bottomSheetDialog = dialog as BottomSheetDialog
+
+                    bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.container)
+                        ?.let {
+                            it.visibility = View.GONE
+                        }
 
                     true
                 }

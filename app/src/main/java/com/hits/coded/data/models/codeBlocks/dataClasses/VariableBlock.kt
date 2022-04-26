@@ -7,7 +7,7 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 
 data class VariableBlock(
-    override val variableBlockType: VariableBlockType,
+    override val variableBlockType: VariableBlockType? = null,
     override var variableParams: StoredVariable? = null,
     override val id: Int? = null,
     override var nestedBlocks: Array<BlockBase>? = null,
