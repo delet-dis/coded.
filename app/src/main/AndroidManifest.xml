@@ -12,6 +12,7 @@
         android:theme="@style/Theme.Coded">
         <activity
             android:name=".presentation.activities.editorActivity.EditorActivity"
+            android:configChanges="screenSize|orientation"
             android:exported="false" />
         <activity
             android:name=".presentation.activities.onboardingActivity.OnboardingActivity"

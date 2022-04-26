@@ -5,6 +5,6 @@ import com.hits.coded.data.models.codeBlocks.types.BlockType
 
 data class StartBlock(
     override val type: BlockType = BlockType.START,
-    override val nestedBlocks: Array<BlockBase>?,
-    override val id: Int
+    override val id: Int? = null,
+    override var nestedBlocks: Array<BlockBase>? = null
 ) : BlockBase()

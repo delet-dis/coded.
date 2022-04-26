@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="lightBlue">#AEBDEF</color>
+
     <color name="lightPurple">#A691D2</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray">#E4E4E4</color>
+
+    <color name="blueFirst">#AEBDEF</color>
+    <color name="blueSecond">#79D3FF</color>
+    <color name="blueThird">#79B7F4</color>
+    <color name="blueFourth">#128DC9</color>
+    <color name="blueFifth">#5097DD</color>
 </resources>

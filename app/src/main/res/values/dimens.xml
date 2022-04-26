@@ -15,4 +15,19 @@
     <dimen name="onboardingNextButtonMaxWidth">300dp</dimen>
 
     <dimen name="onboardingButtonsSpacing">20dp</dimen>
+
+    <dimen name="openedTopBarHeight">50dp</dimen>
+    <dimen name="collapsedTopBarHeight">25dp</dimen>
+
+    <dimen name="openedBottomBarHeight">60dp</dimen>
+    <dimen name="collapsedBottomBarHeight">0dp</dimen>
+
+    <dimen name="bottomSheetContentHorizontalMargin">15dp</dimen>
+
+    <dimen name="bottomSheetElementsSpacing">20dp</dimen>
+
+    <dimen name="variableBlockMaxWidth">200dp</dimen>
+
+    <dimen name="editorLayoutLeftAndRightMargin">20dp</dimen>
+    <dimen name="editorLayoutTopAndBottomMargin">50dp</dimen>
 </resources>

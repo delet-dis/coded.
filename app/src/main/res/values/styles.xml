@@ -36,6 +36,24 @@
         <item name="android:autoSizeTextType" tools:targetApi="o">uniform</item>
     </style>
 
+    <style name="boldTextMinimized">
+        <item name="android:fontFamily">@font/rubik_bold</item>
+        <item name="android:textSize">30sp</item>
+
+        <item name="android:autoSizeMaxTextSize" tools:targetApi="o">30sp</item>
+        <item name="android:autoSizeMinTextSize" tools:targetApi="o">15sp</item>
+        <item name="android:autoSizeTextType" tools:targetApi="o">uniform</item>
+    </style>
+
+    <style name="bottomSheetBoldText">
+        <item name="android:fontFamily">@font/rubik_semi_bold</item>
+        <item name="android:textSize">24sp</item>
+
+        <item name="android:autoSizeMaxTextSize" tools:targetApi="o">24sp</item>
+        <item name="android:autoSizeMinTextSize" tools:targetApi="o">12sp</item>
+        <item name="android:autoSizeTextType" tools:targetApi="o">uniform</item>
+    </style>
+
     <style name="translucentButtonWrapper">
         <item name="android:maxWidth">@dimen/onboardingNextButtonMaxWidth</item>
         <item name="android:layout_height">@dimen/onboardingNextButtonHeight</item>
@@ -45,5 +63,65 @@
         <item name="cardCornerRadius">50dp</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:clickable">true</item>
+    </style>
+
+    <style name="translucentBackground">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="contentDescription">@string/buttonBackgroundImage</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="srcCompat">@drawable/onboarding_button_translucent_background</item>
+    </style>
+
+    <style name="translucentBarWrapper">
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@android:color/transparent</item>
+        <item name="android:layout_width">0dp</item>
+    </style>
+
+    <style name="separator">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="background">@color/gray</item>
+    </style>
+
+    <style name="bottomSheetBackground" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottom_sheet_background</item>
+    </style>
+
+    <style name="bottomSheetFragment" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/bottomSheetBackground</item>
+    </style>
+
+    <style name="itemPickingTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">?attr/colorSecondary</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabBackground">?attr/selectableItemBackground</item>
+        <item name="tabTextAppearance">@style/itemPickingTabLayoutTextAppearance</item>
+        <item name="tabSelectedTextColor">?attr/colorSecondary</item>
+    </style>
+
+    <style name="itemPickingTabLayoutTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">20sp</item>
+        <item name="fontFamily">@font/rubik_regular</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="bottomBarButton">
+        <item name="tint">@color/blueFirst</item>
+        <item name="background">@null</item>
+        <item name="android:layout_height">30dp</item>
+    </style>
+
+    <style name="variableNameEditText">
+        <item name="fontFamily">@font/rubik_bold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="background">@null</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+
+    <style name="variableNameCard">
+        <item name="cardCornerRadius">30dp</item>
     </style>
 </resources>

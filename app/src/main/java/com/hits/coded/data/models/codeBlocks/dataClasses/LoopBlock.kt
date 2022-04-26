@@ -7,9 +7,9 @@ import com.hits.coded.data.models.codeBlocks.types.BlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.LoopBlockType
 
 data class LoopBlock(
-    override val id: Int,
     override val loopBlockType: LoopBlockType,
     override val conditionBlock: ConditionBlockBase,
+    override val id: Int? = null,
+    override var nestedBlocks: Array<BlockBase>? = null,
     override val type: BlockType = BlockType.LOOP,
-    override val nestedBlocks: Array<BlockBase>? = null,
 ) : LoopBlockBase()

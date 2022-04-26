@@ -1,19 +1,22 @@
 package com.hits.coded.data.repositoriesImplementations
 
-import com.hits.coded.data.models.codeBlocks.bases.subBlocks.condition.ConditionBlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.*
+import com.hits.coded.data.models.codeBlocks.dataClasses.ConditionBlock
+import com.hits.coded.data.models.codeBlocks.dataClasses.ExpressionBlock
+import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
+import com.hits.coded.data.models.codeBlocks.dataClasses.LoopBlock
+import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
+import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 import com.hits.coded.data.models.codeBlocks.types.BlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.data.models.types.VariableType
+import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.domain.repositories.InterpreterRepository
-import kotlin.jvm.Throws
 
 class InterpreterRepositoryImplementation : InterpreterRepository() {
-    override fun interpreteStartBlock(start: StartBlock) {
+    override suspend fun interpreteStartBlock(start: StartBlock) {
         for (nestedBlock in start.nestedBlocks!!) {
             when (nestedBlock.type) {
                 BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
@@ -26,7 +29,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     }
 
     @Throws
-    override fun interpreteConditionBlocks(condition: ConditionBlock): Boolean {
+    override suspend fun interpreteConditionBlocks(condition: ConditionBlock): Boolean {
         var ConditionIsTrue: Boolean = false
         var leftSideType: VariableType? = getTypeOfAny(condition.leftSide)
         var rightSideType: VariableType? = getTypeOfAny(condition.rightSide)
@@ -120,7 +123,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         }//стоит вынести в отдельную функцию
         if (ConditionIsTrue) {
             if (condition.nestedBlocks != null) {
-                for (nestedBlock in condition.nestedBlocks) {
+                for (nestedBlock in condition.nestedBlocks!!) {
                     when (nestedBlock.type) {
                         BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
                         BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
@@ -133,10 +136,10 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         return ConditionIsTrue
     }
 
-    override fun interpreteLoopBlocks(loop: LoopBlock) {
+    override suspend fun interpreteLoopBlocks(loop: LoopBlock) {
         if (loop.nestedBlocks != null) {
             while (interpreteConditionBlocks(loop.conditionBlock as ConditionBlock)) {
-                for (nestedBlock in loop.nestedBlocks) {
+                for (nestedBlock in loop.nestedBlocks!!) {
                     when (nestedBlock.type) {
                         BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
                         BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
@@ -148,12 +151,12 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         }
     }
 
-    override fun interpreteVariableBlocks(variable: VariableBlock): StoredVariable? {
+    override suspend fun interpreteVariableBlocks(variable: VariableBlock): StoredVariable? {
         when (variable.variableBlockType) {
             VariableBlockType.VARIABLE_CHANGE ->
                 variable.variableToChange?.let {
                     HeapRepositoryImplementation().reAssignVariable(
-                        it,
+                        it.name,
                         variable.variableParams
                     )
                 }
@@ -161,12 +164,12 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             VariableBlockType.VARIABLE_GET -> return HeapRepositoryImplementation().getVariable(
                 variable.variableParams.name
             )
-            VariableBlockType.VARIABLE_SET -> HeapRepositoryImplementation().addVariable(variable.variableParams)
+            VariableBlockType.VARIABLE_SET -> HeapRepositoryImplementation().addVariable(variable.variableParams.name)
         }
         return null
     }
 
-    override fun interpreteExpressionBlocks(expression: ExpressionBlock): Any {
+    override suspend fun interpreteExpressionBlocks(expression: ExpressionBlock): Any {
         val leftSideType: VariableType? = getTypeOfAny(expression.leftSide)
         val rightSideType: VariableType? = getTypeOfAny(expression.rightSide)
         if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
@@ -210,11 +213,11 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         return 0
     }
 
-    override fun interpreteIOBlocks(IO: IOBlock) {
+    override suspend fun interpreteIOBlocks(IO: IOBlock) {
         //IO action function
     }
 
-    private fun convertAnyToDouble(value: Any): Double? {
+    private suspend fun convertAnyToDouble(value: Any): Double? {
         when (value) {
             is Double -> return value
             is ExpressionBlock -> return interpreteExpressionBlocks(value) as Double
@@ -224,7 +227,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         return null
     }
 
-    private fun convertAnyToInt(value: Any): Int? {
+    private suspend fun convertAnyToInt(value: Any): Int? {
         when (value) {
             is Double -> return value.toInt()
             is Int -> return value
@@ -243,7 +246,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         return null
     }
 
-    private fun convertAnyToBoolean(value: Any): Boolean? {
+    private suspend fun convertAnyToBoolean(value: Any): Boolean? {
         when (value) {
             is Boolean -> return value
             is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.BOOLEAN) return interpreteExpressionBlocks(
@@ -257,7 +260,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         return null
     }
 
-    private fun convertAnyToString(value: Any): String? {
+    private suspend fun convertAnyToString(value: Any): String? {
         when (value) {
             is ExpressionBlock -> return if (getTypeOfAny(value) == VariableType.STRING) interpreteExpressionBlocks(
                 value
@@ -270,7 +273,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         return null
     }
 
-    private fun getTypeOfAny(value: Any?): VariableType? {
+    private suspend fun getTypeOfAny(value: Any?): VariableType? {
         when (value) {
             is String -> return VariableType.STRING
             is Double -> return VariableType.DOUBLE

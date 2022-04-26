@@ -3,15 +3,16 @@ package com.hits.coded.presentation.activities.onboardingActivity.fragmentStateA
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.hits.coded.data.models.onboarding.OnboardingScreens
+import com.hits.coded.data.models.onboarding.dataClasses.OnboardingScreen
 
 class OnboardingViewPagerAdapter(
-    fragmentActivity: FragmentActivity
+    fragmentActivity: FragmentActivity,
+    private val items: Array<OnboardingScreen>
 ) :
     FragmentStateAdapter(fragmentActivity) {
     override fun getItemCount(): Int =
-        OnboardingScreens.values().size
+        items.size
 
     override fun createFragment(position: Int): Fragment =
-        OnboardingScreens.values()[position].screen
+        items[position].screen
 }
