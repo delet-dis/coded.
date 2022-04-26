@@ -9,6 +9,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.data.models.codeField.CodeFieldInterface
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
@@ -77,7 +79,9 @@ class CodeField constructor(
                 }
 
                 DragEvent.ACTION_DRAG_ENDED -> {
-                    draggableItem.post { draggableItem.visibility = VISIBLE }
+                    draggableItem.post { draggableItem.animate().alpha(1f).duration =
+                        UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
+                    }
 
                     this.invalidate()
                     true
@@ -94,8 +98,16 @@ class CodeField constructor(
         dragEvent: DragEvent
     ) =
         with(binding) {
+            val draggableItemWithLastTouchInformation =
+                draggableItem as? UICodeBlockWithLastTouchInformation
+
             draggableItem.x = dragEvent.x - (draggableItem.width / 2)
             draggableItem.y = dragEvent.y - (draggableItem.height / 2)
+
+            draggableItemWithLastTouchInformation?.let {
+                draggableItem.x = dragEvent.x - (it.touchX)
+                draggableItem.y = dragEvent.y - (it.touchY)
+            }
 
             itemParent.removeView(draggableItem)
 

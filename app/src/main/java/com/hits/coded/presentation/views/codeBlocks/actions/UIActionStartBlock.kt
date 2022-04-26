@@ -12,8 +12,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.hits.coded.R
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInterface
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
 import com.hits.coded.databinding.ViewActionStartBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,8 +25,8 @@ class UIActionStartBlock constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr), UICodeBlockInterface,
-    UIElementHandlesDragNDropInterface, UICodeBlockWithDataInterface {
+) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
+    UIElementHandlesDragNDropInterface, UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation {
     private val binding: ViewActionStartBinding
 
     private val animationSet = AnimatorSet()
@@ -35,6 +36,9 @@ class UIActionStartBlock constructor(
     private var _block = StartBlock()
     override val block: BlockBase
         get() = _block
+
+    override var touchX: Int = 0
+    override var touchY: Int = 0
 
     init {
         inflate(
@@ -96,16 +100,18 @@ class UIActionStartBlock constructor(
         draggableItem: View
     ) =
         with(binding) {
-            scaleMinusAnimation(parentConstraint)
+            if (draggableItem != this@UIActionStartBlock){
+                scaleMinusAnimation(parentConstraint)
 
-            itemParent.removeView(draggableItem)
+                itemParent.removeView(draggableItem)
 
-            nestedBlocks.addView(draggableItem)
+                nestedBlocks.addView(draggableItem)
 
-            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                nestedBlocksAsBlockBase.add(it)
+                (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                    nestedBlocksAsBlockBase.add(it)
 
-                _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                    _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                }
             }
         }
 
