@@ -8,8 +8,8 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
 
 data class IOBlock(
     override val ioBlockType: IOBlockType,
-    override val type: BlockType,
     override val variableBlock: VariableBlockBase,
     override val id: Int? = null,
     override var nestedBlocks: Array<BlockBase>? = null,
+    override val type: BlockType = BlockType.IO,
 ) : IOBlockBase()
