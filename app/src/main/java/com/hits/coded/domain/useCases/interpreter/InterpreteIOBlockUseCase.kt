@@ -6,6 +6,6 @@ import com.hits.coded.domain.repositories.InterpreterRepository
 class InterpreteIOBlockUseCase(
     private val interpreterRepository: InterpreterRepository
 ) {
-    fun interpreteIOBlock(IO: IOBlock)=interpreterRepository.interpreteIOBlocks(IO)
+    suspend fun interpreteIOBlock(IO: IOBlock)=interpreterRepository.interpreteIOBlocks(IO)
 
 }

@@ -6,6 +6,6 @@ import com.hits.coded.domain.repositories.InterpreterRepository
 class InterpreteConditionBlockUseCase(
     private val interpriterRepository: InterpreterRepository
 ) {
-    fun interpreteConditionBlock(condition: ConditionBlock) =
+    suspend fun interpreteConditionBlock(condition: ConditionBlock) =
         interpriterRepository.interpreteConditionBlocks(condition)
 }

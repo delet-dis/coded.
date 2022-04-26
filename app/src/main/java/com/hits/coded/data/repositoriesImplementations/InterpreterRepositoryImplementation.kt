@@ -155,16 +155,23 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         when (variable.variableBlockType) {
             VariableBlockType.VARIABLE_CHANGE ->
                 variable.variableToChange?.let {
-                    HeapRepositoryImplementation().reAssignVariable(
-                        it.name,
-                        variable.variableParams
-                    )
+                    variable.variableParams?.let {
+                        HeapRepositoryImplementation().reAssignVariable(
+                            it.name,
+                            variable.variableParams
+                        )
+                    }
                 }
 
-            VariableBlockType.VARIABLE_GET -> return HeapRepositoryImplementation().getVariable(
-                variable.variableParams.name
-            )
-            VariableBlockType.VARIABLE_SET -> HeapRepositoryImplementation().addVariable(variable.variableParams.name)
+            VariableBlockType.VARIABLE_GET -> return variable.variableParams?.let {
+                HeapRepositoryImplementation().getVariable(
+                    it.name
+                )
+            }
+            VariableBlockType.VARIABLE_SET -> variable.variableParams?.let {
+                HeapRepositoryImplementation().addVariable(
+                    it.name)
+            }
         }
         return null
     }
@@ -237,7 +244,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 throw Exception("Can't interprete Expression as Integer. Block id:${value.id}")
             }
             is VariableBlock -> if (getTypeOfAny(value) == VariableType.INT) {
-                return value.variableParams.value as Int
+                return value.variableParams?.value as Int
             } else {
                 throw Exception("Can't interprete Variable as Integer. Block id:${value.id}")
             }
@@ -265,7 +272,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             is ExpressionBlock -> return if (getTypeOfAny(value) == VariableType.STRING) interpreteExpressionBlocks(
                 value
             ) as String else null
-            is VariableBlock -> return if (value.variableParams.type == VariableType.STRING) interpreteVariableBlocks(
+            is VariableBlock -> return if (value.variableParams?.type == VariableType.STRING) interpreteVariableBlocks(
                 value
             )!!.value as String else null
             is String -> return value
@@ -280,7 +287,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             is Int -> return VariableType.INT
             is Boolean -> return VariableType.BOOLEAN
             is ExpressionBlock -> return getTypeOfAny(interpreteExpressionBlocks(value))
-            is VariableBlock -> return value.variableParams.type
+            is VariableBlock -> return value.variableParams?.type
         }
         return null
     }
