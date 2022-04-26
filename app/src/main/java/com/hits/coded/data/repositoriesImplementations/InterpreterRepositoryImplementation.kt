@@ -10,6 +10,7 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.types.VariableType
 import com.hits.coded.domain.repositories.InterpreterRepository
+import kotlin.jvm.Throws
 
 class InterpreterRepositoryImplementation : InterpreterRepository() {
     override fun interpreteStartBlock(start: StartBlock) {
@@ -24,52 +25,96 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         throw Exception()
     }
 
-    override fun interpreteConditionBlocks(condition: ConditionBlock):Boolean {
+    @Throws
+    override fun interpreteConditionBlocks(condition: ConditionBlock): Boolean {
         var ConditionIsTrue: Boolean = false
-        var leftSideType: VariableType? =getTypeOfAny(condition.leftSide)
-        var rightSideType:VariableType?=getTypeOfAny(condition.rightSide)
+        var leftSideType: VariableType? = getTypeOfAny(condition.leftSide)
+        var rightSideType: VariableType? = getTypeOfAny(condition.rightSide)
         if (condition.logicalOperator != null) {
             when (condition.logicalOperator.logicalOperatorType) {
 
-                LogicalOperatorType.AND -> if (condition.rightSide != null && leftSideType==VariableType.BOOLEAN && rightSideType==VariableType.BOOLEAN) {
+                LogicalOperatorType.AND -> if (condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN) {
                     ConditionIsTrue =
                         (convertAnyToBoolean(condition.leftSide) as Boolean && convertAnyToBoolean(
                             condition.rightSide
                         ) as Boolean)
+                } else if (condition.rightSide != null) {
+                    throw Exception("Non Boolean type in Condition. Block id:${condition.id}")
+                } else {
+                    throw Exception("Can't find right side in condition. Block id:${condition.id}")
                 }
-                LogicalOperatorType.NOT ->if(leftSideType==VariableType.BOOLEAN) ConditionIsTrue =
+                LogicalOperatorType.NOT -> if (leftSideType == VariableType.BOOLEAN) ConditionIsTrue =
                     !(convertAnyToBoolean(condition.leftSide) as Boolean)
-
-                LogicalOperatorType.OR -> if (condition.rightSide != null && leftSideType==VariableType.BOOLEAN && rightSideType==VariableType.BOOLEAN) {
+                else {
+                    throw Exception("Non Boolean type in Condition. Block id:${condition.id}")
+                }
+                LogicalOperatorType.OR -> if (condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN) {
                     ConditionIsTrue =
                         (convertAnyToBoolean(condition.leftSide) as Boolean || convertAnyToBoolean(
                             condition.rightSide
                         ) as Boolean)
+                } else if (condition.rightSide != null) {
+                    throw Exception("Non Boolean type in Condition. Block id:${condition.id}")
+                } else {
+                    throw Exception("Can't find right side in condition. Block id:${condition.id}")
                 }
             }
         } else {
             if (condition.rightSide != null) {
                 when (condition.mathematicalOperator?.mathematicalOperatorType) {
-                    MathematicalOperatorType.EQUAL -> ConditionIsTrue =
-                        (convertAnyToDouble(condition.leftSide) == convertAnyToDouble(condition.rightSide))
-                    MathematicalOperatorType.GREATER_OR_EQUAL_THAN -> ConditionIsTrue =
-                        (convertAnyToDouble(condition.leftSide) as Double >= convertAnyToDouble(
-                            condition.rightSide
-                        ) as Double)
-                    MathematicalOperatorType.GREATER_THAN -> ConditionIsTrue =
-                        (convertAnyToDouble(condition.leftSide) as Double > convertAnyToDouble(
-                            condition.rightSide
-                        ) as Double)
-                    MathematicalOperatorType.LOWER_OR_EQUAL_THAN -> ConditionIsTrue =
-                        (convertAnyToDouble(condition.leftSide) as Double <= convertAnyToDouble(
-                            condition.rightSide
-                        ) as Double)
-                    MathematicalOperatorType.LOWER_THAN -> ConditionIsTrue =
-                        (convertAnyToDouble(condition.rightSide) as Double > convertAnyToDouble(
-                            condition.leftSide
-                        ) as Double)
-                    MathematicalOperatorType.NON_EQUAL -> ConditionIsTrue =
-                        (convertAnyToDouble(condition.leftSide) != convertAnyToDouble(condition.rightSide))
+                    MathematicalOperatorType.EQUAL -> if (rightSideType == leftSideType) {
+                        ConditionIsTrue =
+                            (convertAnyToDouble(condition.leftSide) == convertAnyToDouble(condition.rightSide))
+                    } else {
+                        throw Exception("Can't compare variables of different Types. Block id:${condition.id}")
+                    }
+
+                    MathematicalOperatorType.GREATER_OR_EQUAL_THAN -> if (rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT)) {
+                        ConditionIsTrue =
+                            (convertAnyToDouble(condition.leftSide) as Double >= convertAnyToDouble(
+                                condition.rightSide
+                            ) as Double)
+                    } else if (rightSideType == leftSideType) {
+                        throw Exception("Can't use \">=\" operand for $rightSideType. Block id:${condition.id}")
+                    } else {
+                        throw Exception("Can't compare non equal types $leftSideType and $rightSideType. Block id:${condition.id}")
+                    }
+                    MathematicalOperatorType.GREATER_THAN -> if (rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT)) {
+                        ConditionIsTrue =
+                            (convertAnyToDouble(condition.leftSide) as Double > convertAnyToDouble(
+                                condition.rightSide
+                            ) as Double)
+                    } else if (rightSideType == leftSideType) {
+                        throw Exception("Can't use \">=\" operand for $rightSideType. Block id:${condition.id}")
+                    } else {
+                        throw Exception("Can't compare non equal types $leftSideType and $rightSideType. Block id:${condition.id}")
+                    }
+                    MathematicalOperatorType.LOWER_OR_EQUAL_THAN -> if (rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT)) {
+                        ConditionIsTrue =
+                            (convertAnyToDouble(condition.leftSide) as Double <= convertAnyToDouble(
+                                condition.rightSide
+                            ) as Double)
+                    } else if (rightSideType == leftSideType) {
+                        throw Exception("Can't use \">=\" operand for $rightSideType. Block id:${condition.id}")
+                    } else {
+                        throw Exception("Can't compare non equal types $leftSideType and $rightSideType. Block id:${condition.id}")
+                    }
+                    MathematicalOperatorType.LOWER_THAN -> if (rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT)) {
+                        ConditionIsTrue =
+                            (convertAnyToDouble(condition.rightSide) as Double > convertAnyToDouble(
+                                condition.leftSide
+                            ) as Double)
+                    } else if (rightSideType == leftSideType) {
+                        throw Exception("Can't use \">=\" operand for $rightSideType. Block id:${condition.id}")
+                    } else {
+                        throw Exception("Can't compare non equal types $leftSideType and $rightSideType. Block id:${condition.id}")
+                    }
+                    MathematicalOperatorType.NON_EQUAL -> if (rightSideType == leftSideType) {
+                        ConditionIsTrue =
+                            (convertAnyToDouble(condition.leftSide) != convertAnyToDouble(condition.rightSide))
+                    } else {
+                        throw Exception("Can't compare variables of different Types. Block id:${condition.id}")
+                    }
                 }
             }
         }//стоит вынести в отдельную функцию
@@ -183,8 +228,16 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         when (value) {
             is Double -> return value.toInt()
             is Int -> return value
-            is ExpressionBlock -> return interpreteExpressionBlocks(value) as Int
-            is VariableBlock -> return interpreteVariableBlocks(value)!!.value as Int
+            is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.INT) return interpreteExpressionBlocks(
+                value
+            ) as Int else {
+                throw Exception("Can't interprete Expression as Integer. Block id:${value.id}")
+            }
+            is VariableBlock -> if (getTypeOfAny(value) == VariableType.INT) {
+                return value.variableParams.value as Int
+            } else {
+                throw Exception("Can't interprete Variable as Integer. Block id:${value.id}")
+            }
             is String -> return value.toInt()
         }
         return null
@@ -193,7 +246,11 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     private fun convertAnyToBoolean(value: Any): Boolean? {
         when (value) {
             is Boolean -> return value
-            is ExpressionBlock -> return interpreteExpressionBlocks(value) as Boolean
+            is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.BOOLEAN) return interpreteExpressionBlocks(
+                value
+            ) as Boolean else {
+                throw Exception("Can't transform type to Boolean")
+            }
             is VariableBlock -> return interpreteVariableBlocks(value)!!.value as Boolean
             is String -> return value.toBoolean()
         }
@@ -202,8 +259,12 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
 
     private fun convertAnyToString(value: Any): String? {
         when (value) {
-            is ExpressionBlock -> return if (getTypeOfAny(value)==VariableType.STRING) interpreteExpressionBlocks(value) as String else null
-            is VariableBlock -> return if(value.variableParams.type==VariableType.STRING) interpreteVariableBlocks(value)!!.value as String else null
+            is ExpressionBlock -> return if (getTypeOfAny(value) == VariableType.STRING) interpreteExpressionBlocks(
+                value
+            ) as String else null
+            is VariableBlock -> return if (value.variableParams.type == VariableType.STRING) interpreteVariableBlocks(
+                value
+            )!!.value as String else null
             is String -> return value
         }
         return null
@@ -214,9 +275,9 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             is String -> return VariableType.STRING
             is Double -> return VariableType.DOUBLE
             is Int -> return VariableType.INT
-            is Boolean -> return  VariableType.BOOLEAN
+            is Boolean -> return VariableType.BOOLEAN
             is ExpressionBlock -> return getTypeOfAny(interpreteExpressionBlocks(value))
-            is VariableBlock -> return getTypeOfAny(interpreteVariableBlocks(value)!!.value)
+            is VariableBlock -> return value.variableParams.type
         }
         return null
     }
