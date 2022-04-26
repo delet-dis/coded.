@@ -38,7 +38,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.42"
+        app:layout_constraintVertical_bias="0.45"
         tools:ignore="TextContrastCheck" />
 
     <androidx.cardview.widget.CardView
@@ -52,7 +52,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/createVariable"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.42">
+        app:layout_constraintVertical_bias="0.45">
 
         <EditText
             android:id="@+id/variableName"
@@ -60,6 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:background="@null"
+            android:imeOptions="actionDone"
             android:hint="@string/variableName"
             android:importantForAutofill="no"
             android:inputType="text"

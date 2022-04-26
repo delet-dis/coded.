@@ -9,7 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.data.models.codeField.CodeFieldInterface
-import com.hits.coded.data.models.uiCodeBLocks.UICodeBlockHandlesDragNDropInterface
+import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
 import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableCreationBlock
@@ -21,7 +21,7 @@ class CodeField constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), CodeFieldInterface,
-    UICodeBlockHandlesDragNDropInterface {
+    UIElementHandlesDragNDropInterface {
     private val binding: ViewCodeFieldBinding
 
     init {

@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragmentInterface
 import com.hits.coded.databinding.FragmentVariablesItemsPickingBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragments.variablesItemsPickingFragment.viewModels.VariablesItemsPickingFragmentViewModel
+import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableCreationBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class VariablesItemsPickingFragment : Fragment() {
+class VariablesItemsPickingFragment : Fragment(), UIBottomSheetFragmentInterface {
     private lateinit var binding: FragmentVariablesItemsPickingBinding
 
     private val viewModel: VariablesItemsPickingFragmentViewModel by viewModels()
@@ -34,7 +36,14 @@ class VariablesItemsPickingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
+            redrawElements()
+        }
+    }
 
+    override fun redrawElements() {
+        binding.itemsLinearLayout.apply {
+            removeAllViews()
+            addView(UIVariableCreationBlock(requireContext()))
         }
     }
 }

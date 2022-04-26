@@ -3,7 +3,7 @@ package com.hits.coded.presentation.activities.onboardingActivity.fragmentStateA
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.hits.coded.data.models.onboarding.OnboardingScreen
+import com.hits.coded.data.models.onboarding.dataClasses.OnboardingScreen
 
 class OnboardingViewPagerAdapter(
     fragmentActivity: FragmentActivity,

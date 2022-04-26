@@ -15,22 +15,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/variablesList"
-        style="@style/bottomSheetBoldText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/variablesList"
-        android:textColor="@color/blueThird"
+    <LinearLayout
+        android:id="@+id/itemsLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:divider="@drawable/linear_layout_divider"
+        android:orientation="vertical"
+        android:showDividers="middle|beginning|end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/variablesActions" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/variablesRecycler"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/bottomSheetElementsSpacing"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/variablesList" />
 </androidx.constraintlayout.widget.ConstraintLayout>

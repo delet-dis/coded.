@@ -5,11 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragmentInterface
 import com.hits.coded.databinding.FragmentLogicItemsPickingBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LogicItemsPickingFragment : Fragment() {
+class LogicItemsPickingFragment : Fragment(), UIBottomSheetFragmentInterface {
     private lateinit var binding: FragmentLogicItemsPickingBinding
 
     override fun onCreateView(
@@ -32,5 +33,9 @@ class LogicItemsPickingFragment : Fragment() {
         if (savedInstanceState == null) {
 
         }
+    }
+
+    override fun redrawElements() {
+
     }
 }

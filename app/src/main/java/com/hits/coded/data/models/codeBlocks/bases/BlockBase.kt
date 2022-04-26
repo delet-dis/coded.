@@ -4,5 +4,5 @@ import com.hits.coded.data.models.codeBlocks.types.BlockType
 
 abstract class BlockBase {
     abstract val type: BlockType
-    abstract val nestedBlocks: Array<BlockBase>?
+    abstract var nestedBlocks: Array<BlockBase>?
 }

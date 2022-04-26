@@ -1,4 +1,4 @@
-package com.hits.coded.data.models.uiCodeBLocks
+package com.hits.coded.data.models.uiCodeBlocks.interfaces
 
 import android.content.ClipData
 import android.content.ClipDescription

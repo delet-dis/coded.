@@ -1,18 +1,18 @@
 package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel
 
 import androidx.lifecycle.ViewModel
-import com.hits.coded.data.models.itemsBottomSheet.ItemsScreen
-import com.hits.coded.data.models.itemsBottomSheet.ItemsScreens
+import com.hits.coded.data.models.itemsBottomSheet.dataClasses.BottomSheetItemsScreen
+import com.hits.coded.data.models.itemsBottomSheet.enums.BottomSheetItemsScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ItemsPickingBottomSheetFragmentViewModel @Inject constructor() : ViewModel() {
-    fun getItemsScreens(): Array<ItemsScreen> {
-        val itemsScreens = ArrayList<ItemsScreen>()
+    fun getItemsScreens(): Array<BottomSheetItemsScreen> {
+        val itemsScreens = ArrayList<BottomSheetItemsScreen>()
 
-        ItemsScreens.values().forEach {
-            itemsScreens.add(it.itemsScreen)
+        BottomSheetItemsScreens.values().forEach {
+            itemsScreens.add(it.bottomSheetItemsScreen)
         }
 
         return itemsScreens.toTypedArray()

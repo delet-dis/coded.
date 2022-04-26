@@ -10,8 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hits.coded.R
-import com.hits.coded.data.models.uiCodeBLocks.UICodeBlockHandlesDragNDropInterface
-import com.hits.coded.data.models.uiCodeBLocks.UICodeBlockInterface
+import com.hits.coded.data.models.codeBlocks.bases.BlockBase
+import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockInterface
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInterface
+import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
 import com.hits.coded.databinding.ViewActionStartBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,10 +25,16 @@ class UIActionStartBlock constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), UICodeBlockInterface,
-    UICodeBlockHandlesDragNDropInterface {
+    UIElementHandlesDragNDropInterface, UICodeBlockWithDataInterface {
     private val binding: ViewActionStartBinding
 
     private val animationSet = AnimatorSet()
+
+    private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
+
+    private var _block = StartBlock()
+    override val block: BlockBase
+        get() = _block
 
     init {
         inflate(
@@ -39,10 +48,6 @@ class UIActionStartBlock constructor(
         this.initDragNDropGesture(this, DRAG_N_DROP_TAG)
 
         initDragNDropListener()
-    }
-
-    private companion object {
-        const val DRAG_N_DROP_TAG = "ACTION_START_BLOCK_"
     }
 
     override fun initDragNDropListener() {
@@ -69,33 +74,13 @@ class UIActionStartBlock constructor(
                     }
 
                     DragEvent.ACTION_DROP -> {
-                        scaleMinusAnimation(parentConstraint)
-
-                        itemParent.removeView(draggableItem)
-
-                        nestedBlocks.addView(draggableItem)
+                        handleDropEvent(itemParent, draggableItem)
 
                         true
                     }
 
                     DragEvent.ACTION_DRAG_ENDED -> {
-                        draggableItem.post { draggableItem.visibility = VISIBLE }
-
-                        this@UIActionStartBlock.invalidate()
-
-                        if (itemParent == binding.nestedBlocks) {
-                            draggableItem.x = 0f
-                            if (binding.nestedBlocks.childCount == 0) {
-                                draggableItem.y = 0f
-                            } else {
-                                val childRect = Rect()
-                                binding.nestedBlocks.getChildAt(binding.nestedBlocks.childCount-1).getDrawingRect(childRect)
-
-                                binding.nestedBlocks.offsetDescendantRectToMyCoords(binding.nestedBlocks.getChildAt(binding.nestedBlocks.childCount-1), childRect)
-
-                                draggableItem.y = childRect.top.toFloat()
-                            }
-                        }
+                        handleDragEndedEvent(itemParent, draggableItem)
 
                         true
                     }
@@ -103,6 +88,63 @@ class UIActionStartBlock constructor(
                     else -> false
                 }
             }
+        }
+    }
+
+    private fun handleDropEvent(
+        itemParent: ViewGroup,
+        draggableItem: View
+    ) =
+        with(binding) {
+            scaleMinusAnimation(parentConstraint)
+
+            itemParent.removeView(draggableItem)
+
+            nestedBlocks.addView(draggableItem)
+
+            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                nestedBlocksAsBlockBase.add(it)
+
+                _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+            }
+        }
+
+    private fun handleDragEndedEvent(
+        itemParent: ViewGroup,
+        draggableItem: View
+    ) {
+        draggableItem.post { draggableItem.visibility = VISIBLE }
+
+        this@UIActionStartBlock.invalidate()
+
+        if (itemParent == binding.nestedBlocks) {
+            draggableItem.x = 0f
+
+            if (binding.nestedBlocks.childCount == 0) {
+                draggableItem.y = 0f
+            } else {
+                val childRect = Rect()
+                binding.nestedBlocks.getChildAt(binding.nestedBlocks.childCount - 1)
+                    .getDrawingRect(childRect)
+
+                binding.nestedBlocks.offsetDescendantRectToMyCoords(
+                    binding.nestedBlocks.getChildAt(
+                        binding.nestedBlocks.childCount - 1
+                    ), childRect
+                )
+
+                draggableItem.y = childRect.top.toFloat()
+            }
+        }
+    }
+
+    override fun removeView(view: View?) {
+        super.removeView(view)
+
+        (view as? UICodeBlockWithDataInterface)?.block?.let {
+            nestedBlocksAsBlockBase.remove(it)
+
+            _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
         }
     }
 
@@ -126,5 +168,9 @@ class UIActionStartBlock constructor(
             duration = 200
             start()
         }
+    }
+
+    private companion object {
+        const val DRAG_N_DROP_TAG = "ACTION_START_BLOCK_"
     }
 }

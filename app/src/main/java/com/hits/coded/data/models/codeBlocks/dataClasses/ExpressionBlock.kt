@@ -10,5 +10,5 @@ data class ExpressionBlock(
     override val type: BlockType,
     override val leftSide: Any,
     override val rightSide: Any,
-    override val nestedBlocks: Array<BlockBase>? = null
+    override var nestedBlocks: Array<BlockBase>? = null
 ):ExpressionBlockBase()

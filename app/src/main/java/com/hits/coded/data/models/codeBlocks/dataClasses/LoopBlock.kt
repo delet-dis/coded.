@@ -10,5 +10,5 @@ data class LoopBlock(
     override val loopBlockType: LoopBlockType,
     override val type: BlockType,
     override val conditionBlock: ConditionBlockBase,
-    override val nestedBlocks: Array<BlockBase>? = null,
+    override var nestedBlocks: Array<BlockBase>? = null,
 ) : LoopBlockBase()

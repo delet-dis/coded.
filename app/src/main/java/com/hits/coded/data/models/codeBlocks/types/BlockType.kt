@@ -4,5 +4,7 @@ enum class BlockType {
     VARIABLE,
     LOOP,
     EXPRESSION,
-    CONDITION
+    CONDITION,
+    IO,
+    START
 }
