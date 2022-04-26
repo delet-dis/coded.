@@ -9,11 +9,11 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.Condition
 
 data class ConditionBlock(
     override val conditionBlockType: ConditionBlockType,
-    override val type: BlockType,
     override val leftSide: Any,
     override val rightSide: Any?,
-    override val id: Int? = null,
     override val logicalOperator: LogicalOperatorBase?,
     override val mathematicalOperator: MathematicalOperatorBase?,
-    override var nestedBlocks: Array<BlockBase>? = null
+    override val id: Int? = null,
+    override var nestedBlocks: Array<BlockBase>? = null,
+    override val type: BlockType = BlockType.CONDITION,
 ) : ConditionBlockBase()
