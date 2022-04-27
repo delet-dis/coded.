@@ -11,8 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
 import com.hits.coded.databinding.ActivityEditorBinding
-import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.ItemsPickingBottomSheetFragment
-import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel.ItemsPickingBottomSheetFragmentViewModel
+import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.ItemsPickingBottomSheetController
+import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel.ItemsPickingBottomSheetViewModel
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
 import com.hits.coded.presentation.views.codeField.CodeField
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +24,7 @@ class EditorActivity : AppCompatActivity() {
 
     private val viewModel: EditorActivityViewModel by viewModels()
 
-    private lateinit var bottomSheetFragment: ItemsPickingBottomSheetFragment
+    private lateinit var bottomSheetController: ItemsPickingBottomSheetController
 
     private lateinit var codeField: CodeField
 
@@ -149,16 +149,16 @@ class EditorActivity : AppCompatActivity() {
     }
 
     private fun initBottomSheet() {
-        val bottomSheetFragmentViewModel: ItemsPickingBottomSheetFragmentViewModel by viewModels()
-        bottomSheetFragment = ItemsPickingBottomSheetFragment(
+        val bottomSheetViewModel: ItemsPickingBottomSheetViewModel by viewModels()
+        bottomSheetController = ItemsPickingBottomSheetController(
             binding.bottomSheetIncludedLayout,
-            bottomSheetFragmentViewModel,
+            bottomSheetViewModel,
             this
         )
     }
 
     private fun showBottomSheet() {
-        bottomSheetFragment.show()
+        bottomSheetController.show()
     }
 
     private fun initBottomBarButtonsOnClicks() =

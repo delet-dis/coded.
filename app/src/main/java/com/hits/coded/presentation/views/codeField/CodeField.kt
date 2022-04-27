@@ -14,7 +14,6 @@ import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInt
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
-import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableCreationBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,6 +25,8 @@ class CodeField constructor(
     UIElementHandlesDragNDropInterface {
     private val binding: ViewCodeFieldBinding
 
+    private val startBlock = UIActionStartBlock(context)
+
     init {
         inflate(
             context,
@@ -36,15 +37,7 @@ class CodeField constructor(
         }
         initDragNDropListener()
 
-        val firstBlock = UIVariableCreationBlock(context)
-        firstBlock.tag = "treter"
-
-        val secondBlock = UIVariableCreationBlock(context)
-        secondBlock.tag = "treter"
-
-        addBlock(UIActionStartBlock(context))
-        addBlock(firstBlock)
-        addBlock(secondBlock)
+        addBlock(startBlock)
     }
 
     override fun addBlock(viewToAdd: View) {
@@ -79,8 +72,9 @@ class CodeField constructor(
                 }
 
                 DragEvent.ACTION_DRAG_ENDED -> {
-                    draggableItem.post { draggableItem.animate().alpha(1f).duration =
-                        UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
+                    draggableItem.post {
+                        draggableItem.animate().alpha(1f).duration =
+                            UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
                     }
 
                     this.invalidate()

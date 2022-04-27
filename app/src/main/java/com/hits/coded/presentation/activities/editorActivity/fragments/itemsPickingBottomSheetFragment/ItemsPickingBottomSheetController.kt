@@ -13,11 +13,11 @@ import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragm
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
 import com.hits.coded.databinding.IncludeItemsPickingBottomSheetBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragmentStateAdapters.ItemsPickingViewPagerAdapter
-import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel.ItemsPickingBottomSheetFragmentViewModel
+import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel.ItemsPickingBottomSheetViewModel
 
-class ItemsPickingBottomSheetFragment(
+class ItemsPickingBottomSheetController(
     private val binding: IncludeItemsPickingBottomSheetBinding,
-    private val viewModel: ItemsPickingBottomSheetFragmentViewModel,
+    private val viewModel: ItemsPickingBottomSheetViewModel,
     private val parentActivity: Activity
 ) : UIElementHandlesDragNDropInterface {
 
