@@ -1,189 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/motionLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/activity_editor_scene"
-    tools:context=".presentation.activities.editorActivity.EditorActivity">
+    tools:context="presentation.activities.editorActivity.EditorActivity">
 
-    <com.otaliastudios.zoom.ZoomLayout
-        android:id="@+id/zoomLayout"
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/motionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical|horizontal"
-        app:alignment="center"
-        app:animationDuration="280"
-        app:flingEnabled="true"
-        app:hasClickableChildren="true"
-        app:horizontalPanEnabled="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:maxZoom="6"
-        app:maxZoomType="zoom"
-        app:minZoom="2"
-        app:minZoomType="zoom"
-        app:oneFingerScrollEnabled="true"
-        app:overPinchable="true"
-        app:overScrollHorizontal="true"
-        app:overScrollVertical="true"
-        app:scrollEnabled="true"
-        app:threeFingersScrollEnabled="true"
-        app:transformation="centerInside"
-        app:transformationGravity="auto"
-        app:twoFingersScrollEnabled="true"
-        app:verticalPanEnabled="true"
-        app:zoomEnabled="true">
+        app:layoutDescription="@xml/activity_editor_scene"
+        tools:context=".presentation.activities.editorActivity.EditorActivity">
 
-    </com.otaliastudios.zoom.ZoomLayout>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/topBarWrapper"
-        style="@style/translucentBarWrapper"
-        android:layout_height="@dimen/openedTopBarHeight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.otaliastudios.zoom.ZoomLayout
+            android:id="@+id/zoomLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:scrollbars="vertical|horizontal"
+            app:alignment="center"
+            app:animationDuration="280"
+            app:flingEnabled="true"
+            app:hasClickableChildren="true"
+            app:horizontalPanEnabled="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:maxZoom="6"
+            app:maxZoomType="zoom"
+            app:minZoom="2"
+            app:minZoomType="zoom"
+            app:oneFingerScrollEnabled="true"
+            app:overPinchable="true"
+            app:overScrollHorizontal="true"
+            app:overScrollVertical="true"
+            app:scrollEnabled="true"
+            app:threeFingersScrollEnabled="true"
+            app:transformation="centerInside"
+            app:transformationGravity="auto"
+            app:twoFingersScrollEnabled="true"
+            app:verticalPanEnabled="true"
+            app:zoomEnabled="true">
 
-            <ImageView
-                android:id="@+id/backgroundTopImage"
-                style="@style/translucentBackground"
-                android:contentDescription="@string/buttonBackgroundImage"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        </com.otaliastudios.zoom.ZoomLayout>
 
-            <androidx.constraintlayout.motion.widget.MotionLayout
-                android:id="@+id/topBarContentLayout"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/topBarWrapper"
+            style="@style/translucentBarWrapper"
+            android:layout_height="@dimen/openedTopBarHeight"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutDescription="@xml/activity_editor_xml_top_bar_content_layout_scene"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/projectName"
-                    style="@style/boldText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/project"
-                    android:textAlignment="center"
+                <ImageView
+                    android:id="@+id/backgroundTopImage"
+                    style="@style/translucentBackground"
+                    android:contentDescription="@string/buttonBackgroundImage"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.motion.widget.MotionLayout>
 
-            <View
-                android:id="@+id/topSeparator"
-                style="@style/separator"
-                android:background="@color/gray"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                <androidx.constraintlayout.motion.widget.MotionLayout
+                    android:id="@+id/topBarContentLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutDescription="@xml/activity_editor_xml_top_bar_content_layout_scene"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/projectName"
+                        style="@style/boldText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/project"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.motion.widget.MotionLayout>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/bottomBarWrapper"
-        style="@style/translucentBarWrapper"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/openedTopBarHeight"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+                <View
+                    android:id="@+id/topSeparator"
+                    style="@style/separator"
+                    android:background="@color/gray"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
 
-            <ImageView
-                android:id="@+id/backgroundBottomImage"
-                style="@style/translucentBackground"
-                android:contentDescription="@string/buttonBackgroundImage"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/bottomBarWrapper"
+            style="@style/translucentBarWrapper"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/openedTopBarHeight"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/bottomBarContentLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="match_parent">
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/leftGuideline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.1" />
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/rightGuideline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.9" />
-
-                <ImageButton
-                    android:id="@+id/menuButton"
-                    style="@style/bottomBarButton"
-                    android:layout_width="wrap_content"
-                    android:background="@null"
-                    android:contentDescription="@string/console"
+                <ImageView
+                    android:id="@+id/backgroundBottomImage"
+                    style="@style/translucentBackground"
+                    android:contentDescription="@string/buttonBackgroundImage"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/leftGuideline"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_menu" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageButton
-                    android:id="@+id/consoleButton"
-                    style="@style/bottomBarButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:contentDescription="@string/menu"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/startButton"
-                    app:layout_constraintStart_toEndOf="@+id/menuButton"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_console" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/bottomBarContentLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <ImageButton
-                    android:id="@+id/startButton"
-                    style="@style/bottomBarButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/bottomSheetContentHorizontalMargin"
-                    android:background="@null"
-                    android:contentDescription="@string/start"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/rightGuideline"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_start" />
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/leftGuideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.1" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/rightGuideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.9" />
+
+                    <ImageButton
+                        android:id="@+id/menuButton"
+                        style="@style/bottomBarButton"
+                        android:layout_width="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/console"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/leftGuideline"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_menu" />
+
+                    <ImageButton
+                        android:id="@+id/consoleButton"
+                        style="@style/bottomBarButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/menu"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/startButton"
+                        app:layout_constraintStart_toEndOf="@+id/menuButton"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_console" />
+
+                    <ImageButton
+                        android:id="@+id/startButton"
+                        style="@style/bottomBarButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/bottomSheetContentHorizontalMargin"
+                        android:background="@null"
+                        android:contentDescription="@string/start"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/rightGuideline"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_start" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/bottomSeparator"
+                    style="@style/separator"
+                    android:background="@color/gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 
-            <View
-                android:id="@+id/bottomSeparator"
-                style="@style/separator"
-                android:background="@color/gray"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
-</androidx.constraintlayout.motion.widget.MotionLayout>
+    <include
+        android:id="@+id/bottomSheetIncludedLayout"
+        layout="@layout/include_items_picking_bottom_sheet" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -4,7 +4,8 @@ import android.graphics.Canvas
 import android.graphics.Point
 import android.view.View
 
-class BlockDragShadowBuilder(view: View) : View.DragShadowBuilder(view) {
+class BlockDragShadowBuilder(view: View, private val touchX: Int, private val touchY: Int) :
+    View.DragShadowBuilder(view) {
     private val shadow = view
 
     override fun onDrawShadow(canvas: Canvas?) {
@@ -17,6 +18,6 @@ class BlockDragShadowBuilder(view: View) : View.DragShadowBuilder(view) {
 
         outShadowSize?.set(width, height)
 
-        outShadowTouchPoint?.set(width / 2, height / 2)
+        outShadowTouchPoint?.set(touchX, touchY)
     }
 }

@@ -9,10 +9,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.data.models.codeField.CodeFieldInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
+import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
-import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
-import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableCreationBlock
+import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartCodeBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,8 +22,10 @@ class CodeField constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), CodeFieldInterface,
-    UIElementHandlesDragNDropInterface {
+    UIElementHandlesDragAndDropInterface {
     private val binding: ViewCodeFieldBinding
+
+    private val startBlock = UIActionStartCodeBlock(context)
 
     init {
         inflate(
@@ -32,17 +35,9 @@ class CodeField constructor(
         ).also { view ->
             binding = ViewCodeFieldBinding.bind(view)
         }
-        initDragNDropListener()
+        initDragAndDropListener()
 
-        val firstBlock = UIVariableCreationBlock(context)
-        firstBlock.tag = "treter"
-
-        val secondBlock = UIVariableCreationBlock(context)
-        secondBlock.tag = "treter"
-
-        addBlock(UIActionStartBlock(context))
-        addBlock(firstBlock)
-        addBlock(secondBlock)
+        addBlock(startBlock)
     }
 
     override fun addBlock(viewToAdd: View) {
@@ -58,7 +53,7 @@ class CodeField constructor(
         }
     }
 
-    override fun initDragNDropListener() {
+    override fun initDragAndDropListener() {
         binding.fieldLayout.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
@@ -71,18 +66,16 @@ class CodeField constructor(
                 DragEvent.ACTION_DRAG_EXITED -> true
 
                 DragEvent.ACTION_DROP -> {
-                    draggableItem.x = dragEvent.x - (draggableItem.width / 2)
-                    draggableItem.y = dragEvent.y - (draggableItem.height / 2)
-
-                    itemParent.removeView(draggableItem)
-
-                    this.addView(draggableItem)
+                    handleDropEvent(itemParent, draggableItem, dragEvent)
 
                     true
                 }
 
                 DragEvent.ACTION_DRAG_ENDED -> {
-                    draggableItem.post { draggableItem.visibility = VISIBLE }
+                    draggableItem.post {
+                        draggableItem.animate().alpha(1f).duration =
+                            UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
+                    }
 
                     this.invalidate()
                     true
@@ -92,4 +85,26 @@ class CodeField constructor(
             }
         }
     }
+
+    private fun handleDropEvent(
+        itemParent: ViewGroup,
+        draggableItem: View,
+        dragEvent: DragEvent
+    ) =
+        with(binding) {
+            val draggableItemWithLastTouchInformation =
+                draggableItem as? UICodeBlockWithLastTouchInformation
+
+            draggableItem.x = dragEvent.x - (draggableItem.width / 2)
+            draggableItem.y = dragEvent.y - (draggableItem.height / 2)
+
+            draggableItemWithLastTouchInformation?.let {
+                draggableItem.x = dragEvent.x - (it.touchX)
+                draggableItem.y = dragEvent.y - (it.touchY)
+            }
+
+            itemParent.removeView(draggableItem)
+
+            addView(draggableItem)
+        }
 }
