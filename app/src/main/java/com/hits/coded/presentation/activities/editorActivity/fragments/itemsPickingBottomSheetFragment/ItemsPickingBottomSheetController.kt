@@ -10,7 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hits.coded.data.models.itemsBottomSheet.enums.BottomSheetItemsScreens
 import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragmentInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
+import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.IncludeItemsPickingBottomSheetBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragmentStateAdapters.ItemsPickingViewPagerAdapter
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel.ItemsPickingBottomSheetViewModel
@@ -19,7 +19,7 @@ class ItemsPickingBottomSheetController(
     private val binding: IncludeItemsPickingBottomSheetBinding,
     private val viewModel: ItemsPickingBottomSheetViewModel,
     private val parentActivity: Activity
-) : UIElementHandlesDragNDropInterface {
+) : UIElementHandlesDragAndDropInterface {
 
     private val behaviour = BottomSheetBehavior.from(binding.bottomSheetLayout)
 
@@ -28,7 +28,7 @@ class ItemsPickingBottomSheetController(
 
         initDismissButtonOnClickListener()
 
-        initDragNDropListener()
+        initDragAndDropListener()
 
         initViewPager()
 
@@ -64,7 +64,7 @@ class ItemsPickingBottomSheetController(
             behaviour.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-    override fun initDragNDropListener() {
+    override fun initDragAndDropListener() {
         binding.viewPager.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 

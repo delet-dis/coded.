@@ -32,4 +32,7 @@
     <string name="variablesList">Variables list</string>
     <string name="variableName">name</string>
     <string name="variableCall">Variable call</string>
+    <string name="change">change</string>
+    <string name="by">by</string>
+    <string name="value">value</string>
 </resources>

@@ -24,9 +24,12 @@ class UIVariableCreationBlock @JvmOverloads constructor(
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation {
     private val binding: ViewVariableCreateBlockBinding
 
-    private var _block = VariableBlock(VariableBlockType.VARIABLE_CREATE)
+    private var variableParams = StoredVariable()
+
+    private var _block = VariableBlock(VariableBlockType.VARIABLE_CREATE, variableParams)
     override val block: BlockBase
         get() = _block
+
 
     override var touchX: Int = 0
     override var touchY: Int = 0
@@ -40,20 +43,18 @@ class UIVariableCreationBlock @JvmOverloads constructor(
             binding = ViewVariableCreateBlockBinding.bind(view)
         }
 
-        this.initDragNDropGesture(this, DRAG_N_DROP_TAG)
+        this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initVariableNameChangeListener()
     }
 
     private fun initVariableNameChangeListener() = binding.variableName.addTextChangedListener {
-        val variableParams = StoredVariable().apply {
-            name = it?.toString()
-        }
+        variableParams.name = it.toString()
 
         _block.variableParams = variableParams
     }
 
     private companion object {
-        const val DRAG_N_DROP_TAG = "VARIABLE_CREATION_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "VARIABLE_CREATION_BLOCK_"
     }
 }

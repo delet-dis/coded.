@@ -1,7 +1,6 @@
 package com.hits.coded.presentation.views.codeBlocks.actions
 
 import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
@@ -15,21 +14,21 @@ import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
+import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewActionStartBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class UIActionStartBlock constructor(
+class UIActionStartCodeBlock constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
-    UIElementHandlesDragNDropInterface, UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation {
+    UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
+    UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface {
     private val binding: ViewActionStartBinding
-
-    private val animationSet = AnimatorSet()
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
 
@@ -40,6 +39,8 @@ class UIActionStartBlock constructor(
     override var touchX: Int = 0
     override var touchY: Int = 0
 
+    override val animationSet = AnimatorSet()
+
     init {
         inflate(
             context,
@@ -49,12 +50,12 @@ class UIActionStartBlock constructor(
             binding = ViewActionStartBinding.bind(view)
         }
 
-        this.initDragNDropGesture(this, DRAG_N_DROP_TAG)
+        this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
-        initDragNDropListener()
+        initDragAndDropListener()
     }
 
-    override fun initDragNDropListener() {
+    override fun initDragAndDropListener() {
         binding.parentConstraint.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
@@ -100,7 +101,7 @@ class UIActionStartBlock constructor(
         draggableItem: View
     ) =
         with(binding) {
-            if (draggableItem != this@UIActionStartBlock){
+            if (draggableItem != this@UIActionStartCodeBlock) {
                 scaleMinusAnimation(parentConstraint)
 
                 itemParent.removeView(draggableItem)
@@ -119,9 +120,12 @@ class UIActionStartBlock constructor(
         itemParent: ViewGroup,
         draggableItem: View
     ) {
-        draggableItem.post { draggableItem.visibility = VISIBLE }
+        draggableItem.post {
+            draggableItem.animate().alpha(1f).duration =
+                UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
+        }
 
-        this@UIActionStartBlock.invalidate()
+        this@UIActionStartCodeBlock.invalidate()
 
         if (itemParent == binding.nestedBlocks) {
             draggableItem.x = 0f
@@ -154,29 +158,7 @@ class UIActionStartBlock constructor(
         }
     }
 
-    private fun scalePlusAnimation(view: View) {
-        val scaleY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 1.3f)
-        val scaleX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 1.3f)
-
-        animationSet.apply {
-            playTogether(scaleX, scaleY)
-            duration = 200
-            start()
-        }
-    }
-
-    private fun scaleMinusAnimation(view: View) {
-        val scaleY = ObjectAnimator.ofFloat(view, "scaleY", 1.3f, 1f)
-        val scaleX = ObjectAnimator.ofFloat(view, "scaleX", 1.3f, 1f)
-
-        animationSet.apply {
-            playTogether(scaleX, scaleY)
-            duration = 200
-            start()
-        }
-    }
-
     private companion object {
-        const val DRAG_N_DROP_TAG = "ACTION_START_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "ACTION_START_BLOCK_"
     }
 }

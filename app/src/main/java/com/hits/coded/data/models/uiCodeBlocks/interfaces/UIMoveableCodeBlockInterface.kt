@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 interface UIMoveableCodeBlockInterface {
     @SuppressLint("ClickableViewAccessibility")
-    fun initDragNDropGesture(view: View, tag: String) {
+    fun initDragAndDropGesture(view: View, tag: String) {
         view.tag = tag + Random.Default.nextInt().toString()
 
         var touchX = 0

@@ -11,9 +11,9 @@ import com.hits.coded.R
 import com.hits.coded.data.models.codeField.CodeFieldInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
+import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
-import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
+import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartCodeBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,10 +22,10 @@ class CodeField constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), CodeFieldInterface,
-    UIElementHandlesDragNDropInterface {
+    UIElementHandlesDragAndDropInterface {
     private val binding: ViewCodeFieldBinding
 
-    private val startBlock = UIActionStartBlock(context)
+    private val startBlock = UIActionStartCodeBlock(context)
 
     init {
         inflate(
@@ -35,7 +35,7 @@ class CodeField constructor(
         ).also { view ->
             binding = ViewCodeFieldBinding.bind(view)
         }
-        initDragNDropListener()
+        initDragAndDropListener()
 
         addBlock(startBlock)
     }
@@ -53,7 +53,7 @@ class CodeField constructor(
         }
     }
 
-    override fun initDragNDropListener() {
+    override fun initDragAndDropListener() {
         binding.fieldLayout.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
