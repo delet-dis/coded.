@@ -265,10 +265,27 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     override suspend fun interpreteVariableBlocks(variable: VariableBlock): StoredVariable? {
         when (variable.variableBlockType) {
             VariableBlockType.VARIABLE_SET -> {
-
+                when (variable.valueToSet) {
+                    is ExpressionBlock -> {
+                        val expressionValue = getTypeOfAny(variable.valueToSet)
+                        if (expressionValue == variable.variableParams?.type) {
+                            variable.variableParams?.name?.let {
+                                HeapRepositoryImplementation().reAssignVariable(
+                                    it, variable.valueToSet
+                                )
+                            }
+                        } else throw variable.id?.let {
+                            InterpreterException(
+                                it,
+                                ExceptionType.TYPE_MISMATCH
+                            )
+                        }!!
+                    }
+                    is String ->{}
+                }
             }
             VariableBlockType.VARIABLE_CHANGE -> {
-
+                
             }
             VariableBlockType.VARIABLE_CREATE -> variable.variableParams?.let {
                 it.name?.let { it1 ->
@@ -278,6 +295,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 }
             }
 
+            else -> {}
         }
         return null
     }
@@ -359,7 +377,11 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         }
                     }
                 } else {
-                    return value.toDouble()
+                    if (value.toDoubleOrNull() is Double) {
+                        return value.toDouble()
+                    } else {
+                        throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                    }
                 }
             }
         }
@@ -393,8 +415,11 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         }
                     }
                 } else {
-
-                    return value.toInt()
+                    if (value.toIntOrNull() is Int) {
+                        return value.toInt()
+                    } else {
+                        throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                    }
                 }
             }
         }
@@ -429,7 +454,11 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         }
                     }
                 } else {
-                    return value.toBoolean()
+                    if (value.toBooleanStrictOrNull() is Boolean) {
+                        return value.toBooleanStrict()
+                    } else {
+                        throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                    }
                 }
             }
         }
@@ -480,8 +509,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                             0,
                             ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                         )
-                    }
-                    else{
+                    } else {
                         return foundedStoredVariable.type
                     }
                 } else {
