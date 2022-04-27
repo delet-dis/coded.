@@ -13,7 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="64dp"
-        android:text="@string/chooseTheComponentYouWant"
+        android:text="@string/dragAndDropTheComponentToAdd"
         android:textColor="@color/lightPurple"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -17,7 +17,7 @@
     <string name="divisionByZeroError">Oops! Division by zero!</string>
 
     <string name="project">Project</string>
-    <string name="chooseTheComponentToAdd">Choose the component to add</string>
+    <string name="dragAndDropTheComponentToAdd">Drag and drop the component to add</string>
     <string name="close">Close</string>
     <string name="componentType">Component type</string>
     <string name="variables">Variables</string>

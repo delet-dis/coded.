@@ -46,7 +46,7 @@ class ItemsPickingBottomSheetFragment(
     }
 
     fun show() {
-        behaviour.state = BottomSheetBehavior.STATE_EXPANDED
+        behaviour.state = BottomSheetBehavior.STATE_HALF_EXPANDED
 
         redrawCurrentViewPagerScreen()
     }
@@ -69,13 +69,13 @@ class ItemsPickingBottomSheetFragment(
             val draggableItem = dragEvent?.localState as View
 
             when (dragEvent.action) {
-                DragEvent.ACTION_DRAG_EXITED -> {
+                DragEvent.ACTION_DRAG_STARTED -> {
                     behaviour.state = BottomSheetBehavior.STATE_HIDDEN
 
                     true
                 }
 
-                DragEvent.ACTION_DRAG_STARTED,
+                DragEvent.ACTION_DRAG_EXITED,
                 DragEvent.ACTION_DRAG_LOCATION,
                 DragEvent.ACTION_DRAG_ENTERED,
                 DragEvent.ACTION_DRAG_ENDED -> {
