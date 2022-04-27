@@ -12,7 +12,9 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
+import com.hits.coded.data.models.interpreterException.InterpreterException
 import com.hits.coded.data.models.sharedTypes.VariableType
+import com.hits.coded.data.models.types.ExceptionType
 import com.hits.coded.domain.repositories.InterpreterRepository
 
 class InterpreterRepositoryImplementation : InterpreterRepository() {
@@ -23,105 +25,212 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
                 BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
                 BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                BlockType.START -> throw nestedBlock.id?.let {
+                    InterpreterException(
+                        it,
+                        ExceptionType.WRONG_START_POSITION
+                    )
+                }!!
+                BlockType.IO -> interpreteIOBlocks(nestedBlock as IOBlock)
             }
         }
-        throw Exception()
     }
 
     @Throws
     override suspend fun interpreteConditionBlocks(condition: ConditionBlock): Boolean {
-        var ConditionIsTrue: Boolean = false
-        var leftSideType: VariableType? = getTypeOfAny(condition.leftSide)
-        var rightSideType: VariableType? = getTypeOfAny(condition.rightSide)
+        var conditionIsTrue = false
+        val leftSideType = getTypeOfAny(condition.leftSide)
+        val rightSideType = getTypeOfAny(condition.rightSide)
         if (condition.logicalOperator != null) {
             when (condition.logicalOperator.logicalOperatorType) {
 
-                LogicalOperatorType.AND -> if (condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN) {
-                    ConditionIsTrue =
-                        (convertAnyToBoolean(condition.leftSide) as Boolean && convertAnyToBoolean(
-                            condition.rightSide
-                        ) as Boolean)
-                } else if (condition.rightSide != null) {
-                    throw Exception("Non Boolean type in Condition. Block id:${condition.id}")
-                } else {
-                    throw Exception("Can't find right side in condition. Block id:${condition.id}")
+                LogicalOperatorType.AND -> {
+                    when {
+                        condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN -> {
+                            conditionIsTrue =
+                                (convertAnyToBoolean(condition.leftSide) && convertAnyToBoolean(
+                                    condition.rightSide
+                                ))
+                        }
+                        condition.rightSide != null -> throw condition.id?.let {
+                            InterpreterException(
+                                it, ExceptionType.TYPE_MISMATCH
+                            )
+                        }!!
+                        else -> throw condition.id?.let {
+                            InterpreterException(
+                                it,
+                                ExceptionType.LACK_OF_ARGUMENTS
+                            )
+                        }!!
+                    }
+
                 }
-                LogicalOperatorType.NOT -> if (leftSideType == VariableType.BOOLEAN) ConditionIsTrue =
-                    !(convertAnyToBoolean(condition.leftSide) as Boolean)
-                else {
-                    throw Exception("Non Boolean type in Condition. Block id:${condition.id}")
+                LogicalOperatorType.NOT -> {
+                    if (leftSideType == VariableType.BOOLEAN) conditionIsTrue =
+                        !(convertAnyToBoolean(condition.leftSide))
+                    else {
+                        throw condition.id?.let {
+                            InterpreterException(
+                                it,
+                                ExceptionType.TYPE_MISMATCH
+                            )
+                        }!!
+                    }
                 }
-                LogicalOperatorType.OR -> if (condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN) {
-                    ConditionIsTrue =
-                        (convertAnyToBoolean(condition.leftSide) as Boolean || convertAnyToBoolean(
-                            condition.rightSide
-                        ) as Boolean)
-                } else if (condition.rightSide != null) {
-                    throw Exception("Non Boolean type in Condition. Block id:${condition.id}")
-                } else {
-                    throw Exception("Can't find right side in condition. Block id:${condition.id}")
+                LogicalOperatorType.OR -> {
+                    when {
+                        condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN -> {
+                            conditionIsTrue =
+                                (convertAnyToBoolean(condition.leftSide) || convertAnyToBoolean(
+                                    condition.rightSide
+                                ))
+                        }
+                        condition.rightSide != null -> throw condition.id?.let {
+                            InterpreterException(
+                                it, ExceptionType.TYPE_MISMATCH
+                            )
+                        }!!
+                        else -> throw condition.id?.let {
+                            InterpreterException(
+                                it,
+                                ExceptionType.LACK_OF_ARGUMENTS
+                            )
+                        }!!
+                    }
+
                 }
             }
         } else {
             if (condition.rightSide != null) {
-                when (condition.mathematicalOperator?.mathematicalOperatorType) {
-                    MathematicalOperatorType.EQUAL -> if (rightSideType == leftSideType) {
-                        ConditionIsTrue =
-                            (convertAnyToDouble(condition.leftSide) == convertAnyToDouble(condition.rightSide))
-                    } else {
-                        throw Exception("Can't compare variables of different Types. Block id:${condition.id}")
-                    }
-
-                    MathematicalOperatorType.GREATER_OR_EQUAL_THAN -> if (rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT)) {
-                        ConditionIsTrue =
-                            (convertAnyToDouble(condition.leftSide) as Double >= convertAnyToDouble(
-                                condition.rightSide
-                            ) as Double)
-                    } else if (rightSideType == leftSideType) {
-                        throw Exception("Can't use \">=\" operand for $rightSideType. Block id:${condition.id}")
-                    } else {
-                        throw Exception("Can't compare non equal types $leftSideType and $rightSideType. Block id:${condition.id}")
-                    }
-                    MathematicalOperatorType.GREATER_THAN -> if (rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT)) {
-                        ConditionIsTrue =
-                            (convertAnyToDouble(condition.leftSide) as Double > convertAnyToDouble(
-                                condition.rightSide
-                            ) as Double)
-                    } else if (rightSideType == leftSideType) {
-                        throw Exception("Can't use \">=\" operand for $rightSideType. Block id:${condition.id}")
-                    } else {
-                        throw Exception("Can't compare non equal types $leftSideType and $rightSideType. Block id:${condition.id}")
-                    }
-                    MathematicalOperatorType.LOWER_OR_EQUAL_THAN -> if (rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT)) {
-                        ConditionIsTrue =
-                            (convertAnyToDouble(condition.leftSide) as Double <= convertAnyToDouble(
-                                condition.rightSide
-                            ) as Double)
-                    } else if (rightSideType == leftSideType) {
-                        throw Exception("Can't use \">=\" operand for $rightSideType. Block id:${condition.id}")
-                    } else {
-                        throw Exception("Can't compare non equal types $leftSideType and $rightSideType. Block id:${condition.id}")
-                    }
-                    MathematicalOperatorType.LOWER_THAN -> if (rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT)) {
-                        ConditionIsTrue =
-                            (convertAnyToDouble(condition.rightSide) as Double > convertAnyToDouble(
-                                condition.leftSide
-                            ) as Double)
-                    } else if (rightSideType == leftSideType) {
-                        throw Exception("Can't use \">=\" operand for $rightSideType. Block id:${condition.id}")
-                    } else {
-                        throw Exception("Can't compare non equal types $leftSideType and $rightSideType. Block id:${condition.id}")
-                    }
-                    MathematicalOperatorType.NON_EQUAL -> if (rightSideType == leftSideType) {
-                        ConditionIsTrue =
-                            (convertAnyToDouble(condition.leftSide) != convertAnyToDouble(condition.rightSide))
-                    } else {
-                        throw Exception("Can't compare variables of different Types. Block id:${condition.id}")
+                condition.mathematicalOperator?.let {
+                    when (it.mathematicalOperatorType) {
+                        MathematicalOperatorType.EQUAL -> {
+                            if (rightSideType == leftSideType) {
+                                conditionIsTrue =
+                                    (convertAnyToDouble(condition.leftSide) == convertAnyToDouble(
+                                        condition.rightSide
+                                    ))
+                            } else {
+                                throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                        MathematicalOperatorType.GREATER_OR_EQUAL_THAN -> {
+                            when {
+                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
+                                    conditionIsTrue =
+                                        (convertAnyToDouble(condition.leftSide) >= convertAnyToDouble(
+                                            condition.rightSide
+                                        ))
+                                }
+                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
+                                    )
+                                }!!
+                                else -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                        MathematicalOperatorType.GREATER_THAN -> {
+                            when {
+                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
+                                    conditionIsTrue =
+                                        (convertAnyToDouble(condition.leftSide) > convertAnyToDouble(
+                                            condition.rightSide
+                                        ))
+                                }
+                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
+                                    )
+                                }!!
+                                else -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                        MathematicalOperatorType.LOWER_OR_EQUAL_THAN -> {
+                            when {
+                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
+                                    conditionIsTrue =
+                                        (convertAnyToDouble(condition.leftSide) <= convertAnyToDouble(
+                                            condition.rightSide
+                                        ))
+                                }
+                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
+                                    )
+                                }!!
+                                else -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                        MathematicalOperatorType.LOWER_THAN -> {
+                            when {
+                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
+                                    conditionIsTrue =
+                                        (convertAnyToDouble(condition.rightSide) > convertAnyToDouble(
+                                            condition.leftSide
+                                        ))
+                                }
+                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
+                                    )
+                                }!!
+                                else -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                        MathematicalOperatorType.NON_EQUAL -> {
+                            if (rightSideType == leftSideType) {
+                                conditionIsTrue =
+                                    (convertAnyToDouble(condition.leftSide) != convertAnyToDouble(
+                                        condition.rightSide
+                                    ))
+                            } else {
+                                throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
                     }
                 }
+            } else {
+                throw condition.id?.let {
+                    InterpreterException(
+                        it,
+                        ExceptionType.LACK_OF_ARGUMENTS
+                    )
+                }!!
             }
-        }//стоит вынести в отдельную функцию
-        if (ConditionIsTrue) {
+        }
+        if (conditionIsTrue) {
             if (condition.nestedBlocks != null) {
                 for (nestedBlock in condition.nestedBlocks!!) {
                     when (nestedBlock.type) {
@@ -129,11 +238,12 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
                         BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
                         BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                        else -> {}
                     }
                 }
             }
         }
-        return ConditionIsTrue
+        return conditionIsTrue
     }
 
     override suspend fun interpreteLoopBlocks(loop: LoopBlock) {
@@ -145,6 +255,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
                         BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
                         BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                        else -> {}
                     }
                 }
             }
@@ -153,32 +264,20 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
 
     override suspend fun interpreteVariableBlocks(variable: VariableBlock): StoredVariable? {
         when (variable.variableBlockType) {
-            VariableBlockType.VARIABLE_CHANGE ->
-                variable.variableToChange?.let {
-                    variable.variableParams?.let {
-                        if (it.name != null && variable.variableParams != null) {
-                            HeapRepositoryImplementation().reAssignVariable(
-                                it.name!!,
-                                variable.variableParams!!
-                            )
-                        }
-                    }
-                }
+            VariableBlockType.VARIABLE_SET -> {
 
-            VariableBlockType.VARIABLE_GET -> return variable.variableParams?.let {
-                it.name?.let { it1 ->
-                    HeapRepositoryImplementation().getVariable(
-                        it1
-                    )
-                }
             }
-            VariableBlockType.VARIABLE_SET -> variable.variableParams?.let {
+            VariableBlockType.VARIABLE_CHANGE -> {
+
+            }
+            VariableBlockType.VARIABLE_CREATE -> variable.variableParams?.let {
                 it.name?.let { it1 ->
                     HeapRepositoryImplementation().addVariable(
                         it1
                     )
                 }
             }
+
         }
         return null
     }
@@ -188,108 +287,207 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         val rightSideType: VariableType? = getTypeOfAny(expression.rightSide)
         if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
             when (expression.expressionBlockType) {
-                ExpressionBlockType.PLUS -> return (convertAnyToDouble(expression.leftSide) as Double + convertAnyToDouble(
+                ExpressionBlockType.PLUS -> return (convertAnyToDouble(expression.leftSide) + convertAnyToDouble(
                     expression.rightSide
-                ) as Double)
-                ExpressionBlockType.MULTIPLY -> return (convertAnyToDouble(expression.leftSide) as Double * convertAnyToDouble(
+                ))
+                ExpressionBlockType.MULTIPLY -> return (convertAnyToDouble(expression.leftSide) * convertAnyToDouble(
                     expression.rightSide
-                ) as Double)
-                ExpressionBlockType.DIVIDE -> return (convertAnyToDouble(expression.leftSide) as Double / convertAnyToDouble(
+                ))
+                ExpressionBlockType.DIVIDE -> return (convertAnyToDouble(expression.leftSide) / convertAnyToDouble(
                     expression.rightSide
-                ) as Double)
-                ExpressionBlockType.MINUS -> return (convertAnyToDouble(expression.leftSide) as Double - convertAnyToDouble(
+                ))
+                ExpressionBlockType.MINUS -> return (convertAnyToDouble(expression.leftSide) - convertAnyToDouble(
                     expression.rightSide
-                ) as Double)
+                ))
+                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> throw expression.id?.let {
+                    InterpreterException(
+                        it, ExceptionType.WRONG_OPERAND_USE_CASE
+                    )
+                }!!
+                ExpressionBlockType.BRACKETS -> {}
             }
         }
         if (leftSideType == VariableType.INT && VariableType.INT == rightSideType) {
             when (expression.expressionBlockType) {
-                ExpressionBlockType.PLUS -> return (convertAnyToInt(expression.leftSide) as Int + convertAnyToInt(
+                ExpressionBlockType.PLUS -> return (convertAnyToInt(expression.leftSide) + convertAnyToInt(
                     expression.rightSide
-                ) as Int)
-                ExpressionBlockType.MULTIPLY -> return (convertAnyToInt(expression.leftSide) as Int * convertAnyToInt(
+                ))
+                ExpressionBlockType.MULTIPLY -> return (convertAnyToInt(expression.leftSide) * convertAnyToInt(
                     expression.rightSide
-                ) as Int)
-                ExpressionBlockType.DIVIDE -> return (convertAnyToInt(expression.leftSide) as Int / convertAnyToInt(
+                ))
+                ExpressionBlockType.DIVIDE -> return (convertAnyToInt(expression.leftSide) / convertAnyToInt(
                     expression.rightSide
-                ) as Double)
-                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> return (convertAnyToInt(expression.leftSide) as Int % convertAnyToInt(
+                ))
+                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> return (convertAnyToInt(expression.leftSide) % convertAnyToInt(
                     expression.rightSide
-                ) as Int)
-                ExpressionBlockType.MINUS -> return (convertAnyToInt(expression.leftSide) as Int - convertAnyToInt(
+                ))
+                ExpressionBlockType.MINUS -> return (convertAnyToInt(expression.leftSide) - convertAnyToInt(
                     expression.rightSide
-                ) as Int)
+                ))
+                ExpressionBlockType.BRACKETS -> {}
             }
         }
         if (leftSideType == VariableType.STRING && VariableType.STRING == rightSideType && expression.expressionBlockType == ExpressionBlockType.PLUS) {
             return convertAnyToString(expression.leftSide) as String + convertAnyToString(expression.rightSide) as String
         }
-        return 0
+        throw  expression.id?.let { InterpreterException(it, ExceptionType.TYPE_MISMATCH) }!!
     }
 
     override suspend fun interpreteIOBlocks(IO: IOBlock) {
         //IO action function
     }
 
-    private suspend fun convertAnyToDouble(value: Any): Double? {
+    private suspend fun convertAnyToDouble(value: Any): Double {
         when (value) {
             is Double -> return value
             is ExpressionBlock -> return interpreteExpressionBlocks(value) as Double
-            is VariableBlock -> return interpreteVariableBlocks(value)!!.value as Double
-            is String -> return value.toDouble()
+            is String -> {
+                if (value[0] == '"' && value[value.lastIndex] == '"') {
+                    val variableName = value.drop(1).dropLast(1)
+                    val foundedStoredVariable =
+                        HeapRepositoryImplementation().getVariable(variableName)
+                    if (foundedStoredVariable == null) {
+                        throw InterpreterException(
+                            0,
+                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                        )
+                    } else {
+                        if (foundedStoredVariable.type == VariableType.DOUBLE) {
+                            return foundedStoredVariable.value as Double
+                        } else {
+                            throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                        }
+                    }
+                } else {
+                    return value.toDouble()
+                }
+            }
         }
-        return null
+        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
-    private suspend fun convertAnyToInt(value: Any): Int? {
+    private suspend fun convertAnyToInt(value: Any): Int {
         when (value) {
             is Double -> return value.toInt()
             is Int -> return value
             is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.INT) return interpreteExpressionBlocks(
                 value
             ) as Int else {
-                throw Exception("Can't interprete Expression as Integer. Block id:${value.id}")
+                throw Exception("Can't interpret Expression as Integer. Block id:${value.id}")
             }
-            is VariableBlock -> if (getTypeOfAny(value) == VariableType.INT) {
-                return value.variableParams?.value as Int
-            } else {
-                throw Exception("Can't interprete Variable as Integer. Block id:${value.id}")
+            is String -> {
+                if (value[0] == '"' && value[value.lastIndex] == '"') {
+                    val variableName = value.drop(1).dropLast(1)
+                    val foundedStoredVariable =
+                        HeapRepositoryImplementation().getVariable(variableName)
+                    if (foundedStoredVariable == null) {
+                        throw InterpreterException(
+                            0,
+                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                        )
+                    } else {
+                        if (foundedStoredVariable.type == VariableType.INT) {
+                            return foundedStoredVariable.value as Int
+                        } else {
+                            throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                        }
+                    }
+                } else {
+
+                    return value.toInt()
+                }
             }
-            is String -> return value.toInt()
         }
-        return null
+        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
-    private suspend fun convertAnyToBoolean(value: Any): Boolean? {
+    private suspend fun convertAnyToBoolean(value: Any): Boolean {
         when (value) {
             is Boolean -> return value
-            is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.BOOLEAN) return interpreteExpressionBlocks(
-                value
-            ) as Boolean else {
-                throw Exception("Can't transform type to Boolean")
+            is ExpressionBlock -> {
+                if (getTypeOfAny(value) == VariableType.BOOLEAN) return interpreteExpressionBlocks(
+                    value
+                ) as Boolean else {
+                    throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                }
             }
-            is VariableBlock -> return interpreteVariableBlocks(value)!!.value as Boolean
-            is String -> return value.toBoolean()
+            is String -> {
+                if (value[0] == '"' && value[value.lastIndex] == '"') {
+                    val variableName = value.drop(1).dropLast(1)
+                    val foundedStoredVariable =
+                        HeapRepositoryImplementation().getVariable(variableName)
+                    if (foundedStoredVariable == null) {
+                        throw InterpreterException(
+                            0,
+                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                        )
+                    } else {
+                        if (foundedStoredVariable.type == VariableType.BOOLEAN) {
+                            return foundedStoredVariable.value as Boolean
+                        } else {
+                            throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                        }
+                    }
+                } else {
+                    return value.toBoolean()
+                }
+            }
         }
-        return null
+        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
     private suspend fun convertAnyToString(value: Any): String? {
         when (value) {
-            is ExpressionBlock -> return if (getTypeOfAny(value) == VariableType.STRING) interpreteExpressionBlocks(
-                value
-            ) as String else null
-            is VariableBlock -> return if (value.variableParams?.type == VariableType.STRING) interpreteVariableBlocks(
-                value
-            )!!.value as String else null
-            is String -> return value
+            is ExpressionBlock -> {
+                return if (getTypeOfAny(value) == VariableType.STRING) interpreteExpressionBlocks(
+                    value
+                ) as String else null
+            }
+            is String -> {
+                if (value[0] == '"' && value[value.lastIndex] == '"') {
+                    val variableName = value.drop(1).dropLast(1)
+                    val foundedStoredVariable =
+                        HeapRepositoryImplementation().getVariable(variableName)
+                    if (foundedStoredVariable == null) {
+                        throw InterpreterException(
+                            0,
+                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                        )
+                    } else {
+                        if (foundedStoredVariable.type == VariableType.STRING) {
+                            return foundedStoredVariable.value as String
+                        } else {
+                            throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                        }
+                    }
+                } else {
+                    return value
+                }
+            }
         }
-        return null
+        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
     private suspend fun getTypeOfAny(value: Any?): VariableType? {
         when (value) {
-            is String -> return VariableType.STRING
+            is String -> {
+                if (value[0] == '"' && value[value.lastIndex] == '"') {
+                    val variableName = value.drop(1).dropLast(1)
+                    val foundedStoredVariable =
+                        HeapRepositoryImplementation().getVariable(variableName)
+                    if (foundedStoredVariable == null) {
+                        throw InterpreterException(
+                            0,
+                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                        )
+                    }
+                    else{
+                        return foundedStoredVariable.type
+                    }
+                } else {
+                    return VariableType.STRING
+                }
+            }
             is Double -> return VariableType.DOUBLE
             is Int -> return VariableType.INT
             is Boolean -> return VariableType.BOOLEAN
