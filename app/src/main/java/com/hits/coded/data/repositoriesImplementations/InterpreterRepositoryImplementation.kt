@@ -267,12 +267,37 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             VariableBlockType.VARIABLE_SET -> {
                 when (variable.valueToSet) {
                     is ExpressionBlock -> {
-                        val expressionValue = getTypeOfAny(variable.valueToSet)
-                        if (expressionValue == variable.variableParams?.type) {
+                        val expressionValueType = getTypeOfAny(variable.valueToSet)
+                        if (expressionValueType == variable.variableParams?.type) {
                             variable.variableParams?.name?.let {
-                                HeapRepositoryImplementation().reAssignVariable(
-                                    it, variable.valueToSet as ExpressionBlock
-                                )
+                                when (expressionValueType) {
+                                    VariableType.INT -> {
+                                        HeapRepositoryImplementation().reAssignVariable(
+                                            it,
+                                            convertAnyToInt(variable.valueToSet as ExpressionBlock)
+                                        )
+                                    }
+                                    VariableType.DOUBLE -> {
+                                        HeapRepositoryImplementation().reAssignVariable(
+                                            it,
+                                            convertAnyToDouble(variable.valueToSet as ExpressionBlock)
+                                        )
+                                    }
+                                    VariableType.STRING -> {
+                                        HeapRepositoryImplementation().reAssignVariable(
+                                            it,
+                                            convertAnyToString(variable.valueToSet as ExpressionBlock)
+                                        )
+                                    }
+                                    VariableType.BOOLEAN -> {}
+                                    else -> {
+                                        throw variable.id?.let { it1 ->
+                                            InterpreterException(
+                                                it1, ExceptionType.NONEXISTING_DATA_TYPE
+                                            )
+                                        }!!
+                                    }
+                                }
                             }
                         } else throw variable.id?.let {
                             InterpreterException(
@@ -281,7 +306,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                             )
                         }!!
                     }
-                    is String ->{}
+                    is String -> {}
                 }
             }
             VariableBlockType.VARIABLE_CHANGE -> {
@@ -346,7 +371,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             }
         }
         if (leftSideType == VariableType.STRING && VariableType.STRING == rightSideType && expression.expressionBlockType == ExpressionBlockType.PLUS) {
-            return convertAnyToString(expression.leftSide) as String + convertAnyToString(expression.rightSide) as String
+            return convertAnyToString(expression.leftSide) + convertAnyToString(expression.rightSide)
         }
         throw  expression.id?.let { InterpreterException(it, ExceptionType.TYPE_MISMATCH) }!!
     }
@@ -465,12 +490,12 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
-    private suspend fun convertAnyToString(value: Any): String? {
+    private suspend fun convertAnyToString(value: Any): String {
         when (value) {
             is ExpressionBlock -> {
                 return if (getTypeOfAny(value) == VariableType.STRING) interpreteExpressionBlocks(
                     value
-                ) as String else null
+                ) as String else throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
             }
             is String -> {
                 if (value[0] == '"' && value[value.lastIndex] == '"') {
@@ -513,7 +538,12 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         return foundedStoredVariable.type
                     }
                 } else {
-                    return VariableType.STRING
+                    return when {
+                        value.toIntOrNull() is Int -> VariableType.INT
+                        value.toDoubleOrNull() is Double -> VariableType.DOUBLE
+                        value.toBooleanStrictOrNull() is Boolean -> VariableType.BOOLEAN
+                        else -> VariableType.STRING
+                    }
                 }
             }
             is Double -> return VariableType.DOUBLE
