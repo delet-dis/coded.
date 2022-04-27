@@ -54,6 +54,8 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initVariableNameChangeListener()
+
+        initVariableChangeValueListener()
     }
 
     private fun initVariableNameChangeListener() = binding.variableName.addTextChangedListener {
@@ -61,6 +63,11 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
 
         _block.variableParams = variableParams
     }
+
+    private fun initVariableChangeValueListener() =
+        binding.variableChangeValue.addTextChangedListener {
+            _block.valueToSet = it.toString()
+        }
 
     override fun initDragAndDropListener() {
         binding.secondCard.setOnDragListener { view, dragEvent ->
@@ -116,13 +123,20 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
                     setText("")
                 }
 
+                secondCard.addView(draggableItem)
+
                 (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-//                    nestedBlocksAsBlockBase.add(it)
-//
-//                    _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                    _block.valueToSet = it
                 }
             }
         }
+
+    override fun removeView(view: View?) {
+        super.removeView(view)
+
+        binding.variableChangeValue.visibility = View.VISIBLE
+        _block.valueToSet = ""
+    }
 
     private companion object {
         const val DRAG_AND_DROP_TAG = "VARIABLE_CHANGE_BY_BLOCK_"

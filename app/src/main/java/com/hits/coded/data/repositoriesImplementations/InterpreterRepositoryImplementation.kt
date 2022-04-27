@@ -271,7 +271,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         if (expressionValue == variable.variableParams?.type) {
                             variable.variableParams?.name?.let {
                                 HeapRepositoryImplementation().reAssignVariable(
-                                    it, variable.valueToSet
+                                    it, variable.valueToSet as ExpressionBlock
                                 )
                             }
                         } else throw variable.id?.let {
