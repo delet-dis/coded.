@@ -1,110 +1,67 @@
 package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment
 
-import android.app.Dialog
-import android.content.DialogInterface
-import android.os.Bundle
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.view.DragEvent
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hits.coded.R
 import com.hits.coded.data.models.itemsBottomSheet.enums.BottomSheetItemsScreens
 import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragmentInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragNDropInterface
-import com.hits.coded.databinding.FragmentItemsPickingBottomSheetBinding
+import com.hits.coded.databinding.IncludeItemsPickingBottomSheetBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragmentStateAdapters.ItemsPickingViewPagerAdapter
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel.ItemsPickingBottomSheetFragmentViewModel
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
-class ItemsPickingBottomSheetFragment : BottomSheetDialogFragment(),
-    UIElementHandlesDragNDropInterface {
-    private lateinit var binding: FragmentItemsPickingBottomSheetBinding
+class ItemsPickingBottomSheetFragment(
+    private val binding: IncludeItemsPickingBottomSheetBinding,
+    private val viewModel: ItemsPickingBottomSheetFragmentViewModel,
+    private val parentActivity: Activity
+) : UIElementHandlesDragNDropInterface {
 
-    private val viewModel: ItemsPickingBottomSheetFragmentViewModel by viewModels()
+    private val behaviour = BottomSheetBehavior.from(binding.bottomSheetLayout)
 
-    private lateinit var behaviour: BottomSheetBehavior<View>
+    init {
+        initParentViewOnTouchListener()
 
-    private lateinit var parentLayout: View
+        initDismissButtonOnClickListener()
 
-    override fun getTheme() = R.style.bottomSheetFragment
+        initDragNDropListener()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return if (savedInstanceState == null) {
-            binding = FragmentItemsPickingBottomSheetBinding.inflate(layoutInflater)
+        initViewPager()
 
-            binding.root
-        } else {
-            view
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        if (savedInstanceState == null) {
-            initDismissButtonOnClickListener()
-
-            initDragNDropListener()
-        }
+        initTabLayoutMediator()
     }
 
     private fun initTabLayoutMediator() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = getString(viewModel.getItemsScreens()[position].nameId).lowercase()
+            tab.text = binding.root.context.getString(viewModel.getItemsScreens()[position].nameId)
+                .lowercase()
                 .replaceFirstChar {
                     it.uppercase()
                 }
         }.attach()
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
+    fun show() {
+        behaviour.state = BottomSheetBehavior.STATE_EXPANDED
 
-        dialog.setOnShowListener {
-            val bottomSheetDialog = dialog as BottomSheetDialog
-
-            initViewPager()
-
-            initTabLayoutMediator()
-
-            bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-                ?.let {
-                    parentLayout = it
-                }
-
-            parentLayout.let { parentLayoutUnwrapped ->
-                behaviour = BottomSheetBehavior.from(parentLayoutUnwrapped)
-            }
-
-            setupFullHeight(parentLayout)
-        }
-
-        return dialog
-    }
-
-    private fun setupFullHeight(bottomSheet: View) {
-        bottomSheet.layoutParams.height = requireActivity().window.decorView.height
+        redrawCurrentViewPagerScreen()
     }
 
     private fun initViewPager() {
         binding.viewPager.adapter =
-            ItemsPickingViewPagerAdapter(requireActivity(), viewModel.getItemsScreens())
+            ItemsPickingViewPagerAdapter(
+                parentActivity as FragmentActivity,
+                viewModel.getItemsScreens()
+            )
     }
 
     private fun initDismissButtonOnClickListener() =
         binding.xMarkButton.setOnClickListener {
-            dismiss()
+            behaviour.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
     override fun initDragNDropListener() {
@@ -114,13 +71,6 @@ class ItemsPickingBottomSheetFragment : BottomSheetDialogFragment(),
             when (dragEvent.action) {
                 DragEvent.ACTION_DRAG_EXITED -> {
                     behaviour.state = BottomSheetBehavior.STATE_HIDDEN
-
-                    val bottomSheetDialog = dialog as BottomSheetDialog
-
-                    bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.container)
-                        ?.let {
-                            it.visibility = View.GONE
-                        }
 
                     true
                 }
@@ -141,12 +91,13 @@ class ItemsPickingBottomSheetFragment : BottomSheetDialogFragment(),
         }
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initParentViewOnTouchListener(){
+        binding.bottomSheetLayout.setOnTouchListener { _, _ ->
+            true
+        }
 
-        redrawCurrentViewPagerScreen()
     }
-
     private fun redrawCurrentViewPagerScreen() =
         (BottomSheetItemsScreens.values()[binding.viewPager.currentItem].bottomSheetItemsScreen.screen
                 as? UIBottomSheetFragmentInterface)?.redrawElements()

@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
 import com.hits.coded.databinding.ActivityEditorBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.ItemsPickingBottomSheetFragment
+import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel.ItemsPickingBottomSheetFragmentViewModel
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
 import com.hits.coded.presentation.views.codeField.CodeField
 import dagger.hilt.android.AndroidEntryPoint
@@ -148,11 +149,16 @@ class EditorActivity : AppCompatActivity() {
     }
 
     private fun initBottomSheet() {
-        bottomSheetFragment = ItemsPickingBottomSheetFragment()
+        val bottomSheetFragmentViewModel: ItemsPickingBottomSheetFragmentViewModel by viewModels()
+        bottomSheetFragment = ItemsPickingBottomSheetFragment(
+            binding.bottomSheetIncludedLayout,
+            bottomSheetFragmentViewModel,
+            this
+        )
     }
 
     private fun showBottomSheet() {
-        bottomSheetFragment.show(supportFragmentManager, BOTTOM_SHEET_TAG)
+        bottomSheetFragment.show()
     }
 
     private fun initBottomBarButtonsOnClicks() =
@@ -161,8 +167,4 @@ class EditorActivity : AppCompatActivity() {
                 showBottomSheet()
             }
         }
-
-    private companion object {
-        const val BOTTOM_SHEET_TAG = "bottom_sheet"
-    }
 }
