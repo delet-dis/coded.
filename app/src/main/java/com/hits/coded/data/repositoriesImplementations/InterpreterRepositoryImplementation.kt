@@ -27,6 +27,8 @@ constructor(
     private val heapUseCases: HeapUseCases
 ): InterpreterRepository() {
 
+    private var currentId = 0
+
     override suspend fun interpreteStartBlock(start: StartBlock) {
         for (nestedBlock in start.nestedBlocks!!) {
             when (nestedBlock.type) {
@@ -635,9 +637,5 @@ constructor(
             VariableType.STRING -> value
         }
     }
-
-    //private fun <T> divide(a: T, b: T): T {
-    //    return a / b
-    //}
 
 }
