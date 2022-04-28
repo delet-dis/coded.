@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/itemsPickingBottomSheetLayout"
+    android:id="@+id/typeChangerBottomSheetLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_background"
@@ -15,35 +15,35 @@
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <TextView
-        android:id="@+id/itemsPickingHeaderText"
+        android:id="@+id/typeChangerHeaderText"
         style="@style/boldTextMinimized"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="64dp"
-        android:text="@string/dragAndDropTheComponentToAdd"
+        android:text="@string/changeVariableType"
         android:textColor="@color/lightPurple"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/itemsPickingxMarkButton"
+        android:id="@+id/typeChangerxMarkButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"
         android:contentDescription="@string/close"
         android:padding="13dp"
-        app:layout_constraintBottom_toBottomOf="@+id/itemsPickingHeaderText"
+        app:layout_constraintBottom_toBottomOf="@+id/typeChangerHeaderText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/itemsPickingHeaderText"
-        app:layout_constraintTop_toTopOf="@+id/itemsPickingHeaderText"
+        app:layout_constraintStart_toEndOf="@+id/typeChangerHeaderText"
+        app:layout_constraintTop_toTopOf="@+id/typeChangerHeaderText"
         app:srcCompat="@drawable/ic_xmark"
         app:tint="@color/lightPurple" />
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/itemsPickingTabLayout"
+        android:id="@+id/typeChangerTabLayout"
         style="@style/itemPickingTabLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -53,12 +53,12 @@
         android:contentDescription="@string/componentType"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemsPickingHeaderText"
+        app:layout_constraintTop_toBottomOf="@+id/typeChangerHeaderText"
         app:tabMode="auto"
         app:tabTextAppearance="@style/itemPickingTabLayoutTextAppearance" />
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/itemsPickingViewPager"
+        android:id="@+id/typeChangerViewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/bottomSheetContentHorizontalMargin"
@@ -67,5 +67,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemsPickingTabLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/typeChangerTabLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

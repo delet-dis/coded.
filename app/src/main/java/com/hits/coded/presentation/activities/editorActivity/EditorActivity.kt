@@ -13,6 +13,7 @@ import com.hits.coded.R
 import com.hits.coded.databinding.ActivityEditorBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.ItemsPickingBottomSheetController
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.viewModel.ItemsPickingBottomSheetViewModel
+import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.VariableTypeChangerBottomSheetController
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
 import com.hits.coded.presentation.views.codeField.CodeField
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +25,7 @@ class EditorActivity : AppCompatActivity() {
 
     private val viewModel: EditorActivityViewModel by viewModels()
 
-    private lateinit var bottomSheetController: ItemsPickingBottomSheetController
+    private lateinit var itemsPickingBottomSheetController: ItemsPickingBottomSheetController
 
     private lateinit var codeField: CodeField
 
@@ -43,9 +44,11 @@ class EditorActivity : AppCompatActivity() {
 
         initBarsStateChangingBasedOnFieldClick()
 
-        initBottomSheet()
+        initItemsPickingBottomSheet()
 
         initBottomBarButtonsOnClicks()
+
+        VariableTypeChangerBottomSheetController(binding.variableTypeChangerBottomSheet, this).show()
     }
 
     private fun initBinding() {
@@ -148,17 +151,17 @@ class EditorActivity : AppCompatActivity() {
         viewModel.hideBars()
     }
 
-    private fun initBottomSheet() {
+    private fun initItemsPickingBottomSheet() {
         val bottomSheetViewModel: ItemsPickingBottomSheetViewModel by viewModels()
-        bottomSheetController = ItemsPickingBottomSheetController(
-            binding.bottomSheetIncludedLayout,
+        itemsPickingBottomSheetController = ItemsPickingBottomSheetController(
+            binding.itemsPickingBottomSheet,
             bottomSheetViewModel,
             this
         )
     }
 
     private fun showBottomSheet() {
-        bottomSheetController.show()
+        itemsPickingBottomSheetController.show()
     }
 
     private fun initBottomBarButtonsOnClicks() =

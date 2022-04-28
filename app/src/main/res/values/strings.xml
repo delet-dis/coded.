@@ -39,4 +39,5 @@
     <string name="toConsole">to console</string>
     <string name="create">create</string>
     <string name="variable">variable</string>
+    <string name="changeVariableType">Change variable type</string>
 </resources>

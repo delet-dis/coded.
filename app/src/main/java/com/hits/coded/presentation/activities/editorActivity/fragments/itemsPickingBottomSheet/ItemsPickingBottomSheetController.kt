@@ -25,7 +25,7 @@ class ItemsPickingBottomSheetController(
     private val parentActivity: Activity
 ) : UIElementHandlesDragAndDropInterface {
 
-    private val behaviour = BottomSheetBehavior.from(binding.bottomSheetLayout)
+    private val behaviour = BottomSheetBehavior.from(binding.itemsPickingBottomSheetLayout)
 
     init {
         initParentViewOnTouchListener()
@@ -42,13 +42,13 @@ class ItemsPickingBottomSheetController(
     }
 
     private fun initTopMargin() {
-        binding.bottomSheetLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        binding.itemsPickingBottomSheetLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             setMargins(0, 50.dpToPx(binding.root.context), 0, 0)
         }
     }
 
     private fun initTabLayoutMediator() {
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+        TabLayoutMediator(binding.itemsPickingTabLayout, binding.itemsPickingViewPager) { tab, position ->
             tab.text = binding.root.context.getString(viewModel.getItemsScreens()[position].nameId)
                 .lowercase()
                 .replaceFirstChar {
@@ -64,7 +64,7 @@ class ItemsPickingBottomSheetController(
     }
 
     private fun initViewPager() {
-        binding.viewPager.adapter =
+        binding.itemsPickingViewPager.adapter =
             ItemsPickingViewPagerAdapter(
                 parentActivity as FragmentActivity,
                 viewModel.getItemsScreens()
@@ -72,12 +72,12 @@ class ItemsPickingBottomSheetController(
     }
 
     private fun initDismissButtonOnClickListener() =
-        binding.xMarkButton.setOnClickListener {
+        binding.itemsPickingxMarkButton.setOnClickListener {
             behaviour.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
     override fun initDragAndDropListener() {
-        binding.viewPager.setOnDragListener { _, dragEvent ->
+        binding.itemsPickingViewPager.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             when (dragEvent.action) {
@@ -105,13 +105,12 @@ class ItemsPickingBottomSheetController(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initParentViewOnTouchListener() {
-        binding.bottomSheetLayout.setOnTouchListener { _, _ ->
+        binding.itemsPickingBottomSheetLayout.setOnTouchListener { _, _ ->
             true
         }
-
     }
 
     private fun redrawCurrentViewPagerScreen() =
-        (BottomSheetItemsScreens.values()[binding.viewPager.currentItem].bottomSheetItemsScreen.screen
+        (BottomSheetItemsScreens.values()[binding.itemsPickingViewPager.currentItem].bottomSheetItemsScreen.screen
                 as? UIBottomSheetFragmentInterface)?.redrawElements()
 }
