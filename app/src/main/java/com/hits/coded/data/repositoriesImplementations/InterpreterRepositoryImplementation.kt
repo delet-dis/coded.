@@ -306,11 +306,93 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                             )
                         }!!
                     }
-                    is String -> {}
+                    is String -> {
+                        if ((variable.valueToSet as String)[0] == '"' && (variable.valueToSet as String)[(variable.valueToSet as String).lastIndex] == '"') {
+                            val variableName = (variable.valueToSet as String).drop(1).dropLast(1)
+                            val foundedStoredVariable =
+                                HeapRepositoryImplementation().getVariable(variableName)
+                            if (foundedStoredVariable == null) {
+                                throw variable.id?.let {
+                                    InterpreterException(
+                                        it,
+                                        ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                                    )
+                                }!!
+                            } else {
+                                if (foundedStoredVariable.type == variable.variableParams?.type) {
+                                    foundedStoredVariable.value?.let {
+                                        variable.variableParams?.name?.let { it1 ->
+                                            HeapRepositoryImplementation().reAssignVariable(
+                                                it1,
+                                                it
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    throw variable.id?.let {
+                                        InterpreterException(
+                                            it,
+                                            ExceptionType.TYPE_MISMATCH
+                                        )
+                                    }!!
+                                }
+                            }
+                        } else {
+                            when {
+                                variable.variableParams?.type == VariableType.STRING -> {
+                                    variable.variableParams?.name?.let {
+                                        HeapRepositoryImplementation().reAssignVariable(
+                                            it,
+                                            variable.valueToSet as String
+                                        )
+                                    }
+                                }
+                                (variable.valueToSet as String).toIntOrNull() is Int -> {
+                                    variable.variableParams?.name?.let {
+                                        HeapRepositoryImplementation().reAssignVariable(
+                                            it, (variable.valueToSet as String).toInt()
+                                        )
+                                    }
+                                }
+                                (variable.valueToSet as String).toDoubleOrNull() is Double -> {
+                                    variable.variableParams?.name?.let {
+                                        HeapRepositoryImplementation().reAssignVariable(
+                                            it, (variable.valueToSet as String).toDouble()
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             VariableBlockType.VARIABLE_CHANGE -> {
-                
+                val typeOfNewValue = getTypeOfAny(variable.valueToSet)
+                if (typeOfNewValue == variable.variableParams?.type) {
+                    when (typeOfNewValue) {
+                        VariableType.INT -> {
+                            val toAdd:Int= variable.valueToSet?.let { convertAnyToInt(it) }!!
+                                variable.variableParams?.name?.let {
+                                    HeapRepositoryImplementation().reAssignVariable(
+                                        it,
+                                        (variable.variableParams?.value as String).toInt() + toAdd)
+                                }
+                        }
+                        VariableType.DOUBLE->{
+                            val toAdd:Double= variable.valueToSet?.let { convertAnyToDouble(it) }!!
+                            variable.variableParams?.name?.let {
+                                HeapRepositoryImplementation().reAssignVariable(
+                                    it,
+                                    (variable.variableParams?.value as String).toDouble() + toAdd)
+                            }
+                        }
+                        else->{throw  variable.id?.let { InterpreterException(it,ExceptionType.TYPE_MISMATCH) }!!
+                        }
+                    }
+                }
+                else{
+                    throw variable.id?.let { InterpreterException(it,ExceptionType.TYPE_MISMATCH) }!!
+                }
             }
             VariableBlockType.VARIABLE_CREATE -> variable.variableParams?.let {
                 it.name?.let { it1 ->
@@ -322,7 +404,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
 
             else -> {}
         }
-        return null
+        throw variable.id?.let { InterpreterException(it, ExceptionType.WRONG_OPERAND_USE_CASE) }!!
     }
 
     override suspend fun interpreteExpressionBlocks(expression: ExpressionBlock): Any {
@@ -552,6 +634,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             is ExpressionBlock -> return getTypeOfAny(interpreteExpressionBlocks(value))
             is VariableBlock -> return value.variableParams?.type
         }
-        return null
+        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 }
+
