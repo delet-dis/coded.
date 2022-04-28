@@ -39,4 +39,8 @@ class HeapRepositoryImplementation @Inject constructor() : HeapRepository() {
         _hashMap.value.remove(variableName)
         _hashMap.emit(_hashMap.value)
     }
+
+    override fun isVariableDeclared(variableName: String): Boolean {
+        return _hashMap.value.containsKey(variableName)
+    }
 }

@@ -7,6 +7,7 @@ abstract class HeapRepository {
     abstract val hashMap: Flow<HashMap<String, StoredVariable?>>
     abstract suspend fun addVariable(variableName: String)
     abstract fun getVariable(variableName: String): StoredVariable?
+    abstract fun isVariableDeclared(variableName: String): Boolean
     abstract suspend fun reAssignVariable(variableName: String, newValue: Any)
     abstract suspend fun deleteVariable(variableName: String)
 }
