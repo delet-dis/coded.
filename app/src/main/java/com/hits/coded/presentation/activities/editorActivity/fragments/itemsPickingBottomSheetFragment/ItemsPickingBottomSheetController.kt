@@ -38,6 +38,10 @@ class ItemsPickingBottomSheetController(
 
         initTabLayoutMediator()
 
+        initTopMargin()
+    }
+
+    private fun initTopMargin() {
         binding.bottomSheetLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             setMargins(0, 50.dpToPx(binding.root.context), 0, 0)
         }

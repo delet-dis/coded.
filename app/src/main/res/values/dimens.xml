@@ -30,4 +30,6 @@
 
     <dimen name="editorLayoutLeftAndRightMargin">20dp</dimen>
     <dimen name="editorLayoutTopAndBottomMargin">50dp</dimen>
+
+    <dimen name="codeBlockElementsSpacing">8dp</dimen>
 </resources>

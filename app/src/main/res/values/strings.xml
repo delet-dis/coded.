@@ -35,4 +35,6 @@
     <string name="change">change</string>
     <string name="by">by</string>
     <string name="value">value</string>
+    <string name="print">print</string>
+    <string name="toConsole">to console</string>
 </resources>
