@@ -39,4 +39,6 @@
     <string name="toConsole">to console</string>
     <string name="consoleActions">Console actions</string>
     <string name="console">Console</string>
+    <string name="create">create</string>
+    <string name="variable">variable</string>
 </resources>

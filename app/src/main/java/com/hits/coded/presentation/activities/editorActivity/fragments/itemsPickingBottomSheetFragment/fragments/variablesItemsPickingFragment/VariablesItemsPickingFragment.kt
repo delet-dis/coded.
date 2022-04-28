@@ -10,7 +10,7 @@ import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragm
 import com.hits.coded.databinding.FragmentVariablesItemsPickingBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragments.variablesItemsPickingFragment.viewModels.VariablesItemsPickingFragmentViewModel
 import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock
-import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableCreationBlock
+import com.hits.coded.presentation.views.codeBlocks.variables.creationBlock.UIVariableCreationBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

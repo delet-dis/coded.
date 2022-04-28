@@ -18,6 +18,9 @@ import com.hits.coded.data.models.types.ExceptionType
 import com.hits.coded.domain.repositories.InterpreterRepository
 
 class InterpreterRepositoryImplementation : InterpreterRepository() {
+
+    private var currentId = 0
+
     override suspend fun interpreteStartBlock(start: StartBlock) {
         for (nestedBlock in start.nestedBlocks!!) {
             when (nestedBlock.type) {
