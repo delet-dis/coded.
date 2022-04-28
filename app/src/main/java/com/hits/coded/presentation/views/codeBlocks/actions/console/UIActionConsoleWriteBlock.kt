@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.views.codeBlocks.variables
+package com.hits.coded.presentation.views.codeBlocks.actions.console
 
 import android.animation.AnimatorSet
 import android.content.Context
@@ -10,8 +10,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
+import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithCustomRemoveViewProcessInterface
@@ -19,11 +19,11 @@ import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInt
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
-import com.hits.coded.databinding.ViewVariableChangeByBlockBinding
+import com.hits.coded.databinding.ViewConsoleWriteBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UIVariableChangeByBlock @JvmOverloads constructor(
+class UIActionConsoleWriteBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -31,11 +31,11 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface {
-    private val binding: ViewVariableChangeByBlockBinding
+    private val binding: ViewConsoleWriteBlockBinding
 
     private var variableParams = StoredVariable()
 
-    private var _block = VariableBlock(VariableBlockType.VARIABLE_CHANGE, variableParams)
+    private var _block = IOBlock(IOBlockType.WRITE)
     override val block: BlockBase
         get() = _block
 
@@ -47,38 +47,26 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     init {
         inflate(
             context,
-            R.layout.view_variable_change_by_block,
+            R.layout.view_console_write_block,
             this
         ).also { view ->
-            binding = ViewVariableChangeByBlockBinding.bind(view)
+            binding = ViewConsoleWriteBlockBinding.bind(view)
         }
 
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initDragAndDropListener()
-
-        initVariableNameChangeListener()
-
-        initVariableChangeValueListener()
     }
 
     private fun initVariableNameChangeListener() =
         binding.variableName.addTextChangedListener {
             variableParams.name = it.toString()
 
-            _block.variableParams = variableParams
+            _block.output = variableParams
         }
 
-    private fun initVariableChangeValueListener() =
-        binding.variableChangeValue.addTextChangedListener {
-            _block.valueToSet = it.toString()
-        }
 
     override fun initDragAndDropListener() {
-        binding.variableChangeValue.setOnDragListener { _, _ ->
-            true
-        }
-
         binding.variableName.setOnDragListener { _, _ ->
             true
         }
@@ -86,7 +74,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
         binding.parentConstraint.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            if(draggableItem == draggableItem){
+            if (draggableItem == draggableItem) {
                 //TODO: Добавить проверку на то, закидывается ли условие или выражение
 
                 val itemParent = draggableItem.parent as ViewGroup
@@ -131,20 +119,20 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
         draggableItem: View
     ) =
         with(binding) {
-            if (draggableItem != this@UIVariableChangeByBlock) {
+            if (draggableItem != this@UIActionConsoleWriteBlock) {
                 alphaPlusAnimation(parentConstraint)
 
                 itemParent.removeView(draggableItem)
 
-                variableChangeValue.apply {
+                variableName.apply {
                     setText("")
                     visibility = INVISIBLE
                 }
 
-                secondCard.addView(draggableItem)
+                binding.firstCard.addView(draggableItem)
 
                 (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                    _block.valueToSet = it
+                    _block.output = it
                 }
             }
         }
@@ -157,7 +145,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
                 UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
         }
 
-        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.valueToSet) {
+        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.output) {
             draggableItem.x = 0f
             draggableItem.y = 0f
         }
@@ -166,17 +154,17 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     }
 
     override fun customRemoveView(view: View) {
-        binding.secondCard.removeView(view)
+        binding.firstCard.removeView(view)
 
-        _block.valueToSet = null
+        _block.output = null
 
-        binding.variableChangeValue.apply {
+        binding.variableName.apply {
             setText("")
             visibility = VISIBLE
         }
     }
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "VARIABLE_CHANGE_BY_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "ACTION_CONSOLE_WRITE_BLOCK_"
     }
 }

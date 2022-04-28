@@ -9,11 +9,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.data.models.codeField.CodeFieldInterface
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
-import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartCodeBlock
+import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
+import com.hits.coded.presentation.views.codeBlocks.actions.console.UIActionConsoleWriteBlock
+import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +28,7 @@ class CodeField constructor(
     UIElementHandlesDragAndDropInterface {
     private val binding: ViewCodeFieldBinding
 
-    private val startBlock = UIActionStartCodeBlock(context)
+    private val startBlock = UIActionStartBlock(context)
 
     init {
         inflate(
@@ -38,6 +41,8 @@ class CodeField constructor(
         initDragAndDropListener()
 
         addBlock(startBlock)
+        addBlock(UIVariableChangeByBlock(context))
+        addBlock(UIActionConsoleWriteBlock(context))
     }
 
     override fun addBlock(viewToAdd: View) {
@@ -102,6 +107,10 @@ class CodeField constructor(
                 draggableItem.x = dragEvent.x - (it.touchX)
                 draggableItem.y = dragEvent.y - (it.touchY)
             }
+
+            (itemParent.parent.parent as? UICodeBlockWithCustomRemoveViewProcessInterface)?.customRemoveView(
+                draggableItem
+            )
 
             itemParent.removeView(draggableItem)
 

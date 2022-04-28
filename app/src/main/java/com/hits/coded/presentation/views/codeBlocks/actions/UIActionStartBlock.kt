@@ -11,17 +11,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.hits.coded.R
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewActionStartBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class UIActionStartCodeBlock constructor(
+class UIActionStartBlock constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -101,7 +101,7 @@ class UIActionStartCodeBlock constructor(
         draggableItem: View
     ) =
         with(binding) {
-            if (draggableItem != this@UIActionStartCodeBlock) {
+            if (draggableItem != this@UIActionStartBlock) {
                 scaleMinusAnimation(parentConstraint)
 
                 itemParent.removeView(draggableItem)
@@ -125,7 +125,7 @@ class UIActionStartCodeBlock constructor(
                 UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
         }
 
-        this@UIActionStartCodeBlock.invalidate()
+        this@UIActionStartBlock.invalidate()
 
         if (itemParent == binding.nestedBlocks) {
             draggableItem.x = 0f
