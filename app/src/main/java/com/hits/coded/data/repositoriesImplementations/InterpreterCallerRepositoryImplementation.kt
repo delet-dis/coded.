@@ -2,7 +2,7 @@ package com.hits.coded.data.repositoriesImplementations
 
 import android.content.Context
 import com.hits.coded.R
-import com.hits.coded.data.models.interpreterException.InterpreterException
+import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.domain.repositories.InterpreterCallerRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.BufferOverflow
