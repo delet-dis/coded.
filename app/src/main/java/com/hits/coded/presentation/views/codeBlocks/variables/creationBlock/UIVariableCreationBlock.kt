@@ -11,10 +11,10 @@ import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.data.models.sharedTypes.VariableType
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInterface
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
+import com.hits.coded.data.models.types.VariableType
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
+import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.databinding.ViewVariableCreateBlockBinding
 import com.hits.coded.domain.extensions.findVariableType
 import com.hits.coded.presentation.views.codeBlocks.variables.creationBlock.adapters.VariableTypeSpinnerAdapter

@@ -1,4 +1,4 @@
-package com.hits.coded.data.models.uiCodeBlocks.interfaces
+package com.hits.coded.data.interfaces.ui.codeBlocks
 
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 

@@ -1,4 +1,4 @@
-package com.hits.coded.data.models.console
+package com.hits.coded.data.models.console.useCases
 
 import com.hits.coded.domain.useCases.console.CheckIsInputAvailableUseCase
 import com.hits.coded.domain.useCases.console.ClearConsoleUseCase
