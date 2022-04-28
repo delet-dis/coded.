@@ -16,8 +16,8 @@ import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockElementHandlesDragAndDropInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockWithCustomRemoveViewProcessInterface
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewVariableChangeByBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -83,7 +83,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
             true
         }
 
-        binding.parentConstraint.setOnDragListener { view, dragEvent ->
+        binding.parentConstraint.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             if(draggableItem == draggableItem){
@@ -96,13 +96,13 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
                     DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
                     DragEvent.ACTION_DRAG_ENTERED -> {
-                        scalePlusAnimation(binding.parentConstraint)
+                        alphaMinusAnimation(binding.root)
 
                         return@setOnDragListener true
                     }
 
                     DragEvent.ACTION_DRAG_EXITED -> {
-                        scaleMinusAnimation(binding.parentConstraint)
+                        alphaPlusAnimation(binding.root)
 
                         return@setOnDragListener true
                     }
@@ -132,7 +132,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     ) =
         with(binding) {
             if (draggableItem != this@UIVariableChangeByBlock) {
-                scaleMinusAnimation(parentConstraint)
+                alphaPlusAnimation(parentConstraint)
 
                 itemParent.removeView(draggableItem)
 

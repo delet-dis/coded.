@@ -14,7 +14,7 @@ import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewActionStartBinding
 import dagger.hilt.android.AndroidEntryPoint
