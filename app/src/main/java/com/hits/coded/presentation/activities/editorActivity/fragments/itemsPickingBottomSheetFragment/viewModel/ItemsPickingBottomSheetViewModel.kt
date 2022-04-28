@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ItemsPickingBottomSheetFragmentViewModel @Inject constructor() : ViewModel() {
+class ItemsPickingBottomSheetViewModel @Inject constructor() : ViewModel() {
     fun getItemsScreens(): Array<BottomSheetItemsScreen> {
         val itemsScreens = ArrayList<BottomSheetItemsScreen>()
 

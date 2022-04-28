@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parentConstraint"
     android:layout_width="wrap_content"
-    android:animateLayoutChanges="true"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true">
 
     <ImageView
         android:id="@+id/backgroundImage"
@@ -16,14 +16,14 @@
         android:contentDescription="@string/buttonBackgroundImage"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/firstCard"
-        app:layout_constraintStart_toStartOf="@+id/createVariable"
+        app:layout_constraintEnd_toEndOf="@+id/toConsole"
+        app:layout_constraintStart_toStartOf="@+id/print"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/variable_block"
+        app:srcCompat="@drawable/console_write_block"
         tools:ignore="ImageContrastCheck" />
 
     <TextView
-        android:id="@+id/createVariable"
+        android:id="@+id/print"
         style="@style/buttonBoldText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         android:maxLength="20"
         android:maxLines="0"
         android:singleLine="true"
-        android:text="@string/createVariable"
+        android:text="@string/print"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,10 +47,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/codeBlockElementsSpacing"
-        android:layout_marginEnd="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/createVariable"
+        app:layout_constraintEnd_toStartOf="@id/toConsole"
+        app:layout_constraintStart_toEndOf="@+id/print"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.45">
 
@@ -66,5 +65,26 @@
             android:inputType="text"
             tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
     </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/toConsole"
+        style="@style/buttonBoldText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/codeBlockElementsSpacing"
+        android:layout_marginEnd="20dp"
+        android:ellipsize="end"
+        android:maxWidth="@dimen/variableBlockMaxWidth"
+        android:maxLength="20"
+        android:maxLines="0"
+        android:singleLine="true"
+        android:text="@string/toConsole"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/firstCard"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45"
+        tools:ignore="TextContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

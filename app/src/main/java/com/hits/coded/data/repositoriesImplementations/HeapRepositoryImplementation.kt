@@ -26,10 +26,10 @@ class HeapRepositoryImplementation @Inject constructor() : HeapRepository() {
 
     override suspend fun reAssignVariable(
         variableName: String,
-        newValue: StoredVariable
+        newValue: Any
     ) {
         _hashMap.value[variableName]?.let {
-            _hashMap.value[variableName] = newValue
+            _hashMap.value[variableName]?.value = newValue
         }
 
         _hashMap.emit(_hashMap.value)

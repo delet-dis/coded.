@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragmentInterface
 import com.hits.coded.databinding.FragmentVariablesItemsPickingBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragments.variablesItemsPickingFragment.viewModels.VariablesItemsPickingFragmentViewModel
+import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock
 import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableCreationBlock
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,9 +42,10 @@ class VariablesItemsPickingFragment : Fragment(), UIBottomSheetFragmentInterface
     }
 
     override fun redrawElements() {
-        binding.itemsLinearLayout.apply {
+        binding.variablesActionsLinearLayout.apply {
             removeAllViews()
             addView(UIVariableCreationBlock(requireContext()))
+            addView(UIVariableChangeByBlock(requireContext()))
         }
     }
 }

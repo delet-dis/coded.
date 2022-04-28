@@ -17,7 +17,7 @@
     <string name="divisionByZeroError">Oops! Division by zero!</string>
 
     <string name="project">Project</string>
-    <string name="chooseTheComponentToAdd">Choose the component to add</string>
+    <string name="dragAndDropTheComponentToAdd">Drag and drop the component to add</string>
     <string name="close">Close</string>
     <string name="componentType">Component type</string>
     <string name="variables">Variables</string>
@@ -31,4 +31,10 @@
     <string name="createVariable">create variable</string>
     <string name="variablesList">Variables list</string>
     <string name="variableName">name</string>
+    <string name="variableCall">Variable call</string>
+    <string name="change">change</string>
+    <string name="by">by</string>
+    <string name="value">value</string>
+    <string name="print">print</string>
+    <string name="toConsole">to console</string>
 </resources>
