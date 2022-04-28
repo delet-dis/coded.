@@ -12,7 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hits.coded.data.models.itemsBottomSheet.enums.BottomSheetItemsScreens
 import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragmentInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.IncludeItemsPickingBottomSheetBinding
 import com.hits.coded.domain.extensions.dpToPx
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragmentStateAdapters.ItemsPickingViewPagerAdapter

@@ -1,4 +1,4 @@
-package com.hits.coded.data.models.sharedTypes
+package com.hits.coded.data.models.types
 
 enum class VariableType(val typeAsString: String) {
     STRING("String"),
