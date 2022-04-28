@@ -17,7 +17,7 @@ import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInt
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockElementHandlesDragAndDropInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockWithCustomRemoveViewProcess
+import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewVariableChangeByBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +30,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
-    UICodeBlockWithCustomRemoveViewProcess {
+    UICodeBlockWithCustomRemoveViewProcessInterface {
     private val binding: ViewVariableChangeByBlockBinding
 
     private var variableParams = StoredVariable()

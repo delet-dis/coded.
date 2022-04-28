@@ -11,7 +11,7 @@ import com.hits.coded.R
 import com.hits.coded.data.models.codeField.CodeFieldInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockWithCustomRemoveViewProcess
+import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartCodeBlock
@@ -106,7 +106,7 @@ class CodeField constructor(
                 draggableItem.y = dragEvent.y - (it.touchY)
             }
 
-            (itemParent.parent.parent as? UICodeBlockWithCustomRemoveViewProcess)?.customRemoveView(
+            (itemParent.parent.parent as? UICodeBlockWithCustomRemoveViewProcessInterface)?.customRemoveView(
                 draggableItem
             )
 
