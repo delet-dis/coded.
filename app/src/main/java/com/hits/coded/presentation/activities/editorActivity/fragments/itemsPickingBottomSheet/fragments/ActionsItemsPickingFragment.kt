@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragments
+package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater

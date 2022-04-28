@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel
+package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.hits.coded.data.models.itemsBottomSheet.dataClasses.BottomSheetItemsScreen

@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragments.variablesItemsPickingFragment.viewModels
+package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.variablesItemsPickingFragment.viewModels
 
 import androidx.lifecycle.ViewModel
 import com.hits.coded.data.models.heap.useCases.HeapUseCases

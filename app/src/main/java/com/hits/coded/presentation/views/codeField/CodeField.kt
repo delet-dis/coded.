@@ -15,8 +15,6 @@ import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInt
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
-import com.hits.coded.presentation.views.codeBlocks.actions.console.UIActionConsoleWriteBlock
-import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,8 +39,6 @@ class CodeField constructor(
         initDragAndDropListener()
 
         addBlock(startBlock)
-        addBlock(UIVariableChangeByBlock(context))
-        addBlock(UIActionConsoleWriteBlock(context))
     }
 
     override fun addBlock(viewToAdd: View) {

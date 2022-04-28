@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment
+package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -15,8 +15,8 @@ import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragm
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.IncludeItemsPickingBottomSheetBinding
 import com.hits.coded.domain.extensions.dpToPx
-import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragmentStateAdapters.ItemsPickingViewPagerAdapter
-import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel.ItemsPickingBottomSheetViewModel
+import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragmentStateAdapters.ItemsPickingViewPagerAdapter
+import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.viewModel.ItemsPickingBottomSheetViewModel
 
 
 class ItemsPickingBottomSheetController(

@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragmentStateAdapters
+package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragmentStateAdapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
