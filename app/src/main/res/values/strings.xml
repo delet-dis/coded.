@@ -37,4 +37,6 @@
     <string name="value">value</string>
     <string name="print">print</string>
     <string name="toConsole">to console</string>
+    <string name="consoleActions">Console actions</string>
+    <string name="console">Console</string>
 </resources>
