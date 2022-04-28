@@ -8,16 +8,25 @@ import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 import com.hits.coded.data.models.codeBlocks.types.BlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
+import com.hits.coded.data.models.console.ConsoleUseCases
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
+import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreterException.InterpreterException
 import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.data.models.types.ExceptionType
 import com.hits.coded.domain.repositories.InterpreterRepository
+import javax.inject.Inject
 
-class InterpreterRepositoryImplementation : InterpreterRepository() {
+class InterpreterRepositoryImplementation @Inject
+constructor(
+    private val consoleUseCases: ConsoleUseCases,
+    private val heapUseCases: HeapUseCases
+): InterpreterRepository() {
+
     override suspend fun interpreteStartBlock(start: StartBlock) {
         for (nestedBlock in start.nestedBlocks!!) {
             when (nestedBlock.type) {
@@ -352,7 +361,54 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     }
 
     override suspend fun interpreteIOBlocks(IO: IOBlock) {
-        //IO action function
+        when(IO.ioBlockType) {
+            IOBlockType.WRITE -> {
+                if (isVariable(IO.parameter)) {
+                    val variable = heapUseCases.getVariableUseCase.getVariable(IO.parameter)
+                        ?: throw InterpreterException(
+                            IO.id!!,
+                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                        )
+
+                    if (variable.value != null)
+                        consoleUseCases.writeToConsoleUseCase.writeToConsole(variable.value.toString())
+                    else
+                        consoleUseCases.writeToConsoleUseCase.writeToConsole("Undefined")
+                }
+
+                else {
+                    consoleUseCases.writeToConsoleUseCase.writeToConsole(IO.parameter.drop(1).dropLast(1))
+                }
+
+            }
+
+            IOBlockType.READ -> {
+                if (!isVariable(IO.parameter)) {
+                    throw InterpreterException(IO.id!!, ExceptionType.TYPE_MISMATCH)
+                }
+
+                val input = consoleUseCases.readFromConsoleUseCase.readFromConsole()
+                val variable = heapUseCases.getVariableUseCase.getVariable(IO.parameter)
+                    ?: throw InterpreterException(
+                        IO.id!!,
+                        ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                    )
+
+                val value: Any?
+                if (variable.type != null)
+                    value = tryToConvertString(input, variable.type!!) //??
+                else
+                    value = tryToConvertString(input, VariableType.STRING)
+
+
+
+                if(value == null)
+                    throw InterpreterException(IO.id!!, ExceptionType.TYPE_MISMATCH)
+
+
+                variable.value = value
+            }
+        }
     }
 
     private suspend fun convertAnyToDouble(value: Any): Double {
@@ -524,4 +580,34 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         }
         return null
     }
+
+    private fun isVariable(value: String): Boolean {
+        if(value.startsWith('"')) {
+            if(value.length > 1) {
+                if (value.endsWith('"')) {
+                    return false
+                }
+            }
+
+            //TODO: throw InterpreterException()
+        }
+
+        return true
+    }
+
+
+    private fun tryToConvertString(value: String, type: VariableType): Any? {
+        //TODO: array
+        return when (type) {
+            VariableType.BOOLEAN -> value.toBooleanStrictOrNull()
+            VariableType.INT -> value.toIntOrNull()
+            VariableType.DOUBLE -> value.toDoubleOrNull()
+            VariableType.STRING -> value
+        }
+    }
+
+    //private fun <T> divide(a: T, b: T): T {
+    //    return a / b
+    //}
+
 }
