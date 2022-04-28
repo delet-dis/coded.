@@ -46,13 +46,19 @@ class UIVariableCreationBlock @JvmOverloads constructor(
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initVariableNameChangeListener()
+
+        initEditTextsDragAndDropGesture()
     }
 
-    private fun initVariableNameChangeListener() = binding.variableName.addTextChangedListener {
-        variableParams.name = it.toString()
+    private fun initEditTextsDragAndDropGesture() =
+        binding.variableName.setOnDragListener(null)
 
-        _block.variableParams = variableParams
-    }
+    private fun initVariableNameChangeListener() =
+        binding.variableName.addTextChangedListener {
+            variableParams.name = it.toString()
+
+            _block.variableParams = variableParams
+        }
 
     private companion object {
         const val DRAG_AND_DROP_TAG = "VARIABLE_CREATION_BLOCK_"

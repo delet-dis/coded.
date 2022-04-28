@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.DragEvent
 import android.view.View
+import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
@@ -12,8 +14,10 @@ import com.hits.coded.data.models.itemsBottomSheet.enums.BottomSheetItemsScreens
 import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragmentInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.IncludeItemsPickingBottomSheetBinding
+import com.hits.coded.domain.extensions.dpToPx
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.fragmentStateAdapters.ItemsPickingViewPagerAdapter
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel.ItemsPickingBottomSheetViewModel
+
 
 class ItemsPickingBottomSheetController(
     private val binding: IncludeItemsPickingBottomSheetBinding,
@@ -33,6 +37,14 @@ class ItemsPickingBottomSheetController(
         initViewPager()
 
         initTabLayoutMediator()
+
+        initTopMargin()
+    }
+
+    private fun initTopMargin() {
+        binding.bottomSheetLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            setMargins(0, 50.dpToPx(binding.root.context), 0, 0)
+        }
     }
 
     private fun initTabLayoutMediator() {
@@ -92,12 +104,13 @@ class ItemsPickingBottomSheetController(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun initParentViewOnTouchListener(){
+    private fun initParentViewOnTouchListener() {
         binding.bottomSheetLayout.setOnTouchListener { _, _ ->
             true
         }
 
     }
+
     private fun redrawCurrentViewPagerScreen() =
         (BottomSheetItemsScreens.values()[binding.viewPager.currentItem].bottomSheetItemsScreen.screen
                 as? UIBottomSheetFragmentInterface)?.redrawElements()
