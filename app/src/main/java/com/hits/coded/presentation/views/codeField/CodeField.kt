@@ -11,9 +11,11 @@ import com.hits.coded.R
 import com.hits.coded.data.models.codeField.CodeFieldInterface
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
+import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockWithCustomRemoveViewProcess
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartCodeBlock
+import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -38,6 +40,7 @@ class CodeField constructor(
         initDragAndDropListener()
 
         addBlock(startBlock)
+        addBlock(UIVariableChangeByBlock(context))
     }
 
     override fun addBlock(viewToAdd: View) {
@@ -102,6 +105,10 @@ class CodeField constructor(
                 draggableItem.x = dragEvent.x - (it.touchX)
                 draggableItem.y = dragEvent.y - (it.touchY)
             }
+
+            (itemParent.parent.parent as? UICodeBlockWithCustomRemoveViewProcess)?.customRemoveView(
+                draggableItem
+            )
 
             itemParent.removeView(draggableItem)
 

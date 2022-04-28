@@ -17,6 +17,7 @@ import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInt
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
 import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.models.uiSharedInterfaces.UICodeBlockWithCustomRemoveViewProcess
 import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewVariableChangeByBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +29,8 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
-    UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface {
+    UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
+    UICodeBlockWithCustomRemoveViewProcess {
     private val binding: ViewVariableChangeByBlockBinding
 
     private var variableParams = StoredVariable()
@@ -53,16 +55,19 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
 
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
+        initDragAndDropListener()
+
         initVariableNameChangeListener()
 
         initVariableChangeValueListener()
     }
 
-    private fun initVariableNameChangeListener() = binding.variableName.addTextChangedListener {
-        variableParams.name = it.toString()
+    private fun initVariableNameChangeListener() =
+        binding.variableName.addTextChangedListener {
+            variableParams.name = it.toString()
 
-        _block.variableParams = variableParams
-    }
+            _block.variableParams = variableParams
+        }
 
     private fun initVariableChangeValueListener() =
         binding.variableChangeValue.addTextChangedListener {
@@ -70,41 +75,54 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
         }
 
     override fun initDragAndDropListener() {
-        binding.secondCard.setOnDragListener { view, dragEvent ->
+        binding.variableChangeValue.setOnDragListener { _, _ ->
+            true
+        }
+
+        binding.variableName.setOnDragListener { _, _ ->
+            true
+        }
+
+        binding.parentConstraint.setOnDragListener { view, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            val itemParent = draggableItem.parent as ViewGroup
+            if(draggableItem == draggableItem){
+                //TODO: Добавить проверку на то, закидывается ли условие или выражение
 
-            when (dragEvent.action) {
-                DragEvent.ACTION_DRAG_STARTED,
-                DragEvent.ACTION_DRAG_LOCATION -> true
+                val itemParent = draggableItem.parent as ViewGroup
 
-                DragEvent.ACTION_DRAG_ENTERED -> {
-                    scalePlusAnimation(binding.parentConstraint)
+                when (dragEvent.action) {
+                    DragEvent.ACTION_DRAG_STARTED,
+                    DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
-                    true
+                    DragEvent.ACTION_DRAG_ENTERED -> {
+                        scalePlusAnimation(binding.parentConstraint)
+
+                        return@setOnDragListener true
+                    }
+
+                    DragEvent.ACTION_DRAG_EXITED -> {
+                        scaleMinusAnimation(binding.parentConstraint)
+
+                        return@setOnDragListener true
+                    }
+
+                    DragEvent.ACTION_DROP -> {
+                        handleDropEvent(itemParent, draggableItem)
+
+                        return@setOnDragListener true
+                    }
+
+                    DragEvent.ACTION_DRAG_ENDED -> {
+                        handleDragEndedEvent(draggableItem)
+
+                        return@setOnDragListener true
+                    }
+
+                    else -> return@setOnDragListener false
                 }
-
-                DragEvent.ACTION_DRAG_EXITED -> {
-                    scaleMinusAnimation(binding.parentConstraint)
-
-                    true
-                }
-
-                DragEvent.ACTION_DROP -> {
-                    handleDropEvent(itemParent, draggableItem)
-
-                    true
-                }
-
-                DragEvent.ACTION_DRAG_ENDED -> {
-//                    handleDragEndedEvent(itemParent, draggableItem)
-
-                    true
-                }
-
-                else -> false
             }
+            false
         }
     }
 
@@ -119,8 +137,8 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
                 itemParent.removeView(draggableItem)
 
                 variableChangeValue.apply {
-                    visibility = View.INVISIBLE
                     setText("")
+                    visibility = INVISIBLE
                 }
 
                 secondCard.addView(draggableItem)
@@ -131,11 +149,29 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
             }
         }
 
-    override fun removeView(view: View?) {
-        super.removeView(view)
+    private fun handleDragEndedEvent(
+        draggableItem: View
+    ) {
+        draggableItem.post {
+            draggableItem.animate().alpha(1f).duration =
+                UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
+        }
 
-        binding.variableChangeValue.visibility = View.VISIBLE
-        _block.valueToSet = ""
+        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.valueToSet) {
+            draggableItem.x = 0f
+            draggableItem.y = 0f
+        }
+
+        this.invalidate()
+    }
+
+    override fun customRemoveView(view: View) {
+        binding.secondCard.removeView(view)
+
+        binding.variableChangeValue.apply {
+            setText("")
+            visibility = VISIBLE
+        }
     }
 
     private companion object {
