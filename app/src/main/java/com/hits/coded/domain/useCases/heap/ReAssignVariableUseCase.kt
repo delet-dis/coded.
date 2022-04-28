@@ -4,6 +4,6 @@ import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.domain.repositories.HeapRepository
 
 class ReAssignVariableUseCase(private val heapRepository: HeapRepository) {
-    suspend fun reAssignVariable(variableName: String, newValue: StoredVariable) =
+    suspend fun reAssignVariable(variableName: String, newValue: Any) =
         heapRepository.reAssignVariable(variableName, newValue)
 }

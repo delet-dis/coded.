@@ -18,7 +18,12 @@ import com.hits.coded.data.models.types.ExceptionType
 import com.hits.coded.domain.repositories.InterpreterRepository
 
 class InterpreterRepositoryImplementation : InterpreterRepository() {
+    private var currentId:Int=0
     override suspend fun interpreteStartBlock(start: StartBlock) {
+        start.id?.let{
+            currentId=it
+        }
+
         for (nestedBlock in start.nestedBlocks!!) {
             when (nestedBlock.type) {
                 BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
@@ -38,6 +43,9 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
 
     @Throws
     override suspend fun interpreteConditionBlocks(condition: ConditionBlock): Boolean {
+        condition.id?.let{
+            currentId=it
+        }
         var conditionIsTrue = false
         val leftSideType = getTypeOfAny(condition.leftSide)
         val rightSideType = getTypeOfAny(condition.rightSide)
@@ -247,6 +255,9 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     }
 
     override suspend fun interpreteLoopBlocks(loop: LoopBlock) {
+        loop.id?.let{
+            currentId=it
+        }
         if (loop.nestedBlocks != null) {
             while (interpreteConditionBlocks(loop.conditionBlock as ConditionBlock)) {
                 for (nestedBlock in loop.nestedBlocks!!) {
@@ -263,6 +274,9 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     }
 
     override suspend fun interpreteVariableBlocks(variable: VariableBlock): StoredVariable? {
+        variable.id?.let{
+            currentId=it
+        }
         when (variable.variableBlockType) {
             VariableBlockType.VARIABLE_SET -> {
                 when (variable.valueToSet) {
@@ -408,6 +422,9 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     }
 
     override suspend fun interpreteExpressionBlocks(expression: ExpressionBlock): Any {
+        expression.id?.let{
+            currentId=it
+        }
         val leftSideType: VariableType? = getTypeOfAny(expression.leftSide)
         val rightSideType: VariableType? = getTypeOfAny(expression.rightSide)
         if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
@@ -463,6 +480,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     }
 
     private suspend fun convertAnyToDouble(value: Any): Double {
+
         when (value) {
             is Double -> return value
             is ExpressionBlock -> return interpreteExpressionBlocks(value) as Double
@@ -473,26 +491,26 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         HeapRepositoryImplementation().getVariable(variableName)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
-                            0,
+                            currentId,
                             ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                         )
                     } else {
                         if (foundedStoredVariable.type == VariableType.DOUBLE) {
                             return foundedStoredVariable.value as Double
                         } else {
-                            throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                         }
                     }
                 } else {
                     if (value.toDoubleOrNull() is Double) {
                         return value.toDouble()
                     } else {
-                        throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                        throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                     }
                 }
             }
         }
-        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
+        throw InterpreterException(currentId, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
     private suspend fun convertAnyToInt(value: Any): Int {
@@ -511,26 +529,26 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         HeapRepositoryImplementation().getVariable(variableName)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
-                            0,
+                            currentId,
                             ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                         )
                     } else {
                         if (foundedStoredVariable.type == VariableType.INT) {
                             return foundedStoredVariable.value as Int
                         } else {
-                            throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                         }
                     }
                 } else {
                     if (value.toIntOrNull() is Int) {
                         return value.toInt()
                     } else {
-                        throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                        throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                     }
                 }
             }
         }
-        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
+        throw InterpreterException(currentId, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
     private suspend fun convertAnyToBoolean(value: Any): Boolean {
@@ -540,7 +558,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 if (getTypeOfAny(value) == VariableType.BOOLEAN) return interpreteExpressionBlocks(
                     value
                 ) as Boolean else {
-                    throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                 }
             }
             is String -> {
@@ -550,26 +568,26 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         HeapRepositoryImplementation().getVariable(variableName)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
-                            0,
+                            currentId,
                             ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                         )
                     } else {
                         if (foundedStoredVariable.type == VariableType.BOOLEAN) {
                             return foundedStoredVariable.value as Boolean
                         } else {
-                            throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                         }
                     }
                 } else {
                     if (value.toBooleanStrictOrNull() is Boolean) {
                         return value.toBooleanStrict()
                     } else {
-                        throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                        throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                     }
                 }
             }
         }
-        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
+        throw InterpreterException(currentId, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
     private suspend fun convertAnyToString(value: Any): String {
@@ -577,7 +595,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             is ExpressionBlock -> {
                 return if (getTypeOfAny(value) == VariableType.STRING) interpreteExpressionBlocks(
                     value
-                ) as String else throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                ) as String else throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
             }
             is String -> {
                 if (value[0] == '"' && value[value.lastIndex] == '"') {
@@ -586,14 +604,14 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         HeapRepositoryImplementation().getVariable(variableName)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
-                            0,
+                            currentId,
                             ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                         )
                     } else {
                         if (foundedStoredVariable.type == VariableType.STRING) {
                             return foundedStoredVariable.value as String
                         } else {
-                            throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
+                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                         }
                     }
                 } else {
@@ -601,7 +619,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 }
             }
         }
-        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
+        throw InterpreterException(currentId, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
     private suspend fun getTypeOfAny(value: Any?): VariableType? {
@@ -613,7 +631,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         HeapRepositoryImplementation().getVariable(variableName)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
-                            0,
+                            currentId,
                             ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                         )
                     } else {
@@ -634,7 +652,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             is ExpressionBlock -> return getTypeOfAny(interpreteExpressionBlocks(value))
             is VariableBlock -> return value.variableParams?.type
         }
-        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
+        throw InterpreterException(currentId, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 }
 
