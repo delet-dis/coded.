@@ -1,9 +1,13 @@
 package com.hits.coded.data.modules
 
-import com.hits.coded.data.models.interpreter.InterpreterUseCases
+import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.data.repositoriesImplementations.InterpreterRepositoryImplementation
 import com.hits.coded.domain.repositories.InterpreterRepository
-import com.hits.coded.domain.useCases.interpreter.*
+import com.hits.coded.domain.useCases.interpreter.InterpreteConditionBlockUseCase
+import com.hits.coded.domain.useCases.interpreter.InterpreteExpressionBlockUseCase
+import com.hits.coded.domain.useCases.interpreter.InterpreteIOBlockUseCase
+import com.hits.coded.domain.useCases.interpreter.InterpreteLoopBlockUseCase
+import com.hits.coded.domain.useCases.interpreter.InterpreteVariableBlockUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

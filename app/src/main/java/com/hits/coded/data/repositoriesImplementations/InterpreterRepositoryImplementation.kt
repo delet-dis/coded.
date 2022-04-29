@@ -13,12 +13,13 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
-import com.hits.coded.data.models.console.ConsoleUseCases
+import com.hits.coded.data.models.console.useCases.ConsoleUseCases
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
-import com.hits.coded.data.models.interpreterException.InterpreterException
+import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
+
 import com.hits.coded.domain.repositories.InterpreterRepository
 import javax.inject.Inject
 
