@@ -1,5 +1,6 @@
 package com.hits.coded.data.repositoriesImplementations
 
+import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.ConditionBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.ExpressionBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
@@ -16,8 +17,8 @@ import com.hits.coded.data.models.console.ConsoleUseCases
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreterException.InterpreterException
+import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
-import com.hits.coded.data.models.types.ExceptionType
 import com.hits.coded.domain.repositories.InterpreterRepository
 import javax.inject.Inject
 
@@ -388,53 +389,75 @@ constructor(
     }
 
     override suspend fun interpreteIOBlocks(IO: IOBlock) {
+        currentId = IO.id!!
+
         when(IO.ioBlockType) {
             IOBlockType.WRITE -> {
-                if (isVariable(IO.parameter)) {
-                    val variable = heapUseCases.getVariableUseCase.getVariable(IO.parameter)
-                        ?: throw InterpreterException(
-                            IO.id!!,
-                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                        )
 
-                    if (variable.value != null)
-                        consoleUseCases.writeToConsoleUseCase.writeToConsole(variable.value.toString())
-                    else
-                        consoleUseCases.writeToConsoleUseCase.writeToConsole("Undefined")
+                if(IO.argument is BlockBase) {
+                    consoleUseCases.writeToConsoleUseCase.writeToConsole(
+                        interpretBlock(IO.argument as BlockBase).toString()
+                    )
+                }
+
+                else if (IO.argument is String) {
+                    val argument = IO.argument as String
+                    if (isVariable(argument)) {
+                        val variable = heapUseCases.getVariableUseCase.getVariable(argument)
+                            ?: throw InterpreterException(
+                                currentId,
+                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                            )
+
+                        if (variable.value != null)
+                            consoleUseCases.writeToConsoleUseCase.writeToConsole(variable.value.toString())
+                        else
+                            consoleUseCases.writeToConsoleUseCase.writeToConsole("Undefined")
+                    }
+                    else {
+                        consoleUseCases.writeToConsoleUseCase.writeToConsole(argument.drop(1).dropLast(1))
+                    }
                 }
 
                 else {
-                    consoleUseCases.writeToConsoleUseCase.writeToConsole(IO.parameter.drop(1).dropLast(1))
+                    throw InterpreterException(currentId, ExceptionType.INVALID_BLOCK)
                 }
-
             }
 
             IOBlockType.READ -> {
-                if (!isVariable(IO.parameter)) {
-                    throw InterpreterException(IO.id!!, ExceptionType.TYPE_MISMATCH)
+
+                //TODO: этого может никогда не быть
+                if (IO.argument !is String) {
+                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                }
+                val arg = IO.argument as String
+                if (!isVariable(arg)) {
+                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                 }
 
-                val input = consoleUseCases.readFromConsoleUseCase.readFromConsole()
-                val variable = heapUseCases.getVariableUseCase.getVariable(IO.parameter)
+                val variable = heapUseCases.getVariableUseCase.getVariable(arg)
                     ?: throw InterpreterException(
-                        IO.id!!,
+                        currentId,
                         ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                     )
 
-                val value: Any?
-                if (variable.type != null)
-                    value = tryToConvertString(input, variable.type!!) //??
-                else
-                    value = tryToConvertString(input, VariableType.STRING)
-
-
-
-                if(value == null)
-                    throw InterpreterException(IO.id!!, ExceptionType.TYPE_MISMATCH)
-
+                val input = consoleUseCases.readFromConsoleUseCase.readFromConsole()
+                val value = tryToConvertString(input, variable.type!!)
+                    ?: throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
 
                 variable.value = value
             }
+        }
+    }
+
+    private suspend fun  interpretBlock(block: BlockBase): Any? {
+        return when (block.type) {
+            BlockType.CONDITION  -> interpreteConditionBlocks(block as ConditionBlock)
+            BlockType.EXPRESSION -> interpreteExpressionBlocks(block as ExpressionBlock)
+            BlockType.IO         -> interpreteIOBlocks(block as IOBlock)
+            BlockType.LOOP       -> interpreteLoopBlocks(block as LoopBlock)
+            BlockType.VARIABLE   -> interpreteVariableBlocks(block as VariableBlock)
+            BlockType.START      -> interpreteStartBlock(block as StartBlock)
         }
     }
 
@@ -621,7 +644,7 @@ constructor(
                 }
             }
 
-            //TODO: throw InterpreterException()
+            throw InterpreterException(currentId, ExceptionType.INVALID_STRING)
         }
 
         return true

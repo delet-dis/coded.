@@ -1,6 +1,6 @@
 package com.hits.coded.data.models.interpreterException
 
-import com.hits.coded.data.models.types.ExceptionType
+import com.hits.coded.data.models.sharedTypes.ExceptionType
 
 class InterpreterException(
     val blockID: Int,

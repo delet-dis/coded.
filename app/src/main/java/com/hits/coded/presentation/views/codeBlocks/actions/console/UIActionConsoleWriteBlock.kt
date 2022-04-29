@@ -62,7 +62,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         binding.variableName.addTextChangedListener {
             variableParams.name = it.toString()
 
-            _block.output = variableParams
+            _block.argument = variableParams
         }
 
 
@@ -132,7 +132,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
                 binding.firstCard.addView(draggableItem)
 
                 (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                    _block.output = it
+                    _block.argument = it
                 }
             }
         }
@@ -145,7 +145,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
                 UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
         }
 
-        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.output) {
+        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.argument) {
             draggableItem.x = 0f
             draggableItem.y = 0f
         }
@@ -156,7 +156,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
     override fun customRemoveView(view: View) {
         binding.firstCard.removeView(view)
 
-        _block.output = null
+        _block.argument = null
 
         binding.variableName.apply {
             setText("")
