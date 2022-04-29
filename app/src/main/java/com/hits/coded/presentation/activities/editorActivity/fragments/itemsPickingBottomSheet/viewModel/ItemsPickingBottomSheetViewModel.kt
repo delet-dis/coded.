@@ -1,8 +1,8 @@
 package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.viewModel
 
 import androidx.lifecycle.ViewModel
-import com.hits.coded.data.models.itemsBottomSheet.dataClasses.BottomSheetItemsScreen
-import com.hits.coded.data.models.itemsBottomSheet.enums.BottomSheetItemsScreens
+import com.hits.coded.data.models.itemsPickingBottomSheet.dataClasses.BottomSheetItemsScreen
+import com.hits.coded.data.models.itemsPickingBottomSheet.enums.BottomSheetItemsScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

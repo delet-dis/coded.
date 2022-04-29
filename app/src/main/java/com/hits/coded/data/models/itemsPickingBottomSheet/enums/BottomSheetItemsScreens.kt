@@ -1,7 +1,7 @@
-package com.hits.coded.data.models.itemsBottomSheet.enums
+package com.hits.coded.data.models.itemsPickingBottomSheet.enums
 
 import com.hits.coded.R
-import com.hits.coded.data.models.itemsBottomSheet.dataClasses.BottomSheetItemsScreen
+import com.hits.coded.data.models.itemsPickingBottomSheet.dataClasses.BottomSheetItemsScreen
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.ActionsItemsPickingFragment
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.LogicItemsPickingFragment
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.LoopsItemsPickingFragment

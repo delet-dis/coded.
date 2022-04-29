@@ -6,7 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragmentInterface
+import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
+import com.hits.coded.data.interfaces.ui.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.databinding.FragmentVariablesItemsPickingBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.variablesItemsPickingFragment.viewModels.VariablesItemsPickingFragmentViewModel
 import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock
@@ -14,7 +15,7 @@ import com.hits.coded.presentation.views.codeBlocks.variables.creationBlock.UIVa
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class VariablesItemsPickingFragment : Fragment(), UIBottomSheetFragmentInterface {
+class VariablesItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterface {
     private lateinit var binding: FragmentVariablesItemsPickingBinding
 
     private val viewModel: VariablesItemsPickingFragmentViewModel by viewModels()
@@ -44,7 +45,9 @@ class VariablesItemsPickingFragment : Fragment(), UIBottomSheetFragmentInterface
     override fun redrawElements() {
         binding.variablesActionsLinearLayout.apply {
             removeAllViews()
-            addView(UIVariableCreationBlock(requireContext()))
+            addView(UIVariableCreationBlock(requireContext()).apply {
+                initCallback(requireActivity() as UIEditorActivityShowBottomSheetCallback)
+            })
             addView(UIVariableChangeByBlock(requireContext()))
         }
     }

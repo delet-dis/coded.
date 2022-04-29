@@ -1,4 +1,4 @@
-package com.hits.coded.data.models.itemsBottomSheet.dataClasses
+package com.hits.coded.data.models.itemsPickingBottomSheet.dataClasses
 
 import androidx.fragment.app.Fragment
 

@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragmentInterface
+import com.hits.coded.data.interfaces.ui.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.databinding.FragmentActionsItemsPickingBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ActionsItemsPickingFragment : Fragment(), UIBottomSheetFragmentInterface {
+class ActionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterface {
     private lateinit var binding: FragmentActionsItemsPickingBinding
 
     override fun onCreateView(

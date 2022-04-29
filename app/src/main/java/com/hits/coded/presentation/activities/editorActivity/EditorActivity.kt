@@ -10,22 +10,26 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
+import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
+import com.hits.coded.data.models.types.VariableType
 import com.hits.coded.databinding.ActivityEditorBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.ItemsPickingBottomSheetController
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.viewModel.ItemsPickingBottomSheetViewModel
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.VariableTypeChangerBottomSheetController
+import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.viewModel.VariableTypeChangerViewModel
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
 import com.hits.coded.presentation.views.codeField.CodeField
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class EditorActivity : AppCompatActivity() {
+class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallback {
     private lateinit var binding: ActivityEditorBinding
 
     private val viewModel: EditorActivityViewModel by viewModels()
 
     private lateinit var itemsPickingBottomSheetController: ItemsPickingBottomSheetController
+    private lateinit var typeChangerBottomSheetController: VariableTypeChangerBottomSheetController
 
     private lateinit var codeField: CodeField
 
@@ -46,9 +50,9 @@ class EditorActivity : AppCompatActivity() {
 
         initItemsPickingBottomSheet()
 
-        initBottomBarButtonsOnClicks()
+        initVariableTypeChangerBottomSheet()
 
-        VariableTypeChangerBottomSheetController(binding.variableTypeChangerBottomSheet, this).show()
+        initBottomBarButtonsOnClicks()
     }
 
     private fun initBinding() {
@@ -160,6 +164,15 @@ class EditorActivity : AppCompatActivity() {
         )
     }
 
+    private fun initVariableTypeChangerBottomSheet() {
+        val bottomSheetViewModel: VariableTypeChangerViewModel by viewModels()
+
+        typeChangerBottomSheetController = VariableTypeChangerBottomSheetController(
+            binding.variableTypeChangerBottomSheet,
+            bottomSheetViewModel, this
+        )
+    }
+
     private fun showBottomSheet() {
         itemsPickingBottomSheetController.show()
     }
@@ -170,4 +183,8 @@ class EditorActivity : AppCompatActivity() {
                 showBottomSheet()
             }
         }
+
+    override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) {
+        typeChangerBottomSheetController.show(closureToInvoke)
+    }
 }

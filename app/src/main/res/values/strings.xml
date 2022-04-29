@@ -40,4 +40,11 @@
     <string name="create">create</string>
     <string name="variable">variable</string>
     <string name="changeVariableType">Change variable type</string>
+    <string name="variableType">variable type</string>
+    <string name="arrayType">array type</string>
+
+    <string name="stringType">String</string>
+    <string name="doubleType">Double</string>
+    <string name="integerType">Int</string>
+    <string name="booleanType">Boolean</string>
 </resources>

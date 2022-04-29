@@ -10,9 +10,9 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hits.coded.data.models.itemsBottomSheet.enums.BottomSheetItemsScreens
-import com.hits.coded.data.models.itemsBottomSheet.interfaces.UIBottomSheetFragmentInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
+import com.hits.coded.data.models.itemsPickingBottomSheet.enums.BottomSheetItemsScreens
 import com.hits.coded.databinding.IncludeItemsPickingBottomSheetBinding
 import com.hits.coded.domain.extensions.dpToPx
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragmentStateAdapters.ItemsPickingViewPagerAdapter
@@ -112,5 +112,5 @@ class ItemsPickingBottomSheetController(
 
     private fun redrawCurrentViewPagerScreen() =
         (BottomSheetItemsScreens.values()[binding.itemsPickingViewPager.currentItem].bottomSheetItemsScreen.screen
-                as? UIBottomSheetFragmentInterface)?.redrawElements()
+                as? UIBottomSheetItemsFragmentInterface)?.redrawElements()
 }
