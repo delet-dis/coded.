@@ -9,13 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hits.coded.R
-import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
+import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
-import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.models.codeBlocks.bases.BlockBase
+import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.databinding.ViewActionStartBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -55,7 +55,7 @@ class UIActionStartBlock constructor(
         initDragAndDropListener()
     }
 
-    override fun initDragAndDropListener() {
+    override fun initDragAndDropListener() =
         binding.parentConstraint.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
@@ -94,27 +94,25 @@ class UIActionStartBlock constructor(
                 }
             }
         }
-    }
 
     private fun handleDropEvent(
         itemParent: ViewGroup,
         draggableItem: View
-    ) =
-        with(binding) {
-            if (draggableItem != this@UIActionStartBlock) {
-                scaleMinusAnimation(parentConstraint)
+    ) = with(binding) {
+        if (draggableItem != this@UIActionStartBlock) {
+            scaleMinusAnimation(parentConstraint)
 
-                itemParent.removeView(draggableItem)
+            itemParent.removeView(draggableItem)
 
-                nestedBlocks.addView(draggableItem)
+            nestedBlocks.addView(draggableItem)
 
-                (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                    nestedBlocksAsBlockBase.add(it)
+            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                nestedBlocksAsBlockBase.add(it)
 
-                    _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
-                }
+                _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
             }
         }
+    }
 
     private fun handleDragEndedEvent(
         itemParent: ViewGroup,

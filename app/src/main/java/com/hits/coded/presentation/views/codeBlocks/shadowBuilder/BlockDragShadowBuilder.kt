@@ -8,9 +8,8 @@ class BlockDragShadowBuilder(view: View, private val touchX: Int, private val to
     View.DragShadowBuilder(view) {
     private val shadow = view
 
-    override fun onDrawShadow(canvas: Canvas?) {
+    override fun onDrawShadow(canvas: Canvas?) =
         shadow.draw(canvas)
-    }
 
     override fun onProvideShadowMetrics(outShadowSize: Point?, outShadowTouchPoint: Point?) {
         val height: Int = view.height

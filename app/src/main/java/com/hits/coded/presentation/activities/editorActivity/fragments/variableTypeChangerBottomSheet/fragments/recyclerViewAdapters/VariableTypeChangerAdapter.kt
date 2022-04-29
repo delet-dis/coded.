@@ -35,7 +35,7 @@ class VariableTypeChangerAdapter(
         fun bind(data: VariableType) {
             binding.type.setText(data.typeAsStringResource)
 
-            binding.type.setOnClickListener {
+            binding.root.setOnClickListener {
                 clickListener.invoke(data, isArray)
             }
         }

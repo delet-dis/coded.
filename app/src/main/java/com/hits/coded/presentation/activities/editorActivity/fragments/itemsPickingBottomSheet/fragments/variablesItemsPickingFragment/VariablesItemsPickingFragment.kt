@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
-import com.hits.coded.data.interfaces.ui.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
+import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.databinding.FragmentVariablesItemsPickingBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.variablesItemsPickingFragment.viewModels.VariablesItemsPickingFragmentViewModel
 import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock

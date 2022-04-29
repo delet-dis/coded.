@@ -53,7 +53,7 @@ class CodeField constructor(
         }
     }
 
-    override fun initDragAndDropListener() {
+    override fun initDragAndDropListener() =
         binding.fieldLayout.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
@@ -84,7 +84,6 @@ class CodeField constructor(
                 else -> false
             }
         }
-    }
 
     private fun handleDropEvent(
         itemParent: ViewGroup,

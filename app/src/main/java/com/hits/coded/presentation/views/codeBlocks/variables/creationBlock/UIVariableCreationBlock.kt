@@ -1,5 +1,6 @@
 package com.hits.coded.presentation.views.codeBlocks.variables.creationBlock
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -58,14 +59,21 @@ class UIVariableCreationBlock @JvmOverloads constructor(
             variableParams.name = it.toString()
         }
 
-    fun initCallback(callback: UIEditorActivityShowBottomSheetCallback) {
-        binding.variableType.setOnClickListener {
-            callback.showTypeChangingBottomSheet { type, isArray ->
-                variableParams.type = type
-                variableParams.isArray = isArray
+    @SuppressLint("SetTextI18n")
+    fun initCallback(callback: UIEditorActivityShowBottomSheetCallback) =
+        with(binding.variableType) {
+            setOnClickListener {
+                callback.showTypeChangingBottomSheet { type, isArray ->
+                    variableParams.type = type
+                    variableParams.isArray = isArray
+
+                    text = this.context.getString(type.typeAsStringResource) + " " +
+                            if (isArray) this.context.getString(R.string.array) else ""
+
+                    callback.hideTypeChangerBottomSheet()
+                }
             }
         }
-    }
 
     private companion object {
         const val DRAG_AND_DROP_TAG = "VARIABLE_CREATION_BLOCK_"

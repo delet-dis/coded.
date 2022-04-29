@@ -11,7 +11,8 @@ import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
-import com.hits.coded.data.interfaces.ui.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
+import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetWithViewPagerInterface
+import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.data.models.itemsPickingBottomSheet.enums.BottomSheetItemsScreens
 import com.hits.coded.databinding.IncludeItemsPickingBottomSheetBinding
 import com.hits.coded.domain.extensions.dpToPx
@@ -23,7 +24,7 @@ class ItemsPickingBottomSheetController(
     private val binding: IncludeItemsPickingBottomSheetBinding,
     private val viewModel: ItemsPickingBottomSheetViewModel,
     private val parentActivity: Activity
-) : UIElementHandlesDragAndDropInterface {
+) : UIElementHandlesDragAndDropInterface, UIBottomSheetWithViewPagerInterface {
 
     private val behaviour = BottomSheetBehavior.from(binding.itemsPickingBottomSheetLayout)
 
@@ -41,21 +42,22 @@ class ItemsPickingBottomSheetController(
         initTopMargin()
     }
 
-    private fun initTopMargin() {
+    override fun initTopMargin() =
         binding.itemsPickingBottomSheetLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             setMargins(0, 50.dpToPx(binding.root.context), 0, 0)
         }
-    }
 
-    private fun initTabLayoutMediator() {
-        TabLayoutMediator(binding.itemsPickingTabLayout, binding.itemsPickingViewPager) { tab, position ->
+    override fun initTabLayoutMediator() =
+        TabLayoutMediator(
+            binding.itemsPickingTabLayout,
+            binding.itemsPickingViewPager
+        ) { tab, position ->
             tab.text = binding.root.context.getString(viewModel.getItemsScreens()[position].nameId)
                 .lowercase()
                 .replaceFirstChar {
                     it.uppercase()
                 }
         }.attach()
-    }
 
     fun show() {
         behaviour.state = BottomSheetBehavior.STATE_HALF_EXPANDED
@@ -63,7 +65,7 @@ class ItemsPickingBottomSheetController(
         redrawCurrentViewPagerScreen()
     }
 
-    private fun initViewPager() {
+    override fun initViewPager() {
         binding.itemsPickingViewPager.adapter =
             ItemsPickingViewPagerAdapter(
                 parentActivity as FragmentActivity,
@@ -71,12 +73,12 @@ class ItemsPickingBottomSheetController(
             )
     }
 
-    private fun initDismissButtonOnClickListener() =
+    override fun initDismissButtonOnClickListener() =
         binding.itemsPickingxMarkButton.setOnClickListener {
             behaviour.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-    override fun initDragAndDropListener() {
+    override fun initDragAndDropListener() =
         binding.itemsPickingViewPager.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
@@ -101,14 +103,12 @@ class ItemsPickingBottomSheetController(
                 else -> false
             }
         }
-    }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun initParentViewOnTouchListener() {
+    override fun initParentViewOnTouchListener() =
         binding.itemsPickingBottomSheetLayout.setOnTouchListener { _, _ ->
             true
         }
-    }
 
     private fun redrawCurrentViewPagerScreen() =
         (BottomSheetItemsScreens.values()[binding.itemsPickingViewPager.currentItem].bottomSheetItemsScreen.screen

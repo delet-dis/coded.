@@ -9,16 +9,16 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
-import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
-import com.hits.coded.data.models.heap.dataClasses.StoredVariable
+import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
-import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.models.codeBlocks.bases.BlockBase
+import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
+import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.databinding.ViewVariableChangeByBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -86,7 +86,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
         binding.parentConstraint.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            if(draggableItem == draggableItem){
+            if (draggableItem == draggableItem) {
                 //TODO: Добавить проверку на то, закидывается ли условие или выражение
 
                 val itemParent = draggableItem.parent as ViewGroup
@@ -129,25 +129,24 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     private fun handleDropEvent(
         itemParent: ViewGroup,
         draggableItem: View
-    ) =
-        with(binding) {
-            if (draggableItem != this@UIVariableChangeByBlock) {
-                alphaPlusAnimation(parentConstraint)
+    ) = with(binding) {
+        if (draggableItem != this@UIVariableChangeByBlock) {
+            alphaPlusAnimation(parentConstraint)
 
-                itemParent.removeView(draggableItem)
+            itemParent.removeView(draggableItem)
 
-                variableChangeValue.apply {
-                    setText("")
-                    visibility = INVISIBLE
-                }
+            variableChangeValue.apply {
+                setText("")
+                visibility = INVISIBLE
+            }
 
-                secondCard.addView(draggableItem)
+            secondCard.addView(draggableItem)
 
-                (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                    _block.valueToSet = it
-                }
+            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                _block.valueToSet = it
             }
         }
+    }
 
     private fun handleDragEndedEvent(
         draggableItem: View

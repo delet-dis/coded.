@@ -4,4 +4,5 @@ import com.hits.coded.data.models.types.VariableType
 
 interface UIEditorActivityShowBottomSheetCallback {
     fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit)
+    fun hideTypeChangerBottomSheet()
 }

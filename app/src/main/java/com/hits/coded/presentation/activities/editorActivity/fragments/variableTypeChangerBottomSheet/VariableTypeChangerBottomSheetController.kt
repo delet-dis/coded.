@@ -8,7 +8,8 @@ import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hits.coded.R
-import com.hits.coded.data.interfaces.ui.typeChangerBottomSheet.UIBottomSheetTypeChangerFragmentInterface
+import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetWithViewPagerInterface
+import com.hits.coded.data.interfaces.ui.bottomSheets.typeChangerBottomSheet.UIBottomSheetTypeChangerFragmentInterface
 import com.hits.coded.data.models.typeChangerBottomSheet.enums.BottomSheetTypeChangersScreens
 import com.hits.coded.data.models.types.VariableType
 import com.hits.coded.databinding.IncludeVariableTypeChangerBottomSheetBinding
@@ -20,7 +21,7 @@ class VariableTypeChangerBottomSheetController(
     private val binding: IncludeVariableTypeChangerBottomSheetBinding,
     private val viewModel: VariableTypeChangerViewModel,
     private val parentActivity: Activity
-) {
+) : UIBottomSheetWithViewPagerInterface {
 
     private val behaviour = BottomSheetBehavior.from(binding.typeChangerBottomSheetLayout)
 
@@ -36,7 +37,7 @@ class VariableTypeChangerBottomSheetController(
         initTabLayoutMediator()
     }
 
-    private fun initTabLayoutMediator() {
+    override fun initTabLayoutMediator() =
         TabLayoutMediator(
             binding.typeChangerTabLayout,
             binding.typeChangerViewPager
@@ -62,13 +63,11 @@ class VariableTypeChangerBottomSheetController(
             }
 
         }.attach()
-    }
 
-    private fun initTopMargin() {
+    override fun initTopMargin() =
         binding.typeChangerBottomSheetLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             setMargins(0, 50.dpToPx(binding.root.context), 0, 0)
         }
-    }
 
     fun show(closureToInvokeAfterTypePick: (VariableType, Boolean) -> Unit) {
         behaviour.state = BottomSheetBehavior.STATE_HALF_EXPANDED
@@ -76,29 +75,30 @@ class VariableTypeChangerBottomSheetController(
         initFragmentsRecyclers(closureToInvokeAfterTypePick)
     }
 
-    private fun initFragmentsRecyclers(closureToInvokeAfterTypePick: (VariableType, Boolean) -> Unit) {
-        BottomSheetTypeChangersScreens.values().forEach {
-            (it.bottomSheetTypeChangerScreen.screen as? UIBottomSheetTypeChangerFragmentInterface)?.initRecyclerView(
-                binding.root.context,
-                viewModel.getVariablesTypes(),
-                closureToInvokeAfterTypePick
-            )
-        }
+    fun hide() {
+        behaviour.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
+    private fun initFragmentsRecyclers(closureToInvokeAfterTypePick: (VariableType, Boolean) -> Unit) =
+        BottomSheetTypeChangersScreens.values().forEach {
+            (it.bottomSheetTypeChangerScreen.screen as? UIBottomSheetTypeChangerFragmentInterface)?.apply {
+                onClickAction = closureToInvokeAfterTypePick
+                items = viewModel.getVariablesTypes()
+            }
+        }
+
     @SuppressLint("ClickableViewAccessibility")
-    private fun initParentViewOnTouchListener() {
+    override fun initParentViewOnTouchListener() =
         binding.typeChangerBottomSheetLayout.setOnTouchListener { _, _ ->
             true
         }
-    }
 
-    private fun initDismissButtonOnClickListener() =
+    override fun initDismissButtonOnClickListener() =
         binding.typeChangerxMarkButton.setOnClickListener {
             behaviour.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-    private fun initViewPager() {
+    override fun initViewPager() {
         binding.typeChangerViewPager.adapter =
             VariableTypeChangerViewPagerAdapter(
                 parentActivity as FragmentActivity,

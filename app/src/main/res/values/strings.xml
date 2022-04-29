@@ -47,4 +47,5 @@
     <string name="doubleType">Double</string>
     <string name="integerType">Int</string>
     <string name="booleanType">Boolean</string>
+    <string name="array">array</string>
 </resources>

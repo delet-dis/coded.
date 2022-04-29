@@ -133,14 +133,13 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         )
     }
 
-    private fun initScrollableLayoutDimensions() {
+    private fun initScrollableLayoutDimensions() =
         with(resources.displayMetrics) {
             codeField.layoutParams.apply {
                 height = heightPixels * 3
                 width = widthPixels * 3
             }
         }
-    }
 
     private fun initBarsStateChangingBasedOnFieldClick() =
         codeField.setOnClickListener {
@@ -157,6 +156,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
     private fun initItemsPickingBottomSheet() {
         val bottomSheetViewModel: ItemsPickingBottomSheetViewModel by viewModels()
+
         itemsPickingBottomSheetController = ItemsPickingBottomSheetController(
             binding.itemsPickingBottomSheet,
             bottomSheetViewModel,
@@ -173,9 +173,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         )
     }
 
-    private fun showBottomSheet() {
+    private fun showBottomSheet() =
         itemsPickingBottomSheetController.show()
-    }
 
     private fun initBottomBarButtonsOnClicks() =
         with(binding) {
@@ -184,7 +183,9 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
             }
         }
 
-    override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) {
+    override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) =
         typeChangerBottomSheetController.show(closureToInvoke)
-    }
+
+    override fun hideTypeChangerBottomSheet() =
+        typeChangerBottomSheetController.hide()
 }
