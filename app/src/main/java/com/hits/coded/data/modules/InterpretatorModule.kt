@@ -3,11 +3,11 @@ package com.hits.coded.data.modules
 import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.data.repositoriesImplementations.InterpreterRepositoryImplementation
 import com.hits.coded.domain.repositories.InterpreterRepository
-import com.hits.coded.domain.useCases.interpreter.InterpreteConditionBlockUseCase
-import com.hits.coded.domain.useCases.interpreter.InterpreteExpressionBlockUseCase
-import com.hits.coded.domain.useCases.interpreter.InterpreteIOBlockUseCase
-import com.hits.coded.domain.useCases.interpreter.InterpreteLoopBlockUseCase
-import com.hits.coded.domain.useCases.interpreter.InterpreteVariableBlockUseCase
+import com.hits.coded.domain.useCases.interpreter.InterpretConditionBlockUseCase
+import com.hits.coded.domain.useCases.interpreter.InterpretExpressionBlockUseCase
+import com.hits.coded.domain.useCases.interpreter.InterpretIOBlockUseCase
+import com.hits.coded.domain.useCases.interpreter.InterpretLoopBlockUseCase
+import com.hits.coded.domain.useCases.interpreter.InterpretVariableBlockUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -26,11 +26,11 @@ abstract class InterpretatorModule {
         @Singleton
         fun provideInterpreterUseCases(interpreterRepository: InterpreterRepository): InterpreterUseCases =
             InterpreterUseCases(
-                InterpreteConditionBlockUseCase(interpreterRepository),
-                InterpreteExpressionBlockUseCase(interpreterRepository),
-                InterpreteIOBlockUseCase(interpreterRepository),
-                InterpreteLoopBlockUseCase(interpreterRepository),
-                InterpreteVariableBlockUseCase(interpreterRepository)
+                InterpretConditionBlockUseCase(interpreterRepository),
+                InterpretExpressionBlockUseCase(interpreterRepository),
+                InterpretIOBlockUseCase(interpreterRepository),
+                InterpretLoopBlockUseCase(interpreterRepository),
+                InterpretVariableBlockUseCase(interpreterRepository)
             )
     }
 }

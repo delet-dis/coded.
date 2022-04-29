@@ -14,17 +14,15 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
 import com.hits.coded.data.models.console.useCases.ConsoleUseCases
-import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
-
 import com.hits.coded.domain.repositories.InterpreterRepository
-import dagger.Module
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@Module
+@Singleton
 class InterpreterRepositoryImplementation @Inject
 constructor(
     private val consoleUseCases: ConsoleUseCases,
@@ -33,26 +31,27 @@ constructor(
 
     private var currentId = 0
 
-    override suspend fun interpreteStartBlock(start: StartBlock) {
+    @Throws(InterpreterException::class)
+    override suspend fun interpretStartBlock(start: StartBlock) {
         for (nestedBlock in start.nestedBlocks!!) {
             when (nestedBlock.type) {
-                BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
-                BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
-                BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
-                BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlock)
+                BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
+                BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlock)
+                BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlock)
                 BlockType.START -> throw nestedBlock.id?.let {
                     InterpreterException(
                         it,
                         ExceptionType.WRONG_START_POSITION
                     )
                 }!!
-                BlockType.IO -> interpreteIOBlocks(nestedBlock as IOBlock)
+                BlockType.IO -> interpretIOBlocks(nestedBlock as IOBlock)
             }
         }
     }
 
-    @Throws
-    override suspend fun interpreteConditionBlocks(condition: ConditionBlock): Boolean {
+    @Throws(InterpreterException::class)
+    override suspend fun interpretConditionBlocks(condition: ConditionBlock): Boolean {
         var conditionIsTrue = false
         val leftSideType = getTypeOfAny(condition.leftSide)
         val rightSideType = getTypeOfAny(condition.rightSide)
@@ -249,10 +248,10 @@ constructor(
             if (condition.nestedBlocks != null) {
                 for (nestedBlock in condition.nestedBlocks!!) {
                     when (nestedBlock.type) {
-                        BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
-                        BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
-                        BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
-                        BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                        BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlock)
+                        BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
+                        BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlock)
+                        BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlock)
                         else -> {}
                     }
                 }
@@ -261,15 +260,16 @@ constructor(
         return conditionIsTrue
     }
 
-    override suspend fun interpreteLoopBlocks(loop: LoopBlock) {
+    @Throws(InterpreterException::class)
+    override suspend fun interpretLoopBlocks(loop: LoopBlock) {
         if (loop.nestedBlocks != null) {
-            while (interpreteConditionBlocks(loop.conditionBlock as ConditionBlock)) {
+            while (interpretConditionBlocks(loop.conditionBlock as ConditionBlock)) {
                 for (nestedBlock in loop.nestedBlocks!!) {
                     when (nestedBlock.type) {
-                        BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
-                        BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
-                        BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
-                        BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                        BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlock)
+                        BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
+                        BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlock)
+                        BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlock)
                         else -> {}
                     }
                 }
@@ -277,7 +277,8 @@ constructor(
         }
     }
 
-    override suspend fun interpreteVariableBlocks(variable: VariableBlock): StoredVariable? {
+    @Throws(InterpreterException::class)
+    override suspend fun interpretVariableBlocks(variable: VariableBlock) {
         when (variable.variableBlockType) {
             VariableBlockType.VARIABLE_SET -> {
                 when (variable.valueToSet) {
@@ -337,10 +338,10 @@ constructor(
 
             else -> {}
         }
-        return null
     }
 
-    override suspend fun interpreteExpressionBlocks(expression: ExpressionBlock): Any {
+    @Throws(InterpreterException::class)
+    override suspend fun interpretExpressionBlocks(expression: ExpressionBlock): Any {
         val leftSideType: VariableType? = getTypeOfAny(expression.leftSide)
         val rightSideType: VariableType? = getTypeOfAny(expression.rightSide)
         if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
@@ -392,7 +393,7 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    override suspend fun interpreteIOBlocks(IO: IOBlock) {
+    override suspend fun interpretIOBlocks(IO: IOBlock) {
         IO.id?.let {
             currentId = it
         }
@@ -457,21 +458,23 @@ constructor(
         }
     }
 
-    private suspend fun interpretBlock(block: BlockBase): Any? {
+    @Throws(InterpreterException::class)
+    private suspend fun interpretBlock(block: BlockBase): Any {
         return when (block.type) {
-            BlockType.CONDITION -> interpreteConditionBlocks(block as ConditionBlock)
-            BlockType.EXPRESSION -> interpreteExpressionBlocks(block as ExpressionBlock)
-            BlockType.IO -> interpreteIOBlocks(block as IOBlock)
-            BlockType.LOOP -> interpreteLoopBlocks(block as LoopBlock)
-            BlockType.VARIABLE -> interpreteVariableBlocks(block as VariableBlock)
-            BlockType.START -> interpreteStartBlock(block as StartBlock)
+            BlockType.CONDITION -> interpretConditionBlocks(block as ConditionBlock)
+            BlockType.EXPRESSION -> interpretExpressionBlocks(block as ExpressionBlock)
+            BlockType.IO -> interpretIOBlocks(block as IOBlock)
+            BlockType.LOOP -> interpretLoopBlocks(block as LoopBlock)
+            BlockType.VARIABLE -> interpretVariableBlocks(block as VariableBlock)
+            BlockType.START -> interpretStartBlock(block as StartBlock)
         }
     }
 
+    @Throws(InterpreterException::class)
     private suspend fun convertAnyToDouble(value: Any): Double {
         when (value) {
             is Double -> return value
-            is ExpressionBlock -> return interpreteExpressionBlocks(value) as Double
+            is ExpressionBlock -> return interpretExpressionBlocks(value) as Double
             is String -> {
                 if (value[0] == '"' && value[value.lastIndex] == '"') {
                     val variableName = value.drop(1).dropLast(1)
@@ -501,11 +504,12 @@ constructor(
         throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
+    @Throws(InterpreterException::class)
     private suspend fun convertAnyToInt(value: Any): Int {
         when (value) {
             is Double -> return value.toInt()
             is Int -> return value
-            is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.INT) return interpreteExpressionBlocks(
+            is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.INT) return interpretExpressionBlocks(
                 value
             ) as Int else {
                 throw Exception("Can't interpret Expression as Integer. Block id:${value.id}")
@@ -539,11 +543,12 @@ constructor(
         throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
+    @Throws(InterpreterException::class)
     private suspend fun convertAnyToBoolean(value: Any): Boolean {
         when (value) {
             is Boolean -> return value
             is ExpressionBlock -> {
-                if (getTypeOfAny(value) == VariableType.BOOLEAN) return interpreteExpressionBlocks(
+                if (getTypeOfAny(value) == VariableType.BOOLEAN) return interpretExpressionBlocks(
                     value
                 ) as Boolean else {
                     throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
@@ -578,10 +583,11 @@ constructor(
         throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
+    @Throws(InterpreterException::class)
     private suspend fun convertAnyToString(value: Any): String {
         when (value) {
             is ExpressionBlock -> {
-                return if (getTypeOfAny(value) == VariableType.STRING) interpreteExpressionBlocks(
+                return if (getTypeOfAny(value) == VariableType.STRING) interpretExpressionBlocks(
                     value
                 ) as String else throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
             }
@@ -610,6 +616,7 @@ constructor(
         throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
     }
 
+    @Throws(InterpreterException::class)
     private suspend fun getTypeOfAny(value: Any?): VariableType? {
         when (value) {
             is String -> {
@@ -637,12 +644,13 @@ constructor(
             is Double -> return VariableType.DOUBLE
             is Int -> return VariableType.INT
             is Boolean -> return VariableType.BOOLEAN
-            is ExpressionBlock -> return getTypeOfAny(interpreteExpressionBlocks(value))
+            is ExpressionBlock -> return getTypeOfAny(interpretExpressionBlocks(value))
             is VariableBlock -> return value.variableParams?.type
         }
         return null
     }
 
+    @Throws(InterpreterException::class)
     private fun isVariable(value: String): Boolean {
         if (value.startsWith('"')) {
             if (value.length > 1) {
