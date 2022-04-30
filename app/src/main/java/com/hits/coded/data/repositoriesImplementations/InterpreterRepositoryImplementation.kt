@@ -12,8 +12,8 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.data.models.interpreterException.InterpreterException
-import com.hits.coded.data.models.sharedTypes.VariableType
+import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
+import com.hits.coded.data.models.types.VariableType
 import com.hits.coded.data.models.types.ExceptionType
 import com.hits.coded.domain.repositories.InterpreterRepository
 

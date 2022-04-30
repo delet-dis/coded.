@@ -1,6 +1,6 @@
 package com.hits.coded.domain.repositories
 
-import com.hits.coded.data.models.interpreterException.InterpreterException
+import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import kotlinx.coroutines.flow.Flow
 
 abstract class InterpreterCallerRepository {

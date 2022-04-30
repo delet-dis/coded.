@@ -8,11 +8,10 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
-import com.hits.coded.data.models.codeField.CodeFieldInterface
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithCustomRemoveViewProcessInterface
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
+import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +21,7 @@ class CodeField constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr), CodeFieldInterface,
+) : ConstraintLayout(context, attrs, defStyleAttr),
     UIElementHandlesDragAndDropInterface {
     private val binding: ViewCodeFieldBinding
 
@@ -41,7 +40,7 @@ class CodeField constructor(
         addBlock(startBlock)
     }
 
-    override fun addBlock(viewToAdd: View) {
+    private fun addBlock(viewToAdd: View) {
         viewToAdd.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
 
         binding.fieldLayout.addView(viewToAdd)
@@ -54,7 +53,7 @@ class CodeField constructor(
         }
     }
 
-    override fun initDragAndDropListener() {
+    override fun initDragAndDropListener() =
         binding.fieldLayout.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
@@ -85,7 +84,6 @@ class CodeField constructor(
                 else -> false
             }
         }
-    }
 
     private fun handleDropEvent(
         itemParent: ViewGroup,
