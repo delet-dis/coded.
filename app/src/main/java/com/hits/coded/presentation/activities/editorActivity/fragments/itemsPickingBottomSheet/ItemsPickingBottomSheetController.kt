@@ -7,13 +7,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
+import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetWithViewPagerInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.data.models.itemsPickingBottomSheet.enums.BottomSheetItemsScreens
 import com.hits.coded.databinding.IncludeItemsPickingBottomSheetBinding
-import com.hits.coded.domain.extensions.dpToPx
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragmentStateAdapters.ItemsPickingViewPagerAdapter
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.viewModel.ItemsPickingBottomSheetViewModel
 
@@ -50,9 +50,10 @@ class ItemsPickingBottomSheetController(
 
     override fun show() {
         behaviour.isFitToContents = false
-        behaviour.expandedOffset = 50.dpToPx(binding.root.context)
+        behaviour.expandedOffset =
+            binding.root.resources.getDimension(R.dimen.bottomSheetTopOffset).toInt()
 
-        behaviour.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        behaviour.state = BottomSheetBehavior.STATE_EXPANDED
 
         redrawCurrentViewPagerScreen()
     }

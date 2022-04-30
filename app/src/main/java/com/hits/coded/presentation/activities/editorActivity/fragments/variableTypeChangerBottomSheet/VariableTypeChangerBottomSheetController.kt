@@ -11,7 +11,6 @@ import com.hits.coded.data.interfaces.ui.bottomSheets.typeChangerBottomSheet.UIB
 import com.hits.coded.data.models.typeChangerBottomSheet.enums.BottomSheetTypeChangersScreens
 import com.hits.coded.data.models.types.VariableType
 import com.hits.coded.databinding.IncludeVariableTypeChangerBottomSheetBinding
-import com.hits.coded.domain.extensions.dpToPx
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.fragmentStateAdapters.VariableTypeChangerViewPagerAdapter
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.viewModel.VariableTypeChangerViewModel
 
@@ -60,13 +59,14 @@ class VariableTypeChangerBottomSheetController(
 
     override fun show() {
         behaviour.isFitToContents = false
-        behaviour.expandedOffset = 50.dpToPx(binding.root.context)
+        behaviour.expandedOffset =
+            binding.root.resources.getDimension(R.dimen.bottomSheetTopOffset).toInt()
 
-        behaviour.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        behaviour.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     fun show(closureToInvokeAfterTypePick: (VariableType, Boolean) -> Unit) {
-        behaviour.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        show()
 
         initFragmentsRecyclers(closureToInvokeAfterTypePick)
     }

@@ -3,6 +3,7 @@ package com.hits.coded.presentation.activities.editorActivity.fragments.consoleB
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetInterface
 import com.hits.coded.databinding.IncludeConsoleBottomSheetBinding
 import com.hits.coded.domain.extensions.dpToPx
@@ -35,7 +36,7 @@ class ConsoleBottomSheetController(private val binding: IncludeConsoleBottomShee
                 leftMargin,
                 topMargin,
                 rightMargin,
-                (navigationBarHeight + 60.dpToPx(binding.root.context))
+                ((navigationBarHeight + binding.root.resources.getDimension(R.dimen.consoleBottomMargin)).toInt())
             )
         }
     }
