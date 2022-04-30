@@ -1,5 +1,8 @@
 package com.hits.coded.data.repositoriesImplementations
 
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import com.hits.coded.domain.repositories.ConsoleRepository
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -13,11 +16,11 @@ import javax.inject.Singleton
 @Singleton
 class ConsoleRepositoryImplementation @Inject constructor() : ConsoleRepository() {
 
-    private val _bufferValue: ArrayDeque<String> = ArrayDeque(100)
+    private val _bufferValue: ArrayDeque<SpannableString> = ArrayDeque(BUFFER_SIZE)
 
-    private var _buffer: MutableSharedFlow<ArrayDeque<String>> =
+    private var _buffer: MutableSharedFlow<ArrayDeque<SpannableString>> =
         MutableSharedFlow(1, 0, BufferOverflow.DROP_OLDEST)
-    override val buffer: Flow<ArrayDeque<String>>
+    override val buffer: Flow<ArrayDeque<SpannableString>>
         get() = _buffer
 
     private var _isInputAvailable: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -38,14 +41,20 @@ class ConsoleRepositoryImplementation @Inject constructor() : ConsoleRepository(
         _isInputAvailable.emit(true)
         val input = buffer.drop(1).first().first()
         _isInputAvailable.emit(false)
-        return input
+        return input.toString()
     }
 
-    override fun writeToConsole(input: String) {
+    override fun writeToConsole(input: String, color: Int) {
         if (_bufferValue.size == BUFFER_SIZE) {
             _bufferValue.removeLast()
         }
-        _bufferValue.addFirst(input + "\n")
+        _bufferValue.addFirst(SpannableString(input + "\n").apply {
+            setSpan(
+                ForegroundColorSpan(color),
+                0,
+                input.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE )
+        })
         _buffer.tryEmit(_bufferValue)
     }
 
