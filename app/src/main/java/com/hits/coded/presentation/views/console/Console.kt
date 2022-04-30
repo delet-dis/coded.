@@ -2,11 +2,12 @@ package com.hits.coded.presentation.views.console
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.inputmethod.EditorInfo
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.LifecycleOwner
 import com.hits.coded.R
 import com.hits.coded.databinding.ViewConsoleBinding
+import com.hits.coded.domain.extensions.hideKeyboard
 import com.hits.coded.presentation.views.console.viewModel.ConsoleViewModel
 import com.jraska.console.Console
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,17 +52,27 @@ class Console @JvmOverloads constructor(
     private fun initIsInputAvailableObserving() =
         viewModel.isAvailableToInput.observe(context as LifecycleOwner) {
             binding.enteredText.isEnabled = it
-        }
 
-    private fun initConsoleSubmitting() =
-        binding.enteredText.setOnEditorActionListener { textView, actionId, keyEvent ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_SEND -> {
-                    viewModel.submitStringToConsole(textView.text.toString())
+            if (!it) {
+                binding.enteredText.clearFocus()
 
-                    true
-                }
-                else -> false
+                binding.enteredText.hideKeyboard()
             }
         }
+
+    private fun initConsoleSubmitting() {
+        with(binding.enteredText) {
+            addTextChangedListener {
+                val enteredText = it.toString()
+
+                if (enteredText.contains("\n")) {
+                    viewModel.submitStringToConsole(enteredText.replace("\n", ""))
+
+                    setText("")
+
+                    hideKeyboard()
+                }
+            }
+        }
+    }
 }
