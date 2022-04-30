@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false"
     app:layoutDescription="@xml/activity_editor_scene"
     tools:context="presentation.activities.editorActivity.EditorActivity">
 
@@ -197,11 +196,13 @@
 
     <include
         android:id="@+id/itemsPickingBottomSheet"
-        layout="@layout/include_items_picking_bottom_sheet"
-        android:fitsSystemWindows="false" />
+        layout="@layout/include_items_picking_bottom_sheet" />
 
     <include
         android:id="@+id/variableTypeChangerBottomSheet"
-        layout="@layout/include_variable_type_changer_bottom_sheet"
-        android:fitsSystemWindows="false" />
+        layout="@layout/include_variable_type_changer_bottom_sheet" />
+
+    <include
+        android:id="@+id/consoleBottomSheet"
+        layout="@layout/include_console_bottom_sheet" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

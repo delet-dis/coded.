@@ -6,9 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_dark_background"
+    android:clickable="true"
     android:elevation="12dp"
-    android:fitsSystemWindows="false"
-    android:nestedScrollingEnabled="true"
+    android:focusable="true"
+    android:nestedScrollingEnabled="false"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:behavior_peekHeight="0dp"
@@ -42,14 +43,11 @@
         app:srcCompat="@drawable/ic_xmark"
         app:tint="@color/white" />
 
-    <LinearLayout
-        android:id="@+id/consoleLinearLayout"
-        android:layout_width="match_parent"
+    <com.hits.coded.presentation.views.console.Console
+        android:id="@+id/console"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/bottomSheetContentHorizontalMargin"
         android:layout_marginTop="@dimen/bottomSheetElementsSpacing"
-        android:layout_marginEnd="@dimen/bottomSheetContentHorizontalMargin"
-        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

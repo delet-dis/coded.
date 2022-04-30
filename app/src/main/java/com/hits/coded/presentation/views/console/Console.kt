@@ -1,8 +1,8 @@
 package com.hits.coded.presentation.views.console
 
 import android.content.Context
-import android.text.SpannableString
 import android.util.AttributeSet
+import android.view.inputmethod.EditorInfo
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LifecycleOwner
 import com.hits.coded.R
@@ -13,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class Console constructor(
+class Console @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -33,14 +33,35 @@ class Console constructor(
         }
 
         initConsoleObserving()
+
+        initIsInputAvailableObserving()
+
+        initConsoleSubmitting()
     }
 
     private fun initConsoleObserving() =
         viewModel.consoleBuffer.observe(context as LifecycleOwner) {
-            SpannableString
-
             Console.clear()
 
-            Console.writeLine()
+            it.forEach { spannableString ->
+                Console.writeLine(spannableString)
+            }
+        }
+
+    private fun initIsInputAvailableObserving() =
+        viewModel.isAvailableToInput.observe(context as LifecycleOwner) {
+            binding.enteredText.isEnabled = it
+        }
+
+    private fun initConsoleSubmitting() =
+        binding.enteredText.setOnEditorActionListener { textView, actionId, keyEvent ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_SEND -> {
+                    viewModel.submitStringToConsole(textView.text.toString())
+
+                    true
+                }
+                else -> false
+            }
         }
 }

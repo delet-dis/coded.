@@ -1,13 +1,11 @@
 package com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.view.ViewGroup
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hits.coded.R
+import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetWithViewPagerInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.typeChangerBottomSheet.UIBottomSheetTypeChangerFragmentInterface
 import com.hits.coded.data.models.typeChangerBottomSheet.enums.BottomSheetTypeChangersScreens
@@ -21,18 +19,14 @@ class VariableTypeChangerBottomSheetController(
     private val binding: IncludeVariableTypeChangerBottomSheetBinding,
     private val viewModel: VariableTypeChangerViewModel,
     private val parentActivity: Activity
-) : UIBottomSheetWithViewPagerInterface {
+) : UIBottomSheetWithViewPagerInterface, UIBottomSheetInterface {
 
     private val behaviour = BottomSheetBehavior.from(binding.typeChangerBottomSheetLayout)
 
     init {
-        initParentViewOnTouchListener()
-
         initDismissButtonOnClickListener()
 
         initViewPager()
-
-        initTopMargin()
 
         initTabLayoutMediator()
     }
@@ -64,10 +58,12 @@ class VariableTypeChangerBottomSheetController(
 
         }.attach()
 
-    override fun initTopMargin() =
-        binding.typeChangerBottomSheetLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            setMargins(0, 50.dpToPx(binding.root.context), 0, 0)
-        }
+    override fun show() {
+        behaviour.isFitToContents = false
+        behaviour.expandedOffset = 50.dpToPx(binding.root.context)
+
+        behaviour.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+    }
 
     fun show(closureToInvokeAfterTypePick: (VariableType, Boolean) -> Unit) {
         behaviour.state = BottomSheetBehavior.STATE_HALF_EXPANDED
@@ -85,12 +81,6 @@ class VariableTypeChangerBottomSheetController(
                 onClickAction = closureToInvokeAfterTypePick
                 items = viewModel.getVariablesTypes()
             }
-        }
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun initParentViewOnTouchListener() =
-        binding.typeChangerBottomSheetLayout.setOnTouchListener { _, _ ->
-            true
         }
 
     override fun initDismissButtonOnClickListener() =

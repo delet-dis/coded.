@@ -1,16 +1,14 @@
 package com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.DragEvent
 import android.view.View
-import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetWithViewPagerInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.data.models.itemsPickingBottomSheet.enums.BottomSheetItemsScreens
@@ -24,13 +22,11 @@ class ItemsPickingBottomSheetController(
     private val binding: IncludeItemsPickingBottomSheetBinding,
     private val viewModel: ItemsPickingBottomSheetViewModel,
     private val parentActivity: Activity
-) : UIElementHandlesDragAndDropInterface, UIBottomSheetWithViewPagerInterface {
+) : UIElementHandlesDragAndDropInterface, UIBottomSheetWithViewPagerInterface, UIBottomSheetInterface {
 
     private val behaviour = BottomSheetBehavior.from(binding.itemsPickingBottomSheetLayout)
 
     init {
-        initParentViewOnTouchListener()
-
         initDismissButtonOnClickListener()
 
         initDragAndDropListener()
@@ -38,14 +34,7 @@ class ItemsPickingBottomSheetController(
         initViewPager()
 
         initTabLayoutMediator()
-
-        initTopMargin()
     }
-
-    override fun initTopMargin() =
-        binding.itemsPickingBottomSheetLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            setMargins(0, 50.dpToPx(binding.root.context), 0, 0)
-        }
 
     override fun initTabLayoutMediator() =
         TabLayoutMediator(
@@ -59,7 +48,10 @@ class ItemsPickingBottomSheetController(
                 }
         }.attach()
 
-    fun show() {
+    override fun show() {
+        behaviour.isFitToContents = false
+        behaviour.expandedOffset = 50.dpToPx(binding.root.context)
+
         behaviour.state = BottomSheetBehavior.STATE_HALF_EXPANDED
 
         redrawCurrentViewPagerScreen()
@@ -102,12 +94,6 @@ class ItemsPickingBottomSheetController(
 
                 else -> false
             }
-        }
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun initParentViewOnTouchListener() =
-        binding.itemsPickingBottomSheetLayout.setOnTouchListener { _, _ ->
-            true
         }
 
     private fun redrawCurrentViewPagerScreen() =
