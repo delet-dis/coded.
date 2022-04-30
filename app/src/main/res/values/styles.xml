@@ -10,6 +10,15 @@
         <item name="android:autoSizeTextType" tools:targetApi="o">uniform</item>
     </style>
 
+    <style name="headerSemiBoldText">
+        <item name="android:fontFamily">@font/rubik_semi_bold</item>
+        <item name="android:textSize">25sp</item>
+
+        <item name="android:autoSizeMaxTextSize" tools:targetApi="o">25sp</item>
+        <item name="android:autoSizeMinTextSize" tools:targetApi="o">12sp</item>
+        <item name="android:autoSizeTextType" tools:targetApi="o">uniform</item>
+    </style>
+
     <style name="semiBoldText">
         <item name="android:fontFamily">@font/rubik_semi_bold</item>
         <item name="android:textSize">20sp</item>
