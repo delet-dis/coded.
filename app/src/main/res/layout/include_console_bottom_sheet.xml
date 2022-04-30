@@ -19,7 +19,7 @@
         style="@style/boldTextMinimized"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/bottomSheetContentHorizontalMargin"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="64dp"
         android:text="@string/console"
@@ -42,30 +42,18 @@
         app:srcCompat="@drawable/ic_xmark"
         app:tint="@color/white" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        style="@style/itemPickingTabLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/bottomSheetContentHorizontalMargin"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="@dimen/bottomSheetContentHorizontalMargin"
-        android:contentDescription="@string/componentType"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerText"
-        app:tabMode="auto"
-        app:tabTextAppearance="@style/itemPickingTabLayoutTextAppearance" />
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/consoleLinearLayout"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/bottomSheetContentHorizontalMargin"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="@dimen/bottomSheetElementsSpacing"
         android:layout_marginEnd="@dimen/bottomSheetContentHorizontalMargin"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/headerText" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
