@@ -9,16 +9,16 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
-import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
-import com.hits.coded.data.models.heap.dataClasses.StoredVariable
+import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
-import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.models.codeBlocks.bases.BlockBase
+import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
+import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.databinding.ViewConsoleWriteBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -117,25 +117,24 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
     private fun handleDropEvent(
         itemParent: ViewGroup,
         draggableItem: View
-    ) =
-        with(binding) {
-            if (draggableItem != this@UIActionConsoleWriteBlock) {
-                alphaPlusAnimation(parentConstraint)
+    ) = with(binding) {
+        if (draggableItem != this@UIActionConsoleWriteBlock) {
+            alphaPlusAnimation(parentConstraint)
 
-                itemParent.removeView(draggableItem)
+            itemParent.removeView(draggableItem)
 
-                variableName.apply {
-                    setText("")
-                    visibility = INVISIBLE
-                }
+            variableName.apply {
+                setText("")
+                visibility = INVISIBLE
+            }
 
-                binding.firstCard.addView(draggableItem)
+            binding.firstCard.addView(draggableItem)
 
-                (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                    _block.output = it
-                }
+            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                _block.output = it
             }
         }
+    }
 
     private fun handleDragEndedEvent(
         draggableItem: View
@@ -158,7 +157,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
 
         _block.output = null
 
-        binding.variableName.apply {
+        with(binding.variableName) {
             setText("")
             visibility = VISIBLE
         }

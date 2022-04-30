@@ -52,13 +52,16 @@
         app:layout_constraintTop_toTopOf="@+id/backgroundImage"
         app:layout_constraintVertical_bias="0.45">
 
-        <Spinner
-            android:id="@+id/typeSpinner"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/variableType"
+            style="@style/variableNameEditText"
+            android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_marginLeft="@dimen/bottomSheetContentHorizontalMargin"
-            android:spinnerMode="dialog" />
-
+            android:background="@null"
+            android:gravity="center"
+            android:text="@string/variableType"
+            android:textColor="@android:color/darker_gray"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
     </androidx.cardview.widget.CardView>
 
     <TextView

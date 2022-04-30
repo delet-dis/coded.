@@ -196,7 +196,12 @@
     </androidx.constraintlayout.motion.widget.MotionLayout>
 
     <include
-        android:id="@+id/bottomSheetIncludedLayout"
+        android:id="@+id/itemsPickingBottomSheet"
         layout="@layout/include_items_picking_bottom_sheet"
+        android:fitsSystemWindows="false" />
+
+    <include
+        android:id="@+id/variableTypeChangerBottomSheet"
+        layout="@layout/include_variable_type_changer_bottom_sheet"
         android:fitsSystemWindows="false" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

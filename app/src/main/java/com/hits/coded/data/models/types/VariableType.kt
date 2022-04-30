@@ -1,8 +1,10 @@
 package com.hits.coded.data.models.types
 
-enum class VariableType(val typeAsString: String) {
-    STRING("String"),
-    DOUBLE("Double"),
-    INT("Int"),
-    BOOLEAN("Boolean")
+import com.hits.coded.R
+
+enum class VariableType(val typeAsStringResource: Int) {
+    STRING(R.string.stringType),
+    DOUBLE(R.string.doubleType),
+    INT(R.string.integerType),
+    BOOLEAN(R.string.booleanType)
 }

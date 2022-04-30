@@ -14,8 +14,6 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInfo
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
-import com.hits.coded.presentation.views.codeBlocks.actions.console.UIActionConsoleWriteBlock
-import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,8 +38,6 @@ class CodeField constructor(
         initDragAndDropListener()
 
         addBlock(startBlock)
-        addBlock(UIVariableChangeByBlock(context))
-        addBlock(UIActionConsoleWriteBlock(context))
     }
 
     private fun addBlock(viewToAdd: View) {
@@ -57,7 +53,7 @@ class CodeField constructor(
         }
     }
 
-    override fun initDragAndDropListener() {
+    override fun initDragAndDropListener() =
         binding.fieldLayout.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
@@ -88,7 +84,6 @@ class CodeField constructor(
                 else -> false
             }
         }
-    }
 
     private fun handleDropEvent(
         itemParent: ViewGroup,
