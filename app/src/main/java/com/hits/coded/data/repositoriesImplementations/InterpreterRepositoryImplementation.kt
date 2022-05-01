@@ -11,7 +11,6 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
-import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.interpreterException.InterpreterException
 import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.data.models.types.ExceptionType
@@ -19,30 +18,30 @@ import com.hits.coded.domain.repositories.InterpreterRepository
 
 class InterpreterRepositoryImplementation : InterpreterRepository() {
     private var currentId:Int=0
-    override suspend fun interpreteStartBlock(start: StartBlock) {
+    @Throws
+     override suspend fun interpreteStartBlock(start: StartBlock) {
         start.id?.let{
             currentId=it
         }
 
         for (nestedBlock in start.nestedBlocks!!) {
             when (nestedBlock.type) {
-                BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
-                BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
-                BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
-                BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlock)
+                BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
+                BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlock)
+                BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlock)
                 BlockType.START -> throw nestedBlock.id?.let {
                     InterpreterException(
                         it,
                         ExceptionType.WRONG_START_POSITION
                     )
                 }!!
-                BlockType.IO -> interpreteIOBlocks(nestedBlock as IOBlock)
+                BlockType.IO -> interpretIOBlocks(nestedBlock as IOBlock)
             }
         }
     }
-
     @Throws
-    override suspend fun interpreteConditionBlocks(condition: ConditionBlock): Boolean {
+    private suspend fun interpretConditionBlocks(condition: ConditionBlock): Boolean {
         condition.id?.let{
             currentId=it
         }
@@ -242,10 +241,10 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             if (condition.nestedBlocks != null) {
                 for (nestedBlock in condition.nestedBlocks!!) {
                     when (nestedBlock.type) {
-                        BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
-                        BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
-                        BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
-                        BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                        BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlock)
+                        BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
+                        BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlock)
+                        BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlock)
                         else -> {}
                     }
                 }
@@ -254,18 +253,18 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         return conditionIsTrue
     }
 
-    override suspend fun interpreteLoopBlocks(loop: LoopBlock) {
+    private suspend fun interpretLoopBlocks(loop: LoopBlock) {
         loop.id?.let{
             currentId=it
         }
         if (loop.nestedBlocks != null) {
-            while (interpreteConditionBlocks(loop.conditionBlock as ConditionBlock)) {
+            while (interpretConditionBlocks(loop.conditionBlock as ConditionBlock)) {
                 for (nestedBlock in loop.nestedBlocks!!) {
                     when (nestedBlock.type) {
-                        BlockType.VARIABLE -> interpreteVariableBlocks(nestedBlock as VariableBlock)
-                        BlockType.CONDITION -> interpreteConditionBlocks(nestedBlock as ConditionBlock)
-                        BlockType.LOOP -> interpreteLoopBlocks(nestedBlock as LoopBlock)
-                        BlockType.EXPRESSION -> interpreteExpressionBlocks(nestedBlock as ExpressionBlock)
+                        BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlock)
+                        BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
+                        BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlock)
+                        BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlock)
                         else -> {}
                     }
                 }
@@ -273,7 +272,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         }
     }
 
-    override suspend fun interpreteVariableBlocks(variable: VariableBlock): StoredVariable? {
+    private suspend fun interpretVariableBlocks(variable: VariableBlock){
         variable.id?.let{
             currentId=it
         }
@@ -421,7 +420,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         throw variable.id?.let { InterpreterException(it, ExceptionType.WRONG_OPERAND_USE_CASE) }!!
     }
 
-    override suspend fun interpreteExpressionBlocks(expression: ExpressionBlock): Any {
+    private suspend fun interpretExpressionBlocks(expression: ExpressionBlock): Any {
         expression.id?.let{
             currentId=it
         }
@@ -475,7 +474,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         throw  expression.id?.let { InterpreterException(it, ExceptionType.TYPE_MISMATCH) }!!
     }
 
-    override suspend fun interpreteIOBlocks(IO: IOBlock) {
+    private suspend fun interpretIOBlocks(IO: IOBlock) {
         //IO action function
     }
 
@@ -483,7 +482,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
 
         when (value) {
             is Double -> return value
-            is ExpressionBlock -> return interpreteExpressionBlocks(value) as Double
+            is ExpressionBlock -> return interpretExpressionBlocks(value) as Double
             is String -> {
                 if (value[0] == '"' && value[value.lastIndex] == '"') {
                     val variableName = value.drop(1).dropLast(1)
@@ -517,7 +516,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         when (value) {
             is Double -> return value.toInt()
             is Int -> return value
-            is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.INT) return interpreteExpressionBlocks(
+            is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.INT) return interpretExpressionBlocks(
                 value
             ) as Int else {
                 throw Exception("Can't interpret Expression as Integer. Block id:${value.id}")
@@ -555,7 +554,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         when (value) {
             is Boolean -> return value
             is ExpressionBlock -> {
-                if (getTypeOfAny(value) == VariableType.BOOLEAN) return interpreteExpressionBlocks(
+                if (getTypeOfAny(value) == VariableType.BOOLEAN) return interpretExpressionBlocks(
                     value
                 ) as Boolean else {
                     throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
@@ -593,7 +592,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     private suspend fun convertAnyToString(value: Any): String {
         when (value) {
             is ExpressionBlock -> {
-                return if (getTypeOfAny(value) == VariableType.STRING) interpreteExpressionBlocks(
+                return if (getTypeOfAny(value) == VariableType.STRING) interpretExpressionBlocks(
                     value
                 ) as String else throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
             }
@@ -649,7 +648,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             is Double -> return VariableType.DOUBLE
             is Int -> return VariableType.INT
             is Boolean -> return VariableType.BOOLEAN
-            is ExpressionBlock -> return getTypeOfAny(interpreteExpressionBlocks(value))
+            is ExpressionBlock -> return getTypeOfAny(interpretExpressionBlocks(value))
             is VariableBlock -> return value.variableParams?.type
         }
         throw InterpreterException(currentId, ExceptionType.NONEXISTING_DATA_TYPE)

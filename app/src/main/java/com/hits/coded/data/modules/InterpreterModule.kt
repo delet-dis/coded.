@@ -13,20 +13,16 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class InterpretatorModule {
+abstract class InterpreterModule {
     @Binds
-    abstract fun bindInterpretatorRepository(interpretatorRepository: InterpreterRepositoryImplementation): InterpreterRepository
+    abstract fun bindInterpreterRepository(interpreterRepository: InterpreterRepositoryImplementation): InterpreterRepository
 
     companion object {
         @Provides
         @Singleton
         fun provideInterpreterUseCases(interpreterRepository: InterpreterRepository): InterpreterUseCases =
             InterpreterUseCases(
-                InterpreteConditionBlockUseCase(interpreterRepository),
-                InterpreteExpressionBlockUseCase(interpreterRepository),
-                InterpreteIOBlockUseCase(interpreterRepository),
-                InterpreteLoopBlockUseCase(interpreterRepository),
-                InterpreteVariableBlockUseCase(interpreterRepository)
+                InterpretStartBlockUseCase(interpreterRepository)
             )
     }
 }
