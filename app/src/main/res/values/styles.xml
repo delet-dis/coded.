@@ -129,10 +129,12 @@
         <item name="background">@null</item>
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
 
     <style name="variableNameCard">
-        <item name="cardCornerRadius">30dp</item>
+        <item name="cardCornerRadius">25dp</item>
+        <item name="android:layout_height">38dp</item>
     </style>
 
     <style name="bottomSheetItemsList">

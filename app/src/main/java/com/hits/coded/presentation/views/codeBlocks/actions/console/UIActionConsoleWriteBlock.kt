@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
+import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
@@ -30,7 +31,8 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
-    UICodeBlockWithCustomRemoveViewProcessInterface {
+    UICodeBlockWithCustomRemoveViewProcessInterface,
+    UIElementHandlesCustomRemoveViewProcessInterface {
     private val binding: ViewConsoleWriteBlockBinding
 
     private var variableParams = StoredVariable()
@@ -56,6 +58,8 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initDragAndDropListener()
+
+        initVariableNameChangeListener()
     }
 
     private fun initVariableNameChangeListener() =
@@ -122,6 +126,8 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
             alphaPlusAnimation(parentConstraint)
 
             itemParent.removeView(draggableItem)
+
+            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
 
             variableName.apply {
                 setText("")
