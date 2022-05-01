@@ -10,6 +10,7 @@ import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
@@ -110,10 +111,37 @@ class CodeField @JvmOverloads constructor(
             addView(draggableItem)
         }
 
+    fun calculateBlocksHierarchyIds() =
+        calculateElementsIds(startBlock)
+
+    fun getEntryPointBlock() = startBlock
+
     private fun calculateElementsIds(
-        processingView: UICodeBlockWithDataInterface,
-        previousId: Int = -1
-    ): Int {
-        processingView.block.id = previousId + 1
+        processingView: View,
+        previousId: Int? = -1
+    ): Int? {
+        var currentId: Int?
+
+        (processingView as? UICodeBlockWithDataInterface)?.let {
+            if (previousId != null) {
+                currentId = previousId + 1
+
+                processingView.block.id = currentId
+
+                processingView.tag = VIEW_HIERARCHY_ID + currentId
+
+                (processingView as? UICodeBlockSavesNestedBlocksInterface)?.let {
+                    it.nestedBlocks.forEach { block ->
+                        currentId = calculateElementsIds(block, currentId)
+                    }
+                }
+                return currentId
+            }
+        }
+        return null
+    }
+
+    private companion object {
+        const val VIEW_HIERARCHY_ID = "VIEW_HIERARCHY_ID_"
     }
 }

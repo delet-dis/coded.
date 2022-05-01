@@ -190,6 +190,10 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
             consoleButton.setOnClickListener {
                 consoleBottomSheetController.show(navigationBarHeight)
             }
+
+            startButton.setOnClickListener {
+                codeField.calculateBlocksHierarchyIds()
+            }
         }
 
     private fun initConsoleBottomSheet() {
