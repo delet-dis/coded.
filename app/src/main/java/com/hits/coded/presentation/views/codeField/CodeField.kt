@@ -10,6 +10,7 @@ import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
@@ -108,4 +109,11 @@ class CodeField @JvmOverloads constructor(
 
             addView(draggableItem)
         }
+
+    private fun calculateElementsIds(
+        processingView: UICodeBlockWithDataInterface,
+        previousId: Int = -1
+    ): Int {
+        processingView.block.id = previousId + 1
+    }
 }
