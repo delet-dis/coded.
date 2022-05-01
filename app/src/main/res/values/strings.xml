@@ -50,4 +50,5 @@
     <string name="booleanType">Boolean</string>
     <string name="array">array</string>
     <string name="consoleInput">Console input</string>
+    <string name="readFromConsole">read from console</string>
 </resources>

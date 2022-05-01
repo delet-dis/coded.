@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
+import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
@@ -22,7 +22,7 @@ class CodeField @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr),
-    UIElementHandlesDragAndDropInterface {
+    UIElementHandlesDragAndDropInterface, UIElementHandlesCustomRemoveViewProcessInterface {
     private val binding: ViewCodeFieldBinding
 
     private val startBlock = UIActionStartBlock(context)
@@ -102,9 +102,7 @@ class CodeField @JvmOverloads constructor(
                 draggableItem.y = dragEvent.y - (it.touchY)
             }
 
-            (itemParent.parent.parent as? UICodeBlockWithCustomRemoveViewProcessInterface)?.customRemoveView(
-                draggableItem
-            )
+            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
 
             itemParent.removeView(draggableItem)
 

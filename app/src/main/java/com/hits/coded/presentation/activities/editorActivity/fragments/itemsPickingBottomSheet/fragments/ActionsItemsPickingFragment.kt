@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.databinding.FragmentActionsItemsPickingBinding
+import com.hits.coded.presentation.views.codeBlocks.actions.console.UIActionConsoleReadBlock
 import com.hits.coded.presentation.views.codeBlocks.actions.console.UIActionConsoleWriteBlock
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -40,6 +41,7 @@ class ActionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterf
         binding.actionsLinearLayout.apply {
             removeAllViews()
             addView(UIActionConsoleWriteBlock(requireContext()))
+            addView(UIActionConsoleReadBlock(requireContext()))
         }
     }
 }
