@@ -12,6 +12,7 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
@@ -32,8 +33,10 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
-    UIElementHandlesCustomRemoveViewProcessInterface {
+    UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface {
     private val binding: ViewConsoleWriteBlockBinding
+
+    override val nestedUIBlocks: ArrayList<View> = ArrayList()
 
     private var variableParams = StoredVariable()
 
@@ -134,6 +137,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
                 visibility = INVISIBLE
             }
 
+            nestedUIBlocks.add(draggableItem)
             binding.firstCard.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
@@ -159,6 +163,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
     }
 
     override fun customRemoveView(view: View) {
+        nestedUIBlocks.remove(view)
         binding.firstCard.removeView(view)
 
         _block.argument = null
