@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
@@ -27,10 +28,13 @@ class UIActionStartBlock @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
     UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
-    UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface {
+    UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface,
+    UICodeBlockSavesNestedBlocksInterface {
     private val binding: ViewActionStartBinding
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
+
+    override val nestedBlocks: ArrayList<View> = ArrayList()
 
     private var _block = StartBlock()
     override val block: BlockBase
@@ -104,7 +108,8 @@ class UIActionStartBlock @JvmOverloads constructor(
 
             itemParent.removeView(draggableItem)
 
-            nestedBlocks.addView(draggableItem)
+            nestedBlocks.add(draggableItem)
+            nestedBlocksLayout.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
                 nestedBlocksAsBlockBase.add(it)
@@ -125,23 +130,25 @@ class UIActionStartBlock @JvmOverloads constructor(
 
         this@UIActionStartBlock.invalidate()
 
-        if (itemParent == binding.nestedBlocks) {
-            draggableItem.x = 0f
+        with(binding.nestedBlocksLayout) {
+            if (itemParent == this) {
+                draggableItem.x = 0f
 
-            if (binding.nestedBlocks.childCount == 0) {
-                draggableItem.y = 0f
-            } else {
-                val childRect = Rect()
-                binding.nestedBlocks.getChildAt(binding.nestedBlocks.childCount - 1)
-                    .getDrawingRect(childRect)
+                if (childCount == 0) {
+                    draggableItem.y = 0f
+                } else {
+                    val childRect = Rect()
+                    getChildAt(childCount - 1)
+                        .getDrawingRect(childRect)
 
-                binding.nestedBlocks.offsetDescendantRectToMyCoords(
-                    binding.nestedBlocks.getChildAt(
-                        binding.nestedBlocks.childCount - 1
-                    ), childRect
-                )
+                    offsetDescendantRectToMyCoords(
+                        getChildAt(
+                            childCount - 1
+                        ), childRect
+                    )
 
-                draggableItem.y = childRect.top.toFloat()
+                    draggableItem.y = childRect.top.toFloat()
+                }
             }
         }
     }
@@ -151,6 +158,8 @@ class UIActionStartBlock @JvmOverloads constructor(
 
         (view as? UICodeBlockWithDataInterface)?.block?.let {
             nestedBlocksAsBlockBase.remove(it)
+
+            nestedBlocks.remove(view)
 
             _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
         }

@@ -12,6 +12,7 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
@@ -31,8 +32,10 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
-    UICodeBlockWithCustomRemoveViewProcessInterface, UIElementHandlesCustomRemoveViewProcessInterface {
+    UICodeBlockWithCustomRemoveViewProcessInterface, UIElementHandlesCustomRemoveViewProcessInterface,  UICodeBlockSavesNestedBlocksInterface {
     private val binding: ViewVariableChangeByBlockBinding
+
+    override val nestedBlocks: ArrayList<View> = ArrayList()
 
     private var variableParams = StoredVariable()
 
@@ -143,6 +146,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
                 visibility = INVISIBLE
             }
 
+            nestedBlocks.add(draggableItem)
             secondCard.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
@@ -168,6 +172,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     }
 
     override fun customRemoveView(view: View) {
+        nestedBlocks.remove(view)
         binding.secondCard.removeView(view)
 
         _block.valueToSet = null
