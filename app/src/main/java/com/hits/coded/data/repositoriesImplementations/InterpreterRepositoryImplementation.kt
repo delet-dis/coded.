@@ -320,7 +320,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         }!!
                     }
                     is String -> {
-                        if ((variable.valueToSet as String)[0] == '"' && (variable.valueToSet as String)[(variable.valueToSet as String).lastIndex] == '"') {
+                        if (!((variable.valueToSet as String)[0] == '"' && (variable.valueToSet as String)[(variable.valueToSet as String).lastIndex] == '"')) {
                             val variableName = (variable.valueToSet as String).drop(1).dropLast(1)
                             val foundedStoredVariable =
                                 HeapRepositoryImplementation().getVariable(variableName)
@@ -484,7 +484,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             is Double -> return value
             is ExpressionBlock -> return interpretExpressionBlocks(value) as Double
             is String -> {
-                if (value[0] == '"' && value[value.lastIndex] == '"') {
+                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         HeapRepositoryImplementation().getVariable(variableName)
@@ -514,15 +514,15 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
 
     private suspend fun convertAnyToInt(value: Any): Int {
         when (value) {
-            is Double -> return value.toInt()
+            is Double -> throw InterpreterException(currentId,ExceptionType.TYPE_MISMATCH)
             is Int -> return value
             is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.INT) return interpretExpressionBlocks(
                 value
             ) as Int else {
-                throw Exception("Can't interpret Expression as Integer. Block id:${value.id}")
+                throw InterpreterException(currentId,ExceptionType.TYPE_MISMATCH)
             }
             is String -> {
-                if (value[0] == '"' && value[value.lastIndex] == '"') {
+                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         HeapRepositoryImplementation().getVariable(variableName)
@@ -561,7 +561,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 }
             }
             is String -> {
-                if (value[0] == '"' && value[value.lastIndex] == '"') {
+                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         HeapRepositoryImplementation().getVariable(variableName)
@@ -597,7 +597,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 ) as String else throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
             }
             is String -> {
-                if (value[0] == '"' && value[value.lastIndex] == '"') {
+                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         HeapRepositoryImplementation().getVariable(variableName)
@@ -624,7 +624,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
     private suspend fun getTypeOfAny(value: Any?): VariableType? {
         when (value) {
             is String -> {
-                if (value[0] == '"' && value[value.lastIndex] == '"') {
+                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         HeapRepositoryImplementation().getVariable(variableName)
