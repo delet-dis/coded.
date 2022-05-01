@@ -32,4 +32,7 @@
     <dimen name="editorLayoutTopAndBottomMargin">50dp</dimen>
 
     <dimen name="codeBlockElementsSpacing">8dp</dimen>
+
+    <dimen name="bottomSheetTopOffset">50dp</dimen>
+    <dimen name="consoleBottomMargin">60dp</dimen>
 </resources>

@@ -27,16 +27,14 @@ class OnboardingActivityViewModel @Inject constructor(
     var isOnboardingPassed =
         sharedPreferencesUseCases.checkIsOnboardingPassedUseCase.checkIsOnboardingPassed()
 
-    fun initGreetingHideCountdown() {
+    fun initGreetingHideCountdown() =
         viewModelScope.launch {
             delay(1500)
             _isAvailableToHideGreeting.postValue(true)
         }
-    }
 
-    fun setCurrentlyDisplayingOnboardingScreenNumber(newValue: Int) {
+    fun setCurrentlyDisplayingOnboardingScreenNumber(newValue: Int) =
         this._currentlyDisplayingOnboardingScreenNumber.postValue(newValue)
-    }
 
     fun setOnboardingPassed() {
         sharedPreferencesUseCases.changeOnboardingPassedStateUseCase.changeOnboardingPassed(true)

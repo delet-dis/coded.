@@ -10,23 +10,34 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
+import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
+import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.databinding.ActivityEditorBinding
-import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.ItemsPickingBottomSheetController
-import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheetFragment.viewModel.ItemsPickingBottomSheetViewModel
+import com.hits.coded.presentation.activities.editorActivity.fragments.consoleBottomSheet.ConsoleBottomSheetController
+import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.ItemsPickingBottomSheetController
+import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.viewModel.ItemsPickingBottomSheetViewModel
+import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.VariableTypeChangerBottomSheetController
+import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.viewModel.VariableTypeChangerViewModel
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
 import com.hits.coded.presentation.views.codeField.CodeField
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.properties.Delegates
 
 
 @AndroidEntryPoint
-class EditorActivity : AppCompatActivity() {
+class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallback {
     private lateinit var binding: ActivityEditorBinding
 
     private val viewModel: EditorActivityViewModel by viewModels()
 
-    private lateinit var bottomSheetController: ItemsPickingBottomSheetController
+    private lateinit var itemsPickingBottomSheetController: ItemsPickingBottomSheetController
+    private lateinit var typeChangerBottomSheetController: VariableTypeChangerBottomSheetController
+    private lateinit var consoleBottomSheetController: ConsoleBottomSheetController
 
     private lateinit var codeField: CodeField
+
+    private var statusBarHeight by Delegates.notNull<Int>()
+    private var navigationBarHeight by Delegates.notNull<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +54,11 @@ class EditorActivity : AppCompatActivity() {
 
         initBarsStateChangingBasedOnFieldClick()
 
-        initBottomSheet()
+        initItemsPickingBottomSheet()
+
+        initVariableTypeChangerBottomSheet()
+
+        initConsoleBottomSheet()
 
         initBottomBarButtonsOnClicks()
     }
@@ -56,8 +71,8 @@ class EditorActivity : AppCompatActivity() {
 
     private fun initSystemBarsDimensionChangesListener() =
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _: View?, insets: WindowInsetsCompat ->
-            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            val navigationBarHeight =
+            statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            navigationBarHeight =
                 insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
 
             changeTopBarHeight(statusBarHeight)
@@ -126,14 +141,13 @@ class EditorActivity : AppCompatActivity() {
         )
     }
 
-    private fun initScrollableLayoutDimensions() {
+    private fun initScrollableLayoutDimensions() =
         with(resources.displayMetrics) {
             codeField.layoutParams.apply {
                 height = heightPixels * 3
                 width = widthPixels * 3
             }
         }
-    }
 
     private fun initBarsStateChangingBasedOnFieldClick() =
         codeField.setOnClickListener {
@@ -148,23 +162,46 @@ class EditorActivity : AppCompatActivity() {
         viewModel.hideBars()
     }
 
-    private fun initBottomSheet() {
+    private fun initItemsPickingBottomSheet() {
         val bottomSheetViewModel: ItemsPickingBottomSheetViewModel by viewModels()
-        bottomSheetController = ItemsPickingBottomSheetController(
-            binding.bottomSheetIncludedLayout,
+
+        itemsPickingBottomSheetController = ItemsPickingBottomSheetController(
+            binding.itemsPickingBottomSheet,
             bottomSheetViewModel,
             this
         )
     }
 
-    private fun showBottomSheet() {
-        bottomSheetController.show()
+    private fun initVariableTypeChangerBottomSheet() {
+        val bottomSheetViewModel: VariableTypeChangerViewModel by viewModels()
+
+        typeChangerBottomSheetController = VariableTypeChangerBottomSheetController(
+            binding.variableTypeChangerBottomSheet,
+            bottomSheetViewModel, this
+        )
     }
 
     private fun initBottomBarButtonsOnClicks() =
         with(binding) {
             menuButton.setOnClickListener {
-                showBottomSheet()
+                itemsPickingBottomSheetController.show()
+            }
+
+            consoleButton.setOnClickListener {
+                consoleBottomSheetController.show(navigationBarHeight)
             }
         }
+
+    private fun initConsoleBottomSheet() {
+        consoleBottomSheetController = ConsoleBottomSheetController(
+            binding.consoleBottomSheet
+        )
+    }
+
+
+    override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) =
+        typeChangerBottomSheetController.show(closureToInvoke)
+
+    override fun hideTypeChangerBottomSheet() =
+        typeChangerBottomSheetController.hide()
 }
