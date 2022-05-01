@@ -309,7 +309,7 @@ constructor(
                                     else -> {
                                         throw variable.id?.let { it1 ->
                                             InterpreterException(
-                                                it1, ExceptionType.NONEXISTING_DATA_TYPE
+                                                it1, ExceptionType.TYPE_MISMATCH
                                             )
                                         }!!
                                     }
@@ -501,7 +501,7 @@ constructor(
                 }
             }
         }
-        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
+        throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
     }
 
     @Throws(InterpreterException::class)
@@ -540,7 +540,7 @@ constructor(
                 }
             }
         }
-        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
+        throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
     }
 
     @Throws(InterpreterException::class)
@@ -580,7 +580,7 @@ constructor(
                 }
             }
         }
-        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
+        throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
     }
 
     @Throws(InterpreterException::class)
@@ -613,7 +613,7 @@ constructor(
                 }
             }
         }
-        throw InterpreterException(0, ExceptionType.NONEXISTING_DATA_TYPE)
+        throw InterpreterException(0, ExceptionType.TYPE_MISMATCH)
     }
 
     @Throws(InterpreterException::class)
