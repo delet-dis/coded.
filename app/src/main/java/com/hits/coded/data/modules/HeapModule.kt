@@ -6,6 +6,7 @@ import com.hits.coded.domain.repositories.HeapRepository
 import com.hits.coded.domain.useCases.heap.AddVariableUseCase
 import com.hits.coded.domain.useCases.heap.DeleteVariableUseCase
 import com.hits.coded.domain.useCases.heap.GetVariableUseCase
+import com.hits.coded.domain.useCases.heap.IsVariableDeclaredUseCase
 import com.hits.coded.domain.useCases.heap.ReAssignVariableUseCase
 import dagger.Binds
 import dagger.Module
@@ -27,7 +28,8 @@ abstract class HeapModule {
             AddVariableUseCase(heapRepository),
             GetVariableUseCase(heapRepository),
             DeleteVariableUseCase(heapRepository),
-            ReAssignVariableUseCase(heapRepository)
+            ReAssignVariableUseCase(heapRepository),
+            IsVariableDeclaredUseCase(heapRepository)
         )
     }
 }

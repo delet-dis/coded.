@@ -3,7 +3,7 @@ package com.hits.coded.data.modules
 import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.data.repositoriesImplementations.InterpreterRepositoryImplementation
 import com.hits.coded.domain.repositories.InterpreterRepository
-import com.hits.coded.domain.useCases.interpreter.*
+import com.hits.coded.domain.useCases.interpreter.InterpretStartBlockUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -13,20 +13,16 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class InterpretatorModule {
+abstract class InterpreterModule {
     @Binds
-    abstract fun bindInterpretatorRepository(interpretatorRepository: InterpreterRepositoryImplementation): InterpreterRepository
+    abstract fun bindInterpreterRepository(interpreterRepository: InterpreterRepositoryImplementation): InterpreterRepository
 
     companion object {
         @Provides
         @Singleton
         fun provideInterpreterUseCases(interpreterRepository: InterpreterRepository): InterpreterUseCases =
             InterpreterUseCases(
-                InterpreteConditionBlockUseCase(interpreterRepository),
-                InterpreteExpressionBlockUseCase(interpreterRepository),
-                InterpreteIOBlockUseCase(interpreterRepository),
-                InterpreteLoopBlockUseCase(interpreterRepository),
-                InterpreteVariableBlockUseCase(interpreterRepository)
+                InterpretStartBlockUseCase(interpreterRepository),
             )
     }
 }

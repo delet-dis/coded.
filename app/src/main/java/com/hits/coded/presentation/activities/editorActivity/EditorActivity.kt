@@ -11,7 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
-import com.hits.coded.data.models.types.VariableType
+import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.databinding.ActivityEditorBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.consoleBottomSheet.ConsoleBottomSheetController
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.ItemsPickingBottomSheetController

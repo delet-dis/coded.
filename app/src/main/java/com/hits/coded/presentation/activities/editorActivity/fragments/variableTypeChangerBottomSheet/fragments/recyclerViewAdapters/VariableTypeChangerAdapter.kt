@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hits.coded.R
-import com.hits.coded.data.models.types.VariableType
+import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.databinding.RecyclerViewVariableTypeBinding
 
 class VariableTypeChangerAdapter(

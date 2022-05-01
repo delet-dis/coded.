@@ -1,6 +1,6 @@
 package com.hits.coded.data.models.heap.dataClasses
 
-import com.hits.coded.data.models.types.VariableType
+import com.hits.coded.data.models.sharedTypes.VariableType
 
 data class StoredVariable(
     var name: String? = null,

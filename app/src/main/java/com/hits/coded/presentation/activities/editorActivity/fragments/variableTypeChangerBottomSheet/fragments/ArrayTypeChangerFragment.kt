@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hits.coded.data.interfaces.ui.bottomSheets.typeChangerBottomSheet.UIBottomSheetTypeChangerFragmentInterface
-import com.hits.coded.data.models.types.VariableType
+import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.databinding.FragmentArrayTypeChangerBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.fragments.recyclerViewAdapters.VariableTypeChangerAdapter
 import dagger.hilt.android.AndroidEntryPoint
