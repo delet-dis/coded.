@@ -5,7 +5,7 @@ import com.hits.coded.data.models.itemsPickingBottomSheet.dataClasses.BottomShee
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.ActionsItemsPickingFragment
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.LogicItemsPickingFragment
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.LoopsItemsPickingFragment
-import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.variablesItemsPickingFragment.VariablesItemsPickingFragment
+import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragments.VariablesItemsPickingFragment
 
 enum class BottomSheetItemsScreens(val bottomSheetItemsScreen: BottomSheetItemsScreen) {
     VARIABLES(BottomSheetItemsScreen(VariablesItemsPickingFragment(), R.string.variables)),

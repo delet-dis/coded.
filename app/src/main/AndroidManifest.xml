@@ -13,6 +13,7 @@
         <activity
             android:name=".presentation.activities.editorActivity.EditorActivity"
             android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="stateHidden|adjustPan"
             android:exported="false" />
         <activity
             android:name=".presentation.activities.onboardingActivity.OnboardingActivity"

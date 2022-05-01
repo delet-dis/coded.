@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.databinding.FragmentActionsItemsPickingBinding
+import com.hits.coded.presentation.views.codeBlocks.actions.console.UIActionConsoleWriteBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,11 +32,14 @@ class ActionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterf
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
-
+            redrawElements()
         }
     }
 
     override fun redrawElements() {
-
+        binding.actionsLinearLayout.apply {
+            removeAllViews()
+            addView(UIActionConsoleWriteBlock(requireContext()))
+        }
     }
 }

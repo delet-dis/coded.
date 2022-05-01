@@ -13,6 +13,7 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
 import com.hits.coded.data.models.types.VariableType
 import com.hits.coded.databinding.ActivityEditorBinding
+import com.hits.coded.presentation.activities.editorActivity.fragments.consoleBottomSheet.ConsoleBottomSheetController
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.ItemsPickingBottomSheetController
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.viewModel.ItemsPickingBottomSheetViewModel
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.VariableTypeChangerBottomSheetController
@@ -20,6 +21,7 @@ import com.hits.coded.presentation.activities.editorActivity.fragments.variableT
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
 import com.hits.coded.presentation.views.codeField.CodeField
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.properties.Delegates
 
 
 @AndroidEntryPoint
@@ -30,8 +32,12 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
     private lateinit var itemsPickingBottomSheetController: ItemsPickingBottomSheetController
     private lateinit var typeChangerBottomSheetController: VariableTypeChangerBottomSheetController
+    private lateinit var consoleBottomSheetController: ConsoleBottomSheetController
 
     private lateinit var codeField: CodeField
+
+    private var statusBarHeight by Delegates.notNull<Int>()
+    private var navigationBarHeight by Delegates.notNull<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +58,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
         initVariableTypeChangerBottomSheet()
 
+        initConsoleBottomSheet()
+
         initBottomBarButtonsOnClicks()
     }
 
@@ -63,8 +71,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
     private fun initSystemBarsDimensionChangesListener() =
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _: View?, insets: WindowInsetsCompat ->
-            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            val navigationBarHeight =
+            statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            navigationBarHeight =
                 insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
 
             changeTopBarHeight(statusBarHeight)
@@ -173,15 +181,23 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         )
     }
 
-    private fun showBottomSheet() =
-        itemsPickingBottomSheetController.show()
-
     private fun initBottomBarButtonsOnClicks() =
         with(binding) {
             menuButton.setOnClickListener {
-                showBottomSheet()
+                itemsPickingBottomSheetController.show()
+            }
+
+            consoleButton.setOnClickListener {
+                consoleBottomSheetController.show(navigationBarHeight)
             }
         }
+
+    private fun initConsoleBottomSheet() {
+        consoleBottomSheetController = ConsoleBottomSheetController(
+            binding.consoleBottomSheet
+        )
+    }
+
 
     override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) =
         typeChangerBottomSheetController.show(closureToInvoke)

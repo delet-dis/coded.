@@ -17,7 +17,7 @@ import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CodeField constructor(
+class CodeField @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightBlack"
+    android:fitsSystemWindows="true">
+
+    <com.jraska.console.Console
+        android:id="@+id/console"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:focusable="false"
+        app:layout_constraintBottom_toTopOf="@+id/enteredText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/enteredText"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:background="@null"
+        android:ems="10"
+        android:hint="@string/consoleInput"
+        android:inputType="textMultiLine"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textColorHint="@color/gray"
+        android:typeface="monospace"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:importantForAutofill="no" />
+</androidx.constraintlayout.widget.ConstraintLayout>
