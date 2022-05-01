@@ -51,7 +51,7 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    override suspend fun interpretConditionBlocks(condition: ConditionBlock): Boolean {
+    private suspend fun interpretConditionBlocks(condition: ConditionBlock): Boolean {
         var conditionIsTrue = false
         val leftSideType = getTypeOfAny(condition.leftSide)
         val rightSideType = getTypeOfAny(condition.rightSide)
@@ -261,7 +261,7 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    override suspend fun interpretLoopBlocks(loop: LoopBlock) {
+    private suspend fun interpretLoopBlocks(loop: LoopBlock) {
         if (loop.nestedBlocks != null) {
             while (interpretConditionBlocks(loop.conditionBlock as ConditionBlock)) {
                 for (nestedBlock in loop.nestedBlocks!!) {
@@ -278,7 +278,7 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    override suspend fun interpretVariableBlocks(variable: VariableBlock) {
+    private suspend fun interpretVariableBlocks(variable: VariableBlock) {
         when (variable.variableBlockType) {
             VariableBlockType.VARIABLE_SET -> {
                 when (variable.valueToSet) {
@@ -341,7 +341,7 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    override suspend fun interpretExpressionBlocks(expression: ExpressionBlock): Any {
+    private suspend fun interpretExpressionBlocks(expression: ExpressionBlock): Any {
         val leftSideType: VariableType? = getTypeOfAny(expression.leftSide)
         val rightSideType: VariableType? = getTypeOfAny(expression.rightSide)
         if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
@@ -393,7 +393,7 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    override suspend fun interpretIOBlocks(IO: IOBlock) {
+    private suspend fun interpretIOBlocks(IO: IOBlock) {
         IO.id?.let {
             currentId = it
         }
