@@ -35,7 +35,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     UICodeBlockWithCustomRemoveViewProcessInterface, UIElementHandlesCustomRemoveViewProcessInterface,  UICodeBlockSavesNestedBlocksInterface {
     private val binding: ViewVariableChangeByBlockBinding
 
-    override val nestedBlocks: ArrayList<View> = ArrayList()
+    override val nestedUIBlocks: ArrayList<View> = ArrayList()
 
     private var variableParams = StoredVariable()
 
@@ -146,7 +146,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
                 visibility = INVISIBLE
             }
 
-            nestedBlocks.add(draggableItem)
+            nestedUIBlocks.add(draggableItem)
             secondCard.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
@@ -172,7 +172,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     }
 
     override fun customRemoveView(view: View) {
-        nestedBlocks.remove(view)
+        nestedUIBlocks.remove(view)
         binding.secondCard.removeView(view)
 
         _block.valueToSet = null

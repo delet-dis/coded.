@@ -1,5 +1,6 @@
 package com.hits.coded.presentation.activities.editorActivity
 
+import android.animation.ObjectAnimator
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
+import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.databinding.ActivityEditorBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.consoleBottomSheet.ConsoleBottomSheetController
@@ -39,6 +41,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
     private var statusBarHeight by Delegates.notNull<Int>()
     private var navigationBarHeight by Delegates.notNull<Int>()
 
+    private val objectAnimator = ObjectAnimator()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -47,6 +51,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         initSystemBarsDimensionChangesListener()
 
         initIsBarsCollapsedObserver()
+
+//        initIsCodeExecutingObserver()
 
         initCodeField()
 
@@ -193,6 +199,10 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
             startButton.setOnClickListener {
                 codeField.calculateBlocksHierarchyIds()
+
+                (codeField.getEntryPointBlock().block as? StartBlock)?.let {
+                    viewModel.executeCode(it)
+                }
             }
         }
 
@@ -202,6 +212,19 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         )
     }
 
+//    private fun showStartButton() =
+//        with(binding) {
+//            val firstAnimation = ObjectAnimator.ofFloat(binding.)
+//        }
+//
+//    private fun initIsCodeExecutingObserver() =
+//        viewModel.isCodeExecuting.observe(this) {
+//            if (it) {
+//                showStopButton()
+//            } else {
+//                showStartButton()
+//            }
+//        }
 
     override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) =
         typeChangerBottomSheetController.show(closureToInvoke)

@@ -36,7 +36,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
     UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface {
     private val binding: ViewConsoleWriteBlockBinding
 
-    override val nestedBlocks: ArrayList<View> = ArrayList()
+    override val nestedUIBlocks: ArrayList<View> = ArrayList()
 
     private var variableParams = StoredVariable()
 
@@ -137,7 +137,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
                 visibility = INVISIBLE
             }
 
-            nestedBlocks.add(draggableItem)
+            nestedUIBlocks.add(draggableItem)
             binding.firstCard.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
@@ -163,7 +163,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
     }
 
     override fun customRemoveView(view: View) {
-        nestedBlocks.remove(view)
+        nestedUIBlocks.remove(view)
         binding.firstCard.removeView(view)
 
         _block.argument = null

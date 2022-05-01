@@ -131,7 +131,7 @@ class CodeField @JvmOverloads constructor(
                 processingView.tag = VIEW_HIERARCHY_ID + currentId
 
                 (processingView as? UICodeBlockSavesNestedBlocksInterface)?.let {
-                    it.nestedBlocks.forEach { block ->
+                    it.nestedUIBlocks.forEach { block ->
                         currentId = calculateElementsIds(block, currentId)
                     }
                 }

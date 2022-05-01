@@ -34,7 +34,7 @@ class UIActionStartBlock @JvmOverloads constructor(
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
 
-    override val nestedBlocks: ArrayList<View> = ArrayList()
+    override val nestedUIBlocks: ArrayList<View> = ArrayList()
 
     private var _block = StartBlock()
     override val block: BlockBase
@@ -108,7 +108,7 @@ class UIActionStartBlock @JvmOverloads constructor(
 
             itemParent.removeView(draggableItem)
 
-            nestedBlocks.add(draggableItem)
+            nestedUIBlocks.add(draggableItem)
             nestedBlocksLayout.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
@@ -159,7 +159,7 @@ class UIActionStartBlock @JvmOverloads constructor(
         (view as? UICodeBlockWithDataInterface)?.block?.let {
             nestedBlocksAsBlockBase.remove(it)
 
-            nestedBlocks.remove(view)
+            nestedUIBlocks.remove(view)
 
             _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
         }
