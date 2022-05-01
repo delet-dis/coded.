@@ -15,6 +15,13 @@
     <string name="typeMismatchError">Ouch! You can\'t use variable of this type here!</string>
     <string name="arrayOutOFBoundError">Eh? Check indices of the array</string>
     <string name="divisionByZeroError">Oops! Division by zero!</string>
+    <string name="wrongStartPositionError">Second start block? Original! </string>
+    <string name="lackOfArgumentsError">Well, and who will set missing blocks? Me?</string>
+    <string name="variableNotExistError">And where do you expect me to get this variable?</string>
+    <string name="wrongOperandError">You shouldn\'t use such operand in this case</string>
+    <string name="invalidStringError">Hmm, I can\'t quite understand what do you mean here</string>
+    <string name="invalidBlockError"> *CRAAACK* It seems that this block doesn\'t fit here!</string>
+
 
     <string name="project">Project</string>
     <string name="dragAndDropTheComponentToAdd">Drag and drop the component to add</string>
