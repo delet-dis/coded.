@@ -9,7 +9,7 @@ import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetWithViewPagerInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.typeChangerBottomSheet.UIBottomSheetTypeChangerFragmentInterface
 import com.hits.coded.data.models.typeChangerBottomSheet.enums.BottomSheetTypeChangersScreens
-import com.hits.coded.data.models.types.VariableType
+import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.databinding.IncludeVariableTypeChangerBottomSheetBinding
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.fragmentStateAdapters.VariableTypeChangerViewPagerAdapter
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.viewModel.VariableTypeChangerViewModel

@@ -1,4 +1,4 @@
-package com.hits.coded.data.models.types
+package com.hits.coded.data.models.sharedTypes
 
 enum class ExceptionType {
     TYPE_MISMATCH,
@@ -7,6 +7,7 @@ enum class ExceptionType {
     WRONG_START_POSITION,
     LACK_OF_ARGUMENTS,
     ACCESSING_A_NONEXISTENT_VARIABLE,
-    NONEXISTING_DATA_TYPE,
-    WRONG_OPERAND_USE_CASE
+    WRONG_OPERAND_USE_CASE,
+    INVALID_STRING,
+    INVALID_BLOCK,
 }

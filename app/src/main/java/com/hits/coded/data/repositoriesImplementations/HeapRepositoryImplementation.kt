@@ -29,4 +29,8 @@ class HeapRepositoryImplementation @Inject constructor() : HeapRepository() {
     override fun deleteVariable(variableName: String) {
         hashMap.remove(variableName)
     }
+
+    override fun isVariableDeclared(variableName: String): Boolean {
+        return hashMap.containsKey(variableName)
+    }
 }

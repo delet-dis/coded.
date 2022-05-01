@@ -13,7 +13,7 @@ data class ConditionBlock(
     override val rightSide: Any?,
     override val logicalOperator: LogicalOperatorBase?,
     override val mathematicalOperator: MathematicalOperatorBase?,
-    override val id: Int? = null,
+    override var id: Int? = null,
     override var nestedBlocks: Array<BlockBase>? = null,
     override val type: BlockType = BlockType.CONDITION,
 ) : ConditionBlockBase()

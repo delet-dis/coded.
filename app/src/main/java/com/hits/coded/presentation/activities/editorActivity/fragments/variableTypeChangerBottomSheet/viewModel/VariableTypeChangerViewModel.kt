@@ -1,9 +1,9 @@
 package com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.viewModel
 
 import androidx.lifecycle.ViewModel
+import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.data.models.typeChangerBottomSheet.dataClasses.BottomSheetTypeChangerScreen
 import com.hits.coded.data.models.typeChangerBottomSheet.enums.BottomSheetTypeChangersScreens
-import com.hits.coded.data.models.types.VariableType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

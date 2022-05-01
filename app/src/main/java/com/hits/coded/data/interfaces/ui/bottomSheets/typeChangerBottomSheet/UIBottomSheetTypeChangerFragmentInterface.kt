@@ -1,6 +1,6 @@
 package com.hits.coded.data.interfaces.ui.bottomSheets.typeChangerBottomSheet
 
-import com.hits.coded.data.models.types.VariableType
+import com.hits.coded.data.models.sharedTypes.VariableType
 
 interface UIBottomSheetTypeChangerFragmentInterface {
     var items: Array<VariableType>
