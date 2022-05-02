@@ -34,7 +34,7 @@ constructor(
 
     @Throws(InterpreterException::class)
     override suspend fun interpretStartBlock(start: StartBlock) {
-        for (nestedBlock in start.nestedBlocks!!) {
+        start.nestedBlocks?.forEach { nestedBlock ->
             when (nestedBlock.type) {
                 BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlock)
                 BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
