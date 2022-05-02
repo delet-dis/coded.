@@ -8,6 +8,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.hits.coded.R
 import com.hits.coded.databinding.ViewConsoleBinding
 import com.hits.coded.domain.extensions.hideKeyboard
+import com.hits.coded.domain.extensions.showKeyboard
 import com.hits.coded.presentation.views.console.viewModel.ConsoleViewModel
 import com.jraska.console.Console
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,6 +58,10 @@ class Console @JvmOverloads constructor(
                 binding.enteredText.clearFocus()
 
                 binding.enteredText.hideKeyboard()
+            } else {
+                binding.enteredText.showKeyboard()
+
+                binding.enteredText.requestFocus()
             }
         }
 

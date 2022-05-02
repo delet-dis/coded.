@@ -548,7 +548,7 @@ constructor(
             IOBlockType.WRITE -> {
                 when (IO.argument) {
                     is BlockBase -> {
-                        consoleUseCases.writeToConsoleUseCase.writeToConsole(
+                        consoleUseCases.writeToConsoleUseCase.writeOutputToConsole(
                             interpretBlock(IO.argument as BlockBase).toString()
                         )
                     }
@@ -563,11 +563,11 @@ constructor(
                                 )
 
                             if (variable.value != null)
-                                consoleUseCases.writeToConsoleUseCase.writeToConsole(variable.value.toString())
+                                consoleUseCases.writeToConsoleUseCase.writeOutputToConsole(variable.value.toString())
                             else
-                                consoleUseCases.writeToConsoleUseCase.writeToConsole("Undefined")
+                                consoleUseCases.writeToConsoleUseCase.writeOutputToConsole("Undefined")
                         } else {
-                            consoleUseCases.writeToConsoleUseCase.writeToConsole(
+                            consoleUseCases.writeToConsoleUseCase.writeOutputToConsole(
                                 argument.drop(1).dropLast(1)
                             )
                         }

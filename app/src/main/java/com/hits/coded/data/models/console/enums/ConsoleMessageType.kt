@@ -4,6 +4,6 @@ import com.hits.coded.R
 
 enum class ConsoleMessageType(val colorResourceId: Int) {
     ERROR(R.color.lightRed),
-    OUTPUT(R.color.lightOcean),
-    INPUT(R.color.darkOcean)
+    OUTPUT(R.color.lightGreen),
+    INPUT(R.color.lightBluePurple)
 }
