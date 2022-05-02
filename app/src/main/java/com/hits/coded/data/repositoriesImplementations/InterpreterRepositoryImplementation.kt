@@ -539,7 +539,7 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun interpretIOBlocks(IO: IOBlock) {
+    private suspend fun interpretIOBlocks(IO: IOBlock): String? {
         IO.id?.let {
             currentId = it
         }
@@ -576,36 +576,18 @@ constructor(
                         throw InterpreterException(currentId, ExceptionType.INVALID_BLOCK)
                     }
                 }
+
+                return null
             }
 
             IOBlockType.READ -> {
-                //TODO: этого может никогда не быть
-                if (IO.argument !is String) {
-                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-                }
-
-                val arg = IO.argument as String
-                if (!isVariable(arg)) {
-                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-                }
-
-                val variable = heapUseCases.getVariableUseCase.getVariable(arg)
-                    ?: throw InterpreterException(
-                        currentId,
-                        ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                    )
-
-                val input = consoleUseCases.readFromConsoleUseCase.readFromConsole()
-                val value = tryToConvertString(input, variable.type!!)
-                    ?: throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-
-                variable.value = value
+                return consoleUseCases.readFromConsoleUseCase.readFromConsole()
             }
         }
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun interpretBlock(block: BlockBase): Any {
+    private suspend fun interpretBlock(block: BlockBase): Any? {
         return when (block.type) {
             BlockType.CONDITION -> interpretConditionBlocks(block as ConditionBlock)
             BlockType.EXPRESSION -> interpretExpressionBlocks(block as ExpressionBlock)
