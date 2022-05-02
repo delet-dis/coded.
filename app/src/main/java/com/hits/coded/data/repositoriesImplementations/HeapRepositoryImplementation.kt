@@ -9,8 +9,10 @@ import javax.inject.Singleton
 class HeapRepositoryImplementation @Inject constructor() : HeapRepository() {
     private val hashMap: HashMap<String, StoredVariable?> = HashMap()
 
-    override fun addVariable(variableName: String) {
-        hashMap[variableName] = StoredVariable(variableName)
+    override fun addVariable(storedVariable: StoredVariable) {
+        storedVariable.name?.let {
+            hashMap[it] = storedVariable
+        }
     }
 
     override fun getVariable(variableName: String): StoredVariable? {
