@@ -232,7 +232,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
         val firstAnimation =
             ObjectAnimator.ofFloat(viewToHide, "alpha", 1f, 0f).apply {
-                duration = 300
+                duration = BUTTONS_ANIMATION_DURATION
             }
 
         firstAnimation.addListener(object : Animator.AnimatorListener {
@@ -244,7 +244,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
                 viewToShow.visibility = View.VISIBLE
                 val secondAnimation =
                     ObjectAnimator.ofFloat(viewToShow, "alpha", 0f, 1f).apply {
-                        duration = 300
+                        duration = BUTTONS_ANIMATION_DURATION
                     }
 
                 secondAnimation.start()
@@ -278,4 +278,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
     override fun hideTypeChangerBottomSheet() =
         typeChangerBottomSheetController.hide()
+
+    private companion object {
+        const val BUTTONS_ANIMATION_DURATION:Long = 200
+    }
 }

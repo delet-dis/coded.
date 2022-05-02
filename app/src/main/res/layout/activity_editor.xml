@@ -164,8 +164,8 @@
                         android:background="@null"
                         android:contentDescription="@string/menu"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/startButton"
-                        app:layout_constraintStart_toEndOf="@+id/menuButton"
+                        app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
+                        app:layout_constraintStart_toStartOf="@+id/leftGuideline"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_console" />
 

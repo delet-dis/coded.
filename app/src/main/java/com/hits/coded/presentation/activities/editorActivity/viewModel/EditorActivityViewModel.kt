@@ -47,5 +47,9 @@ class EditorActivityViewModel @Inject constructor(
         }
     }
 
-    fun stopCodeExecution() = processingJob.cancel()
+    fun stopCodeExecution() {
+        processingJob.cancel()
+
+        _isCodeExecuting.postValue(false)
+    }
 }

@@ -59,9 +59,9 @@ class Console @JvmOverloads constructor(
 
                 binding.enteredText.hideKeyboard()
             } else {
-                binding.enteredText.showKeyboard()
-
                 binding.enteredText.requestFocus()
+
+                binding.enteredText.showKeyboard()
             }
         }
 
