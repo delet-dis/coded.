@@ -52,10 +52,10 @@ class ConsoleRepositoryImplementation @Inject constructor(
 
     override fun writeToConsole(input: String, consoleMessageType: ConsoleMessageType) {
         if (_bufferValue.size == BUFFER_SIZE) {
-            _bufferValue.removeLast()
+            _bufferValue.removeFirst()
         }
 
-        _bufferValue.addFirst(SpannableString(input).apply {
+        _bufferValue.addLast(SpannableString(input).apply {
             setSpan(
                 ForegroundColorSpan(context.getColor(consoleMessageType.colorResourceId)),
                 0,
