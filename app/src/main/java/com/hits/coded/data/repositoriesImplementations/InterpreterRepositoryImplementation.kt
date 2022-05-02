@@ -396,8 +396,8 @@ constructor(
                 }
             }
             VariableBlockType.VARIABLE_CHANGE -> {
-                Log.d("TYPE", "I'm here")
                 val typeOfNewValue = getTypeOfAny(variable.valueToSet)
+                Log.d("TYPE", variable.variableParams?.type.toString())
                 if (typeOfNewValue == variable.variableParams?.type) {
                     Log.d("finder1", "helpVariable1")
                     when (typeOfNewValue) {
@@ -771,7 +771,8 @@ constructor(
         when (value) {
             is String -> {
                 when {
-                    value.toIntOrNull() is Int -> {return VariableType.INT }
+                    value.toIntOrNull() is Int -> {
+                        return VariableType.INT }
                     value.toDoubleOrNull() is Double -> return VariableType.DOUBLE
                     value.toBooleanStrictOrNull() is Boolean ->return VariableType.BOOLEAN
                     else -> {
