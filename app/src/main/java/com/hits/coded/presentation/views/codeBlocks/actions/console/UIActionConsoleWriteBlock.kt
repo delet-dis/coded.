@@ -20,7 +20,6 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
-import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.databinding.ViewConsoleWriteBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,8 +36,6 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
     private val binding: ViewConsoleWriteBlockBinding
 
     override val nestedUIBlocks: ArrayList<View> = ArrayList()
-
-    private var variableParams = StoredVariable()
 
     private var _block = IOBlock(IOBlockType.WRITE)
     override val block: BlockBase
@@ -67,9 +64,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
 
     private fun initVariableNameChangeListener() =
         binding.variableName.addTextChangedListener {
-            variableParams.name = it.toString()
-
-            _block.argument = variableParams
+            _block.argument = it.toString()
         }
 
 

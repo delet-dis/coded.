@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.interpreterCaller.useCases.InterpreterCallerUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,6 +24,8 @@ class EditorActivityViewModel @Inject constructor(
     val isCodeExecuting: LiveData<Boolean>
         get() = _isCodeExecuting
 
+    private lateinit var processingJob: Job
+
     fun hideBars() = _isBarsCollapsed.postValue(true)
 
     fun toggleBars() = _isBarsCollapsed.value?.let {
@@ -31,10 +34,12 @@ class EditorActivityViewModel @Inject constructor(
 
     fun executeCode(startBlock: StartBlock) {
         _isCodeExecuting.postValue(true)
-        viewModelScope.launch {
+        processingJob = viewModelScope.launch {
             interpreterCallerUseCases.callInterpreterUseCase.callInterpreter(startBlock)
 
             _isCodeExecuting.postValue(false)
         }
     }
+
+    fun stopCodeExecution() = processingJob.cancel()
 }
