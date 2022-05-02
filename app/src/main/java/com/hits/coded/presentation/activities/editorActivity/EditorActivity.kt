@@ -67,6 +67,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         initConsoleBottomSheet()
 
         initBottomBarButtonsOnClicks()
+
+        initIsConsoleInputAvailableObserver()
     }
 
     private fun initBinding() {
@@ -194,7 +196,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
             }
 
             consoleButton.setOnClickListener {
-                consoleBottomSheetController.show(navigationBarHeight)
+                showConsole()
             }
 
             startButton.setOnClickListener {
@@ -261,6 +263,15 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         viewModel.isCodeExecuting.observe(this) {
             showButton(!it)
         }
+
+    private fun initIsConsoleInputAvailableObserver() =
+        viewModel.isConsoleInputAvailable.observe(this) {
+            if (it) {
+                showConsole()
+            }
+        }
+
+    private fun showConsole() = consoleBottomSheetController.show(navigationBarHeight)
 
     override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) =
         typeChangerBottomSheetController.show(closureToInvoke)

@@ -1,9 +1,12 @@
 package com.hits.coded.data.repositoriesImplementations
 
+import android.content.Context
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
+import com.hits.coded.data.models.console.enums.ConsoleMessageType
 import com.hits.coded.domain.repositories.ConsoleRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,7 +17,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ConsoleRepositoryImplementation @Inject constructor() : ConsoleRepository() {
+class ConsoleRepositoryImplementation @Inject constructor(
+    @ApplicationContext private val context: Context
+) :
+    ConsoleRepository() {
 
     private val _bufferValue: ArrayDeque<SpannableString> = ArrayDeque(BUFFER_SIZE)
 
@@ -44,16 +50,18 @@ class ConsoleRepositoryImplementation @Inject constructor() : ConsoleRepository(
         return input.toString()
     }
 
-    override fun writeToConsole(input: String, color: Int) {
+    override fun writeToConsole(input: String, consoleMessageType: ConsoleMessageType) {
         if (_bufferValue.size == BUFFER_SIZE) {
             _bufferValue.removeLast()
         }
-        _bufferValue.addFirst(SpannableString(input + "\n").apply {
+
+        _bufferValue.addFirst(SpannableString(input).apply {
             setSpan(
-                ForegroundColorSpan(color),
+                ForegroundColorSpan(context.getColor(consoleMessageType.colorResourceId)),
                 0,
                 input.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE )
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         })
         _buffer.tryEmit(_bufferValue)
     }
