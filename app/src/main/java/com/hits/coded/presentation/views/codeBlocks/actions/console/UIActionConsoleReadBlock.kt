@@ -7,6 +7,7 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
@@ -19,7 +20,7 @@ class UIActionConsoleReadBlock @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
-    UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation {
+    UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation, UINestedableCodeBlock {
     private val binding: ViewConsoleReadBlockBinding
 
     private var _block = IOBlock(IOBlockType.READ)
