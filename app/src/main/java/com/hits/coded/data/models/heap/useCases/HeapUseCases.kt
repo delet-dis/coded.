@@ -1,6 +1,7 @@
 package com.hits.coded.data.models.heap.useCases
 
 import com.hits.coded.domain.useCases.heap.AddVariableUseCase
+import com.hits.coded.domain.useCases.heap.ClearUseCase
 import com.hits.coded.domain.useCases.heap.DeleteVariableUseCase
 import com.hits.coded.domain.useCases.heap.GetVariableUseCase
 import com.hits.coded.domain.useCases.heap.IsVariableDeclaredUseCase
@@ -11,5 +12,6 @@ data class HeapUseCases(
     val getVariableUseCase: GetVariableUseCase,
     val deleteVariableUseCase: DeleteVariableUseCase,
     val reAssignVariableUseCase: ReAssignVariableUseCase,
-    val isVariableDeclaredUseCase: IsVariableDeclaredUseCase
+    val isVariableDeclaredUseCase: IsVariableDeclaredUseCase,
+    val clearUseCase: ClearUseCase
 )
