@@ -3,7 +3,11 @@ package com.hits.coded.data.modules
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.repositoriesImplementations.HeapRepositoryImplementation
 import com.hits.coded.domain.repositories.HeapRepository
-import com.hits.coded.domain.useCases.heap.*
+import com.hits.coded.domain.useCases.heap.AddVariableUseCase
+import com.hits.coded.domain.useCases.heap.DeleteVariableUseCase
+import com.hits.coded.domain.useCases.heap.GetVariableUseCase
+import com.hits.coded.domain.useCases.heap.IsVariableDeclaredUseCase
+import com.hits.coded.domain.useCases.heap.ReAssignVariableUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -23,9 +27,9 @@ abstract class HeapModule {
         fun provideHeapUseCases(heapRepository: HeapRepository): HeapUseCases = HeapUseCases(
             AddVariableUseCase(heapRepository),
             GetVariableUseCase(heapRepository),
-            GetVariablesUseCase(heapRepository),
             DeleteVariableUseCase(heapRepository),
-            ReAssignVariableUseCase(heapRepository)
+            ReAssignVariableUseCase(heapRepository),
+            IsVariableDeclaredUseCase(heapRepository)
         )
     }
 }

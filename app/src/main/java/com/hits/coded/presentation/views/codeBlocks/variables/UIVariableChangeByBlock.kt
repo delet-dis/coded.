@@ -9,16 +9,18 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
+import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
+import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
+import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockElementHandlesDragAndDropInterface
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithCustomRemoveViewProcessInterface
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithDataInterface
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
 import com.hits.coded.databinding.ViewVariableChangeByBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,8 +32,10 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
-    UICodeBlockWithCustomRemoveViewProcessInterface {
+    UICodeBlockWithCustomRemoveViewProcessInterface, UIElementHandlesCustomRemoveViewProcessInterface,  UICodeBlockSavesNestedBlocksInterface {
     private val binding: ViewVariableChangeByBlockBinding
+
+    override val nestedUIBlocks: ArrayList<View> = ArrayList()
 
     private var variableParams = StoredVariable()
 
@@ -86,7 +90,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
         binding.parentConstraint.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            if(draggableItem == draggableItem){
+            if (draggableItem == draggableItem) {
                 //TODO: Добавить проверку на то, закидывается ли условие или выражение
 
                 val itemParent = draggableItem.parent as ViewGroup
@@ -129,25 +133,27 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     private fun handleDropEvent(
         itemParent: ViewGroup,
         draggableItem: View
-    ) =
-        with(binding) {
-            if (draggableItem != this@UIVariableChangeByBlock) {
-                alphaPlusAnimation(parentConstraint)
+    ) = with(binding) {
+        if (draggableItem != this@UIVariableChangeByBlock) {
+            alphaPlusAnimation(parentConstraint)
 
-                itemParent.removeView(draggableItem)
+            itemParent.removeView(draggableItem)
 
-                variableChangeValue.apply {
-                    setText("")
-                    visibility = INVISIBLE
-                }
+            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
 
-                secondCard.addView(draggableItem)
+            variableChangeValue.apply {
+                setText("")
+                visibility = INVISIBLE
+            }
 
-                (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                    _block.valueToSet = it
-                }
+            nestedUIBlocks.add(draggableItem)
+            secondCard.addView(draggableItem)
+
+            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                _block.valueToSet = it
             }
         }
+    }
 
     private fun handleDragEndedEvent(
         draggableItem: View
@@ -166,6 +172,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     }
 
     override fun customRemoveView(view: View) {
+        nestedUIBlocks.remove(view)
         binding.secondCard.removeView(view)
 
         _block.valueToSet = null

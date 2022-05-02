@@ -1,9 +1,9 @@
 package com.hits.coded.data.modules
 
-import com.hits.coded.data.models.interpreter.InterpreterUseCases
+import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.data.repositoriesImplementations.InterpreterRepositoryImplementation
 import com.hits.coded.domain.repositories.InterpreterRepository
-import com.hits.coded.domain.useCases.interpreter.*
+import com.hits.coded.domain.useCases.interpreter.InterpretStartBlockUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -22,7 +22,7 @@ abstract class InterpreterModule {
         @Singleton
         fun provideInterpreterUseCases(interpreterRepository: InterpreterRepository): InterpreterUseCases =
             InterpreterUseCases(
-                InterpretStartBlockUseCase(interpreterRepository)
+                InterpretStartBlockUseCase(interpreterRepository),
             )
     }
 }
