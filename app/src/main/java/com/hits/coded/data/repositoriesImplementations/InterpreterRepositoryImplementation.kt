@@ -273,7 +273,7 @@ private val consoleUseCases: ConsoleUseCases)
                         BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
                         BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlock)
                         BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlock)
-                        else -> {}
+                        else -> {throw InterpreterException(currentId, ExceptionType.NONEXISTING_DATA_TYPE)}
                     }
                 }
             }
@@ -436,9 +436,8 @@ private val consoleUseCases: ConsoleUseCases)
                 }
             }
 
-            else -> {}
+            else -> {throw variable.id?.let { InterpreterException(it, ExceptionType.WRONG_OPERAND_USE_CASE) }!!}
         }
-        throw variable.id?.let { InterpreterException(it, ExceptionType.WRONG_OPERAND_USE_CASE) }!!
     }
     @Throws
     private suspend fun interpretExpressionBlocks(expression: ExpressionBlock): Any {
