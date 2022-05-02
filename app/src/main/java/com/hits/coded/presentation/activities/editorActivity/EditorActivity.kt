@@ -200,6 +200,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
             startButton.setOnClickListener {
                 codeField.calculateBlocksHierarchyIds()
 
+                val test = codeField.getEntryPointBlock()
+
                 (codeField.getEntryPointBlock().block as? StartBlock)?.let {
                     viewModel.executeCode(it)
                 }

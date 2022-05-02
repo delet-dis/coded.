@@ -442,8 +442,7 @@ constructor(
                 }
             }
             VariableBlockType.VARIABLE_CREATE -> {
-
-                variable.variableParams!!.name?.let {
+                variable.variableParams?.let {
                     heapUseCases.addVariableUseCase.addVariable(it)
                 }
             }
