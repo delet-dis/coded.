@@ -1,11 +1,13 @@
 package com.hits.coded.presentation.activities.editorActivity
 
+import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -41,8 +43,6 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
     private var statusBarHeight by Delegates.notNull<Int>()
     private var navigationBarHeight by Delegates.notNull<Int>()
 
-    private val objectAnimator = ObjectAnimator()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,7 +52,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
         initIsBarsCollapsedObserver()
 
-//        initIsCodeExecutingObserver()
+        initIsCodeExecutingObserver()
 
         initCodeField()
 
@@ -67,6 +67,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         initConsoleBottomSheet()
 
         initBottomBarButtonsOnClicks()
+
+        initIsConsoleInputAvailableObserver()
     }
 
     private fun initBinding() {
@@ -194,7 +196,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
             }
 
             consoleButton.setOnClickListener {
-                consoleBottomSheetController.show(navigationBarHeight)
+                showConsole()
             }
 
             startButton.setOnClickListener {
@@ -204,6 +206,10 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
                     viewModel.executeCode(it)
                 }
             }
+
+            stopButton.setOnClickListener {
+                viewModel.stopCodeExecution()
+            }
         }
 
     private fun initConsoleBottomSheet() {
@@ -212,23 +218,68 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         )
     }
 
-//    private fun showStartButton() =
-//        with(binding) {
-//            val firstAnimation = ObjectAnimator.ofFloat(binding.)
-//        }
-//
-//    private fun initIsCodeExecutingObserver() =
-//        viewModel.isCodeExecuting.observe(this) {
-//            if (it) {
-//                showStopButton()
-//            } else {
-//                showStartButton()
-//            }
-//        }
+    private fun showButton(isStopDisplaying: Boolean) {
+        val viewToHide: ImageButton
+        val viewToShow: ImageButton
+
+        if (isStopDisplaying) {
+            viewToHide = binding.stopButton
+            viewToShow = binding.startButton
+        } else {
+            viewToHide = binding.startButton
+            viewToShow = binding.stopButton
+        }
+
+        val firstAnimation =
+            ObjectAnimator.ofFloat(viewToHide, "alpha", 1f, 0f).apply {
+                duration = BUTTONS_ANIMATION_DURATION
+            }
+
+        firstAnimation.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(p0: Animator?) {}
+
+            override fun onAnimationEnd(p0: Animator?) {
+                viewToHide.visibility = View.GONE
+
+                viewToShow.visibility = View.VISIBLE
+                val secondAnimation =
+                    ObjectAnimator.ofFloat(viewToShow, "alpha", 0f, 1f).apply {
+                        duration = BUTTONS_ANIMATION_DURATION
+                    }
+
+                secondAnimation.start()
+            }
+
+            override fun onAnimationCancel(p0: Animator?) {}
+
+            override fun onAnimationRepeat(p0: Animator?) {}
+
+        })
+
+        firstAnimation.start()
+    }
+
+    private fun initIsCodeExecutingObserver() =
+        viewModel.isCodeExecuting.observe(this) {
+            showButton(!it)
+        }
+
+    private fun initIsConsoleInputAvailableObserver() =
+        viewModel.isConsoleInputAvailable.observe(this) {
+            if (it) {
+                showConsole()
+            }
+        }
+
+    private fun showConsole() = consoleBottomSheetController.show(navigationBarHeight)
 
     override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) =
         typeChangerBottomSheetController.show(closureToInvoke)
 
     override fun hideTypeChangerBottomSheet() =
         typeChangerBottomSheetController.hide()
+
+    private companion object {
+        const val BUTTONS_ANIMATION_DURATION:Long = 200
+    }
 }

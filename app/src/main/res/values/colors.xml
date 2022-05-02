@@ -16,4 +16,8 @@
     <color name="darkenOrange">#DB6E00</color>
 
     <color name="lightBlack">#121212</color>
+
+    <color name="lightRed">#EA8388</color>
+    <color name="lightGreen">#13B778</color>
+    <color name="lightBluePurple">#9697FB</color>
 </resources>
