@@ -11,12 +11,18 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
+import com.hits.coded.data.models.console.ConsoleUseCases
+import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreterException.InterpreterException
 import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.data.models.types.ExceptionType
 import com.hits.coded.domain.repositories.InterpreterRepository
+import javax.inject.Inject
 
-class InterpreterRepositoryImplementation : InterpreterRepository() {
+class InterpreterRepositoryImplementation @Inject
+constructor(private val heapUseCases: HeapUseCases,
+private val consoleUseCases: ConsoleUseCases)
+: InterpreterRepository() {
     private var currentId: Int = 0
 
     @Throws
@@ -287,19 +293,19 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                             variable.variableParams?.name?.let {
                                 when (expressionValueType) {
                                     VariableType.INT -> {
-                                        HeapRepositoryImplementation().reAssignVariable(
+                                        heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                             it,
                                             convertAnyToInt(variable.valueToSet as ExpressionBlock)
                                         )
                                     }
                                     VariableType.DOUBLE -> {
-                                        HeapRepositoryImplementation().reAssignVariable(
+                                        heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                             it,
                                             convertAnyToDouble(variable.valueToSet as ExpressionBlock)
                                         )
                                     }
                                     VariableType.STRING -> {
-                                        HeapRepositoryImplementation().reAssignVariable(
+                                        heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                             it,
                                             convertAnyToString(variable.valueToSet as ExpressionBlock)
                                         )
@@ -325,7 +331,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         if (!((variable.valueToSet as String)[0] == '"' && (variable.valueToSet as String)[(variable.valueToSet as String).lastIndex] == '"')) {
                             val variableName = (variable.valueToSet as String).drop(1).dropLast(1)
                             val foundedStoredVariable =
-                                HeapRepositoryImplementation().getVariable(variableName)
+                                heapUseCases.getVariableUseCase.getVariable(variableName)
                             if (foundedStoredVariable == null) {
                                 throw variable.id?.let {
                                     InterpreterException(
@@ -337,7 +343,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                                 if (foundedStoredVariable.type == variable.variableParams?.type) {
                                     foundedStoredVariable.value?.let {
                                         variable.variableParams?.name?.let { it1 ->
-                                            HeapRepositoryImplementation().reAssignVariable(
+                                          heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                                 it1,
                                                 it
                                             )
@@ -356,7 +362,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                             when {
                                 variable.variableParams?.type == VariableType.STRING -> {
                                     variable.variableParams?.name?.let {
-                                        HeapRepositoryImplementation().reAssignVariable(
+                                       heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                             it,
                                             variable.valueToSet as String
                                         )
@@ -364,14 +370,14 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                                 }
                                 (variable.valueToSet as String).toIntOrNull() is Int -> {
                                     variable.variableParams?.name?.let {
-                                        HeapRepositoryImplementation().reAssignVariable(
+                                        heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                             it, (variable.valueToSet as String).toInt()
                                         )
                                     }
                                 }
                                 (variable.valueToSet as String).toDoubleOrNull() is Double -> {
                                     variable.variableParams?.name?.let {
-                                        HeapRepositoryImplementation().reAssignVariable(
+                                        heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                             it, (variable.valueToSet as String).toDouble()
                                         )
                                     }
@@ -388,7 +394,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         VariableType.INT -> {
                             val toAdd: Int = variable.valueToSet?.let { convertAnyToInt(it) }!!
                             variable.variableParams?.name?.let {
-                                HeapRepositoryImplementation().reAssignVariable(
+                               heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                     it,
                                     (variable.variableParams?.value as String).toInt() + toAdd
                                 )
@@ -398,7 +404,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                             val toAdd: Double =
                                 variable.valueToSet?.let { convertAnyToDouble(it) }!!
                             variable.variableParams?.name?.let {
-                                HeapRepositoryImplementation().reAssignVariable(
+                               heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                     it,
                                     (variable.variableParams?.value as String).toDouble() + toAdd
                                 )
@@ -424,7 +430,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             }
             VariableBlockType.VARIABLE_CREATE -> variable.variableParams?.let {
                 it.name?.let { it1 ->
-                    HeapRepositoryImplementation().addVariable(
+                   heapUseCases.addVariableUseCase.addVariable(
                         it1
                     )
                 }
@@ -527,7 +533,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
-                        HeapRepositoryImplementation().getVariable(variableName)
+                       heapUseCases.getVariableUseCase.getVariable(variableName)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
                             currentId,
@@ -565,7 +571,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
-                        HeapRepositoryImplementation().getVariable(variableName)
+                       heapUseCases.getVariableUseCase.getVariable(variableName)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
                             currentId,
@@ -604,7 +610,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
-                        HeapRepositoryImplementation().getVariable(variableName)
+                       heapUseCases.getVariableUseCase.getVariable(variableName)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
                             currentId,
@@ -640,7 +646,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
-                        HeapRepositoryImplementation().getVariable(variableName)
+                       heapUseCases.getVariableUseCase.getVariable(variableName)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
                             currentId,
@@ -667,7 +673,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
-                        HeapRepositoryImplementation().getVariable(variableName)
+                       heapUseCases.getVariableUseCase.getVariable(variableName)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
                             currentId,
