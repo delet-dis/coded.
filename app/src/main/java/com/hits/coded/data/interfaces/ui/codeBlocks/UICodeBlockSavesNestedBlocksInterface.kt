@@ -6,8 +6,11 @@ import android.view.ViewGroup
 interface UICodeBlockSavesNestedBlocksInterface {
     val nestedUIBlocks: ArrayList<View>
 
-    fun clearNestedBlocksFromParent(parent: ViewGroup) =
+    fun clearNestedBlocksFromParent(parent: ViewGroup) {
         nestedUIBlocks.forEach {
             parent.removeView(it)
         }
+
+        nestedUIBlocks.clear()
+    }
 }
