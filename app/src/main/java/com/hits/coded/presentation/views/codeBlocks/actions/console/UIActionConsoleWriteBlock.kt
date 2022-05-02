@@ -17,6 +17,7 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveV
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
@@ -76,9 +77,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         binding.parentConstraint.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            if (draggableItem == draggableItem) {
-                //TODO: Добавить проверку на то, закидывается ли условие или выражение
-
+            (draggableItem as? UINestedableCodeBlock)?.let {
                 val itemParent = draggableItem.parent as ViewGroup
 
                 when (dragEvent.action) {
@@ -132,8 +131,10 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
                 visibility = INVISIBLE
             }
 
+            clearNestedBlocksFromParent(firstCard)
+
             nestedUIBlocks.add(draggableItem)
-            binding.firstCard.addView(draggableItem)
+            firstCard.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
                 _block.argument = it
