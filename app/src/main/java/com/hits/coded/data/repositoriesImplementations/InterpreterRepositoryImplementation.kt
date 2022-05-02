@@ -17,11 +17,12 @@ import com.hits.coded.data.models.types.ExceptionType
 import com.hits.coded.domain.repositories.InterpreterRepository
 
 class InterpreterRepositoryImplementation : InterpreterRepository() {
-    private var currentId:Int=0
+    private var currentId: Int = 0
+
     @Throws
-     override suspend fun interpreteStartBlock(start: StartBlock) {
-        start.id?.let{
-            currentId=it
+    override suspend fun interpreteStartBlock(start: StartBlock) {
+        start.id?.let {
+            currentId = it
         }
 
         for (nestedBlock in start.nestedBlocks!!) {
@@ -40,10 +41,11 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             }
         }
     }
+
     @Throws
     private suspend fun interpretConditionBlocks(condition: ConditionBlock): Boolean {
-        condition.id?.let{
-            currentId=it
+        condition.id?.let {
+            currentId = it
         }
         var conditionIsTrue = false
         val leftSideType = getTypeOfAny(condition.leftSide)
@@ -252,10 +254,10 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         }
         return conditionIsTrue
     }
-
+    @Throws
     private suspend fun interpretLoopBlocks(loop: LoopBlock) {
-        loop.id?.let{
-            currentId=it
+        loop.id?.let {
+            currentId = it
         }
         if (loop.nestedBlocks != null) {
             while (interpretConditionBlocks(loop.conditionBlock as ConditionBlock)) {
@@ -271,10 +273,10 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
             }
         }
     }
-
-    private suspend fun interpretVariableBlocks(variable: VariableBlock){
-        variable.id?.let{
-            currentId=it
+    @Throws
+    private suspend fun interpretVariableBlocks(variable: VariableBlock) {
+        variable.id?.let {
+            currentId = it
         }
         when (variable.variableBlockType) {
             VariableBlockType.VARIABLE_SET -> {
@@ -384,27 +386,40 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 if (typeOfNewValue == variable.variableParams?.type) {
                     when (typeOfNewValue) {
                         VariableType.INT -> {
-                            val toAdd:Int= variable.valueToSet?.let { convertAnyToInt(it) }!!
-                                variable.variableParams?.name?.let {
-                                    HeapRepositoryImplementation().reAssignVariable(
-                                        it,
-                                        (variable.variableParams?.value as String).toInt() + toAdd)
-                                }
-                        }
-                        VariableType.DOUBLE->{
-                            val toAdd:Double= variable.valueToSet?.let { convertAnyToDouble(it) }!!
+                            val toAdd: Int = variable.valueToSet?.let { convertAnyToInt(it) }!!
                             variable.variableParams?.name?.let {
                                 HeapRepositoryImplementation().reAssignVariable(
                                     it,
-                                    (variable.variableParams?.value as String).toDouble() + toAdd)
+                                    (variable.variableParams?.value as String).toInt() + toAdd
+                                )
                             }
                         }
-                        else->{throw  variable.id?.let { InterpreterException(it,ExceptionType.TYPE_MISMATCH) }!!
+                        VariableType.DOUBLE -> {
+                            val toAdd: Double =
+                                variable.valueToSet?.let { convertAnyToDouble(it) }!!
+                            variable.variableParams?.name?.let {
+                                HeapRepositoryImplementation().reAssignVariable(
+                                    it,
+                                    (variable.variableParams?.value as String).toDouble() + toAdd
+                                )
+                            }
+                        }
+                        else -> {
+                            throw  variable.id?.let {
+                                InterpreterException(
+                                    it,
+                                    ExceptionType.TYPE_MISMATCH
+                                )
+                            }!!
                         }
                     }
-                }
-                else{
-                    throw variable.id?.let { InterpreterException(it,ExceptionType.TYPE_MISMATCH) }!!
+                } else {
+                    throw variable.id?.let {
+                        InterpreterException(
+                            it,
+                            ExceptionType.TYPE_MISMATCH
+                        )
+                    }!!
                 }
             }
             VariableBlockType.VARIABLE_CREATE -> variable.variableParams?.let {
@@ -419,10 +434,10 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         }
         throw variable.id?.let { InterpreterException(it, ExceptionType.WRONG_OPERAND_USE_CASE) }!!
     }
-
+    @Throws
     private suspend fun interpretExpressionBlocks(expression: ExpressionBlock): Any {
-        expression.id?.let{
-            currentId=it
+        expression.id?.let {
+            currentId = it
         }
         val leftSideType: VariableType? = getTypeOfAny(expression.leftSide)
         val rightSideType: VariableType? = getTypeOfAny(expression.rightSide)
@@ -434,9 +449,18 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 ExpressionBlockType.MULTIPLY -> return (convertAnyToDouble(expression.leftSide) * convertAnyToDouble(
                     expression.rightSide
                 ))
-                ExpressionBlockType.DIVIDE -> return (convertAnyToDouble(expression.leftSide) / convertAnyToDouble(
-                    expression.rightSide
-                ))
+                ExpressionBlockType.DIVIDE -> {
+                    if (convertAnyToDouble(
+                            expression.rightSide
+                        ) != 0.0
+                    ) {
+                        return (convertAnyToDouble(expression.leftSide) / convertAnyToDouble(
+                            expression.rightSide
+                        ))
+                    } else {
+                        throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
+                    }
+                }
                 ExpressionBlockType.MINUS -> return (convertAnyToDouble(expression.leftSide) - convertAnyToDouble(
                     expression.rightSide
                 ))
@@ -445,7 +469,6 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                         it, ExceptionType.WRONG_OPERAND_USE_CASE
                     )
                 }!!
-                ExpressionBlockType.BRACKETS -> {}
             }
         }
         if (leftSideType == VariableType.INT && VariableType.INT == rightSideType) {
@@ -456,16 +479,33 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
                 ExpressionBlockType.MULTIPLY -> return (convertAnyToInt(expression.leftSide) * convertAnyToInt(
                     expression.rightSide
                 ))
-                ExpressionBlockType.DIVIDE -> return (convertAnyToInt(expression.leftSide) / convertAnyToInt(
-                    expression.rightSide
-                ))
-                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> return (convertAnyToInt(expression.leftSide) % convertAnyToInt(
-                    expression.rightSide
-                ))
+                ExpressionBlockType.DIVIDE -> {
+                    if (convertAnyToInt(
+                            expression.rightSide
+                        ) != 0
+                    ) {
+                        return (convertAnyToInt(expression.leftSide) / convertAnyToInt(
+                            expression.rightSide
+                        ))
+                    } else {
+                        throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
+                    }
+                }
+                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> {
+                    if (convertAnyToInt(
+                            expression.rightSide
+                        ) != 0
+                    ) {
+                        return (convertAnyToInt(expression.leftSide) % convertAnyToInt(
+                            expression.rightSide
+                        ))
+                    } else {
+                        throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
+                    }
+                }
                 ExpressionBlockType.MINUS -> return (convertAnyToInt(expression.leftSide) - convertAnyToInt(
                     expression.rightSide
                 ))
-                ExpressionBlockType.BRACKETS -> {}
             }
         }
         if (leftSideType == VariableType.STRING && VariableType.STRING == rightSideType && expression.expressionBlockType == ExpressionBlockType.PLUS) {
@@ -473,11 +513,11 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         }
         throw  expression.id?.let { InterpreterException(it, ExceptionType.TYPE_MISMATCH) }!!
     }
-
+    @Throws
     private suspend fun interpretIOBlocks(IO: IOBlock) {
         //IO action function
     }
-
+    @Throws
     private suspend fun convertAnyToDouble(value: Any): Double {
 
         when (value) {
@@ -514,12 +554,12 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
 
     private suspend fun convertAnyToInt(value: Any): Int {
         when (value) {
-            is Double -> throw InterpreterException(currentId,ExceptionType.TYPE_MISMATCH)
+            is Double -> throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
             is Int -> return value
             is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.INT) return interpretExpressionBlocks(
                 value
             ) as Int else {
-                throw InterpreterException(currentId,ExceptionType.TYPE_MISMATCH)
+                throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
             }
             is String -> {
                 if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
@@ -549,7 +589,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         }
         throw InterpreterException(currentId, ExceptionType.NONEXISTING_DATA_TYPE)
     }
-
+    @Throws
     private suspend fun convertAnyToBoolean(value: Any): Boolean {
         when (value) {
             is Boolean -> return value
@@ -588,7 +628,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         }
         throw InterpreterException(currentId, ExceptionType.NONEXISTING_DATA_TYPE)
     }
-
+    @Throws
     private suspend fun convertAnyToString(value: Any): String {
         when (value) {
             is ExpressionBlock -> {
@@ -620,7 +660,7 @@ class InterpreterRepositoryImplementation : InterpreterRepository() {
         }
         throw InterpreterException(currentId, ExceptionType.NONEXISTING_DATA_TYPE)
     }
-
+    @Throws
     private suspend fun getTypeOfAny(value: Any?): VariableType? {
         when (value) {
             is String -> {

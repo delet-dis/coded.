@@ -6,5 +6,4 @@ enum class ExpressionBlockType {
     MULTIPLY,
     DIVIDE,
     DIVIDE_WITH_REMAINDER,
-    BRACKETS
 }
