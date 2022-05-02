@@ -8,4 +8,5 @@ abstract class HeapRepository {
     abstract fun isVariableDeclared(variableName: String): Boolean
     abstract fun reAssignVariable(variableName: String, newValue: Any)
     abstract fun deleteVariable(variableName: String)
+    abstract fun clear()
 }

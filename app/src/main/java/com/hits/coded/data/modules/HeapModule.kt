@@ -4,6 +4,7 @@ import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.repositoriesImplementations.HeapRepositoryImplementation
 import com.hits.coded.domain.repositories.HeapRepository
 import com.hits.coded.domain.useCases.heap.AddVariableUseCase
+import com.hits.coded.domain.useCases.heap.ClearUseCase
 import com.hits.coded.domain.useCases.heap.DeleteVariableUseCase
 import com.hits.coded.domain.useCases.heap.GetVariableUseCase
 import com.hits.coded.domain.useCases.heap.IsVariableDeclaredUseCase
@@ -29,7 +30,8 @@ abstract class HeapModule {
             GetVariableUseCase(heapRepository),
             DeleteVariableUseCase(heapRepository),
             ReAssignVariableUseCase(heapRepository),
-            IsVariableDeclaredUseCase(heapRepository)
+            IsVariableDeclaredUseCase(heapRepository),
+            ClearUseCase(heapRepository)
         )
     }
 }

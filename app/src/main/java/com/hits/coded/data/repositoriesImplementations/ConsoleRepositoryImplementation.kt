@@ -45,7 +45,7 @@ class ConsoleRepositoryImplementation @Inject constructor(
 
     override suspend fun readFromConsole(): String {
         _isInputAvailable.emit(true)
-        val input = buffer.drop(1).first().first()
+        val input = buffer.drop(1).first().last()
         _isInputAvailable.emit(false)
         return input.toString()
     }
