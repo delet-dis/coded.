@@ -11,4 +11,9 @@
     <color name="blueThird">#79B7F4</color>
     <color name="blueFourth">#128DC9</color>
     <color name="blueFifth">#5097DD</color>
+
+    <color name="orange">#FF8C1A</color>
+    <color name="darkenOrange">#DB6E00</color>
+
+    <color name="lightBlack">#121212</color>
 </resources>

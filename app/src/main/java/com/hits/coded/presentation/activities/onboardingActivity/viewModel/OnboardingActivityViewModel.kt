@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hits.coded.data.models.onboarding.dataClasses.OnboardingScreen
-import com.hits.coded.data.models.onboarding.enums.OnboardingScreens
+import com.hits.coded.data.models.onboardingActivity.dataClasses.OnboardingScreen
+import com.hits.coded.data.models.onboardingActivity.enums.OnboardingScreens
 import com.hits.coded.data.models.sharedPreferences.useCases.SharedPreferencesUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -27,16 +27,14 @@ class OnboardingActivityViewModel @Inject constructor(
     var isOnboardingPassed =
         sharedPreferencesUseCases.checkIsOnboardingPassedUseCase.checkIsOnboardingPassed()
 
-    fun initGreetingHideCountdown() {
+    fun initGreetingHideCountdown() =
         viewModelScope.launch {
             delay(1500)
             _isAvailableToHideGreeting.postValue(true)
         }
-    }
 
-    fun setCurrentlyDisplayingOnboardingScreenNumber(newValue: Int) {
+    fun setCurrentlyDisplayingOnboardingScreenNumber(newValue: Int) =
         this._currentlyDisplayingOnboardingScreenNumber.postValue(newValue)
-    }
 
     fun setOnboardingPassed() {
         sharedPreferencesUseCases.changeOnboardingPassedStateUseCase.changeOnboardingPassed(true)

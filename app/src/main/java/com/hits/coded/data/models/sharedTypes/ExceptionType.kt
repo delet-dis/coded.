@@ -1,0 +1,13 @@
+package com.hits.coded.data.models.sharedTypes
+
+enum class ExceptionType {
+    TYPE_MISMATCH,
+    ARRAY_OUT_OF_BOUNDS,
+    DIVISION_BY_ZERO,
+    WRONG_START_POSITION,
+    LACK_OF_ARGUMENTS,
+    ACCESSING_A_NONEXISTENT_VARIABLE,
+    WRONG_OPERAND_USE_CASE,
+    INVALID_STRING,
+    INVALID_BLOCK,
+}

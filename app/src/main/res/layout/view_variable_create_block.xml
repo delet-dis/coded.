@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parentConstraint"
     android:layout_width="wrap_content"
-    android:animateLayoutChanges="true"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true">
 
     <ImageView
         android:id="@+id/backgroundImage"
@@ -17,13 +17,13 @@
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/firstCard"
-        app:layout_constraintStart_toStartOf="@+id/createVariable"
+        app:layout_constraintStart_toStartOf="@+id/create"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/variable_block"
         tools:ignore="ImageContrastCheck" />
 
     <TextView
-        android:id="@+id/createVariable"
+        android:id="@+id/create"
         style="@style/buttonBoldText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         android:maxLength="20"
         android:maxLines="0"
         android:singleLine="true"
-        android:text="@string/createVariable"
+        android:text="@string/create"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,23 +42,61 @@
         tools:ignore="TextContrastCheck" />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/spinnerWrapperCard"
+        style="@style/variableNameCard"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="@dimen/codeBlockElementsSpacing"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/create"
+        app:layout_constraintTop_toTopOf="@+id/backgroundImage"
+        app:layout_constraintVertical_bias="0.42">
+
+        <TextView
+            android:id="@+id/variableType"
+            style="@style/variableNameEditText"
+            android:layout_width="wrap_content"
+            android:background="@null"
+            android:gravity="center"
+            android:text="@string/variableType"
+            android:textColor="@android:color/darker_gray"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/variable"
+        style="@style/buttonBoldText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/codeBlockElementsSpacing"
+        android:ellipsize="end"
+        android:maxWidth="@dimen/variableBlockMaxWidth"
+        android:maxLength="20"
+        android:maxLines="0"
+        android:singleLine="true"
+        android:text="@string/variable"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/spinnerWrapperCard"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45"
+        tools:ignore="TextContrastCheck" />
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/firstCard"
         style="@style/variableNameCard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_marginStart="@dimen/codeBlockElementsSpacing"
         android:layout_marginEnd="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/createVariable"
+        app:layout_constraintStart_toEndOf="@+id/variable"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.45">
+        app:layout_constraintVertical_bias="0.42">
 
         <EditText
             android:id="@+id/variableName"
             style="@style/variableNameEditText"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
             android:background="@null"
             android:hint="@string/variableName"
             android:imeOptions="actionDone"

@@ -8,24 +8,23 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
-import com.hits.coded.data.models.codeField.CodeFieldInterface
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithCustomRemoveViewProcessInterface
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UICodeBlockWithLastTouchInformation
-import com.hits.coded.data.models.uiCodeBlocks.interfaces.UIMoveableCodeBlockInterface
-import com.hits.coded.data.models.uiSharedInterfaces.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
+import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
+import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
 import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
-import com.hits.coded.presentation.views.codeBlocks.actions.console.UIActionConsoleWriteBlock
-import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CodeField constructor(
+class CodeField @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr), CodeFieldInterface,
-    UIElementHandlesDragAndDropInterface {
+) : ConstraintLayout(context, attrs, defStyleAttr),
+    UIElementHandlesDragAndDropInterface, UIElementHandlesCustomRemoveViewProcessInterface {
     private val binding: ViewCodeFieldBinding
 
     private val startBlock = UIActionStartBlock(context)
@@ -41,11 +40,9 @@ class CodeField constructor(
         initDragAndDropListener()
 
         addBlock(startBlock)
-        addBlock(UIVariableChangeByBlock(context))
-        addBlock(UIActionConsoleWriteBlock(context))
     }
 
-    override fun addBlock(viewToAdd: View) {
+    private fun addBlock(viewToAdd: View) {
         viewToAdd.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
 
         binding.fieldLayout.addView(viewToAdd)
@@ -58,7 +55,7 @@ class CodeField constructor(
         }
     }
 
-    override fun initDragAndDropListener() {
+    override fun initDragAndDropListener() =
         binding.fieldLayout.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
@@ -89,7 +86,6 @@ class CodeField constructor(
                 else -> false
             }
         }
-    }
 
     private fun handleDropEvent(
         itemParent: ViewGroup,
@@ -108,12 +104,44 @@ class CodeField constructor(
                 draggableItem.y = dragEvent.y - (it.touchY)
             }
 
-            (itemParent.parent.parent as? UICodeBlockWithCustomRemoveViewProcessInterface)?.customRemoveView(
-                draggableItem
-            )
+            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
 
             itemParent.removeView(draggableItem)
 
             addView(draggableItem)
         }
+
+    fun calculateBlocksHierarchyIds() =
+        calculateElementsIds(startBlock)
+
+    fun getEntryPointBlock() = startBlock
+
+    private fun calculateElementsIds(
+        processingView: View,
+        previousId: Int? = -1
+    ): Int? {
+        var currentId: Int?
+
+        (processingView as? UICodeBlockWithDataInterface)?.let {
+            if (previousId != null) {
+                currentId = previousId + 1
+
+                processingView.block.id = currentId
+
+                processingView.tag = VIEW_HIERARCHY_ID + currentId
+
+                (processingView as? UICodeBlockSavesNestedBlocksInterface)?.let {
+                    it.nestedUIBlocks.forEach { block ->
+                        currentId = calculateElementsIds(block, currentId)
+                    }
+                }
+                return currentId
+            }
+        }
+        return null
+    }
+
+    private companion object {
+        const val VIEW_HIERARCHY_ID = "VIEW_HIERARCHY_ID_"
+    }
 }

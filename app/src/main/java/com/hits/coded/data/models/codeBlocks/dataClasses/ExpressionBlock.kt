@@ -9,7 +9,7 @@ data class ExpressionBlock(
     override val expressionBlockType: ExpressionBlockType,
     override val leftSide: Any,
     override val rightSide: Any,
-    override val id: Int? = null,
+    override var id: Int? = null,
     override var nestedBlocks: Array<BlockBase>? = null,
     override val type: BlockType = BlockType.EXPRESSION,
 ):ExpressionBlockBase()
