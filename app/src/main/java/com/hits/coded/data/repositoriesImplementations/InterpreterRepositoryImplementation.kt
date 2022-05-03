@@ -397,18 +397,25 @@ constructor(
             }
             VariableBlockType.VARIABLE_CHANGE -> {
                 val typeOfNewValue = getTypeOfAny(variable.valueToSet)
-                Log.d("TYPE", variable.variableParams?.type.toString())
-                if (typeOfNewValue == variable.variableParams?.type) {
+                val currentStoredVariable = variable.variableParams?.name?.let {
+                    heapUseCases.getVariableUseCase.getVariable(it)
+                }
+                if (typeOfNewValue == currentStoredVariable?.type) {
                     Log.d("finder1", "helpVariable1")
                     when (typeOfNewValue) {
                         VariableType.INT -> {
-                            Log.d("finder2", "helpVariable2")
-                            val toAdd: Int = variable.valueToSet?.let { convertAnyToInt(it) }!!
-                            variable.variableParams?.name?.let {
-                                heapUseCases.reAssignVariableUseCase.reAssignVariable(
-                                    it,
-                                    (variable.variableParams?.value as String).toInt() + toAdd
-                                )
+                            val toAdd: Int? = variable.valueToSet?.let {
+                                convertAnyToInt(it)
+                            }
+                            Log.d("values", toAdd.toString())
+                            Log.d("values2", currentStoredVariable?.value.toString())
+
+                            if (toAdd != null && currentStoredVariable?.value != null) {
+                                currentStoredVariable?.name?.let {
+                                    heapUseCases.reAssignVariableUseCase.reAssignVariable(
+                                        it, toAdd + convertAnyToInt(currentStoredVariable.value!!)
+                                    )
+                                }
                             }
                         }
                         VariableType.DOUBLE -> {
@@ -418,7 +425,7 @@ constructor(
                             variable.variableParams?.name?.let {
                                 heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                     it,
-                                    (variable.variableParams?.value as String).toDouble() + toAdd
+                                    (currentStoredVariable?.value as String).toDouble() + toAdd
                                 )
                             }
                         }
@@ -442,6 +449,7 @@ constructor(
                 }
             }
             VariableBlockType.VARIABLE_CREATE -> {
+                Log.d("tip", variable.variableParams!!.type.toString())
                 variable.variableParams?.let {
                     heapUseCases.addVariableUseCase.addVariable(it)
                 }
@@ -622,7 +630,10 @@ constructor(
             is Double -> return value
             is ExpressionBlock -> return interpretExpressionBlocks(value) as Double
             is String -> {
-                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
+                if (value.toDoubleOrNull() is Double) {
+                    return value.toDouble()
+                }
+                else if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         heapUseCases.getVariableUseCase.getVariable(variableName)
@@ -639,11 +650,7 @@ constructor(
                         }
                     }
                 } else {
-                    if (value.toDoubleOrNull() is Double) {
-                        return value.toDouble()
-                    } else {
                         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-                    }
                 }
             }
         }
@@ -661,7 +668,9 @@ constructor(
                 throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
             }
             is String -> {
-                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
+                if (value.toIntOrNull() is Int) {
+                    return value.toInt()
+                } else if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         heapUseCases.getVariableUseCase.getVariable(variableName)
@@ -678,11 +687,7 @@ constructor(
                         }
                     }
                 } else {
-                    if (value.toIntOrNull() is Int) {
-                        return value.toInt()
-                    } else {
-                        throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-                    }
+                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                 }
             }
         }
@@ -771,9 +776,10 @@ constructor(
             is String -> {
                 when {
                     value.toIntOrNull() is Int -> {
-                        return VariableType.INT }
+                        return VariableType.INT
+                    }
                     value.toDoubleOrNull() is Double -> return VariableType.DOUBLE
-                    value.toBooleanStrictOrNull() is Boolean ->return VariableType.BOOLEAN
+                    value.toBooleanStrictOrNull() is Boolean -> return VariableType.BOOLEAN
                     else -> {
                         if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                             val variableName = value.drop(1).dropLast(1)
@@ -799,35 +805,35 @@ constructor(
             is ExpressionBlock -> return getTypeOfAny(interpretExpressionBlocks(value))
             is VariableBlock -> return value.variableParams?.type
         }
-            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-        }
+        throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+    }
 
-        @Throws(InterpreterException::class)
-        private fun isVariable(value: String): Boolean {
-            if (value.startsWith('"')) {
-                if (value.length > 1) {
-                    if (value.endsWith('"')) {
-                        return false
-                    }
+    @Throws(InterpreterException::class)
+    private fun isVariable(value: String): Boolean {
+        if (value.startsWith('"')) {
+            if (value.length > 1) {
+                if (value.endsWith('"')) {
+                    return false
                 }
-
-                throw InterpreterException(currentId, ExceptionType.INVALID_STRING)
             }
 
-            return true
+            throw InterpreterException(currentId, ExceptionType.INVALID_STRING)
         }
 
+        return true
+    }
 
-        private fun tryToConvertString(value: String, type: VariableType): Any? {
-            //TODO: array
-            return when (type) {
-                VariableType.BOOLEAN -> value.toBooleanStrictOrNull()
-                VariableType.INT -> value.toIntOrNull()
-                VariableType.DOUBLE -> value.toDoubleOrNull()
-                VariableType.STRING -> value
-            }
+
+    private fun tryToConvertString(value: String, type: VariableType): Any? {
+        //TODO: array
+        return when (type) {
+            VariableType.BOOLEAN -> value.toBooleanStrictOrNull()
+            VariableType.INT -> value.toIntOrNull()
+            VariableType.DOUBLE -> value.toDoubleOrNull()
+            VariableType.STRING -> value
         }
     }
+}
 
 
 
