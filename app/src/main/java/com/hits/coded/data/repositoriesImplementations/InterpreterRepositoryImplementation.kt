@@ -30,7 +30,8 @@ constructor(
     private val heapUseCases: HeapUseCases
 ) : InterpreterRepository() {
 
-    private var currentId = 0
+    override var currentId = 0
+        private set
 
     @Throws(InterpreterException::class)
     override suspend fun interpretStartBlock(start: StartBlock) {
@@ -783,32 +784,22 @@ constructor(
             throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
         }
 
-        @Throws(InterpreterException::class)
-        private fun isVariable(value: String): Boolean {
-            if (value.startsWith('"')) {
-                if (value.length > 1) {
-                    if (value.endsWith('"')) {
-                        return false
-                    }
+    @Throws(InterpreterException::class)
+    private fun isVariable(value: String): Boolean {
+        if (value.startsWith('"')) {
+            if (value.length > 1) {
+                if (value.endsWith('"')) {
+                    return false
                 }
-
-                throw InterpreterException(currentId, ExceptionType.INVALID_STRING)
             }
 
-            return true
+            throw InterpreterException(currentId, ExceptionType.INVALID_STRING)
         }
 
-
-        private fun tryToConvertString(value: String, type: VariableType): Any? {
-            //TODO: array
-            return when (type) {
-                VariableType.BOOLEAN -> value.toBooleanStrictOrNull()
-                VariableType.INT -> value.toIntOrNull()
-                VariableType.DOUBLE -> value.toDoubleOrNull()
-                VariableType.STRING -> value
-            }
-        }
+        return true
     }
+
+}
 
 
 
