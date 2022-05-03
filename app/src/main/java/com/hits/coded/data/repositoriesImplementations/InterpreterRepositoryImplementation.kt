@@ -404,6 +404,7 @@ constructor(
                     Log.d("finder1", "helpVariable1")
                     when (typeOfNewValue) {
                         VariableType.INT -> {
+                            Log.d("chek1", "chek")
                             val toAdd: Int? = variable.valueToSet?.let {
                                 convertAnyToInt(it)
                             }
@@ -616,19 +617,18 @@ constructor(
                     return value.toDouble()
                 }
                 else if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
-                    val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
-                        heapUseCases.getVariableUseCase.getVariable(variableName)
+                        heapUseCases.getVariableUseCase.getVariable(value)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
                             currentId,
                             ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                         )
                     } else {
-                        if (foundedStoredVariable.type == VariableType.DOUBLE) {
-                            return foundedStoredVariable.value as Double
-                        } else {
-                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                        when{
+                            foundedStoredVariable.type == VariableType.DOUBLE&& foundedStoredVariable.value!=null-> return foundedStoredVariable.value as Double
+                            foundedStoredVariable.value!=null->throw InterpreterException(currentId,ExceptionType.TYPE_MISMATCH)
+                            else-> throw InterpreterException(currentId,ExceptionType.TYPE_MISMATCH)
                         }
                     }
                 } else {
@@ -641,9 +641,10 @@ constructor(
 
     @Throws(InterpreterException::class)
     private suspend fun convertAnyToInt(value: Any): Int {
+        Log.d("convertor","now")
         when (value) {
-            is Double -> throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
             is Int -> return value
+            is Double -> throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
             is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.INT) return interpretExpressionBlocks(
                 value
             ) as Int else {
@@ -653,19 +654,21 @@ constructor(
                 if (value.toIntOrNull() is Int) {
                     return value.toInt()
                 } else if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
-                    val variableName = value.drop(1).dropLast(1)
+
                     val foundedStoredVariable =
-                        heapUseCases.getVariableUseCase.getVariable(variableName)
+                        heapUseCases.getVariableUseCase.getVariable(value)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
                             currentId,
                             ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                         )
                     } else {
-                        if (foundedStoredVariable.type == VariableType.INT) {
-                            return foundedStoredVariable.value as Int
-                        } else {
-                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                        when{
+                            foundedStoredVariable.type == VariableType.INT && foundedStoredVariable.value!=null-> return foundedStoredVariable.value as Int
+                            foundedStoredVariable.value!=null->throw InterpreterException(currentId,ExceptionType.TYPE_MISMATCH)
+                                else->{ Log.d("kk","excellent")
+                                    throw InterpreterException(currentId,ExceptionType.TYPE_MISMATCH)
+                                }
                         }
                     }
                 } else {
@@ -689,19 +692,18 @@ constructor(
             }
             is String -> {
                 if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
-                    val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
-                        heapUseCases.getVariableUseCase.getVariable(variableName)
+                        heapUseCases.getVariableUseCase.getVariable(value)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
                             currentId,
                             ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                         )
                     } else {
-                        if (foundedStoredVariable.type == VariableType.BOOLEAN) {
-                            return foundedStoredVariable.value as Boolean
-                        } else {
-                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                        when{
+                            foundedStoredVariable.type == VariableType.BOOLEAN && foundedStoredVariable.value!=null-> return foundedStoredVariable.value as Boolean
+                            foundedStoredVariable.value!=null->throw InterpreterException(currentId,ExceptionType.TYPE_MISMATCH)
+                            else-> throw InterpreterException(currentId,ExceptionType.VARIABLE_VALUE_IS_NULL)
                         }
                     }
                 } else {
@@ -729,19 +731,18 @@ constructor(
             }
             is String -> {
                 if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
-                    val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
-                        heapUseCases.getVariableUseCase.getVariable(variableName)
+                        heapUseCases.getVariableUseCase.getVariable(value)
                     if (foundedStoredVariable == null) {
                         throw InterpreterException(
                             currentId,
                             ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                         )
                     } else {
-                        if (foundedStoredVariable.type == VariableType.STRING) {
-                            return foundedStoredVariable.value as String
-                        } else {
-                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                        when{
+                            foundedStoredVariable.type == VariableType.STRING && foundedStoredVariable.value!=null-> return foundedStoredVariable.value as String
+                            foundedStoredVariable.value!=null->throw InterpreterException(currentId,ExceptionType.TYPE_MISMATCH)
+                            else-> throw InterpreterException(currentId,ExceptionType.VARIABLE_VALUE_IS_NULL)
                         }
                     }
                 } else {
@@ -756,6 +757,7 @@ constructor(
     private suspend fun getTypeOfAny(value: Any?): VariableType? {
         when (value) {
             is String -> {
+                Log.d("isSTR",value.toString())
                 when {
                     value.toIntOrNull() is Int -> {
                         return VariableType.INT
@@ -764,9 +766,9 @@ constructor(
                     value.toBooleanStrictOrNull() is Boolean -> return VariableType.BOOLEAN
                     else -> {
                         if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
-                            val variableName = value.drop(1).dropLast(1)
                             val foundedStoredVariable =
-                                heapUseCases.getVariableUseCase.getVariable(variableName)
+                                heapUseCases.getVariableUseCase.getVariable(value)
+
                             if (foundedStoredVariable == null) {
                                 throw InterpreterException(
                                     currentId,
@@ -777,6 +779,7 @@ constructor(
 
                             }
                         }
+                        else return VariableType.STRING
                     }
 
                 }
