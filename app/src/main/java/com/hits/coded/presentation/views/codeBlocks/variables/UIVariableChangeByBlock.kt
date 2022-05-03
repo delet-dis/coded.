@@ -17,6 +17,7 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveV
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
@@ -32,7 +33,8 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
-    UICodeBlockWithCustomRemoveViewProcessInterface, UIElementHandlesCustomRemoveViewProcessInterface,  UICodeBlockSavesNestedBlocksInterface {
+    UICodeBlockWithCustomRemoveViewProcessInterface,
+    UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface {
     private val binding: ViewVariableChangeByBlockBinding
 
     override val nestedUIBlocks: ArrayList<View> = ArrayList()
@@ -90,9 +92,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
         binding.parentConstraint.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            if (draggableItem == draggableItem) {
-                //TODO: Добавить проверку на то, закидывается ли условие или выражение
-
+            (draggableItem as? UINestedableCodeBlock)?.let {
                 val itemParent = draggableItem.parent as ViewGroup
 
                 when (dragEvent.action) {
@@ -145,6 +145,8 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
                 setText("")
                 visibility = INVISIBLE
             }
+
+            clearNestedBlocksFromParent(secondCard)
 
             nestedUIBlocks.add(draggableItem)
             secondCard.addView(draggableItem)

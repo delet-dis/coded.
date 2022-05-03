@@ -3,6 +3,8 @@ package com.hits.coded.data.repositoriesImplementations
 import android.content.Context
 import com.hits.coded.R
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
+import com.hits.coded.data.models.console.useCases.ConsoleUseCases
+import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.domain.repositories.InterpreterCallerRepository
@@ -18,7 +20,9 @@ import javax.inject.Singleton
 class InterpreterCallerRepositoryImplementation
 @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val interpreterUseCases: InterpreterUseCases
+    private val interpreterUseCases: InterpreterUseCases,
+    private val consoleUseCases: ConsoleUseCases,
+    private val heapUseCases: HeapUseCases
 ): InterpreterCallerRepository() {
 
     private val errorStrings =
@@ -45,11 +49,13 @@ class InterpreterCallerRepositoryImplementation
     }
 
     override suspend fun callInterpreter(start: StartBlock) {
+        heapUseCases.clearUseCase.clear()
         try {
             interpreterUseCases.interpretStartBlock.interpretStartBlock(start)
         }
         catch (error: InterpreterException) {
             error.msg = context.getString(errorStrings[error.errorCode.ordinal])
+            consoleUseCases.writeToConsoleUseCase.writeErrorToConsole(error.msg)
             _executionResult.emit(error)
         }
         finally {

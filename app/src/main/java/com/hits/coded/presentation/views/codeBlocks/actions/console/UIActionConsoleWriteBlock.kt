@@ -17,10 +17,10 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveV
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
-import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.databinding.ViewConsoleWriteBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,8 +37,6 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
     private val binding: ViewConsoleWriteBlockBinding
 
     override val nestedUIBlocks: ArrayList<View> = ArrayList()
-
-    private var variableParams = StoredVariable()
 
     private var _block = IOBlock(IOBlockType.WRITE)
     override val block: BlockBase
@@ -67,9 +65,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
 
     private fun initVariableNameChangeListener() =
         binding.variableName.addTextChangedListener {
-            variableParams.name = it.toString()
-
-            _block.argument = variableParams
+            _block.argument = it.toString()
         }
 
 
@@ -81,9 +77,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         binding.parentConstraint.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            if (draggableItem == draggableItem) {
-                //TODO: Добавить проверку на то, закидывается ли условие или выражение
-
+            (draggableItem as? UINestedableCodeBlock)?.let {
                 val itemParent = draggableItem.parent as ViewGroup
 
                 when (dragEvent.action) {
@@ -91,13 +85,13 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
                     DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
                     DragEvent.ACTION_DRAG_ENTERED -> {
-                        alphaMinusAnimation(binding.root)
+                        scalePlusAnimation(binding.firstCard)
 
                         return@setOnDragListener true
                     }
 
                     DragEvent.ACTION_DRAG_EXITED -> {
-                        alphaPlusAnimation(binding.root)
+                        scaleMinusAnimation(binding.firstCard)
 
                         return@setOnDragListener true
                     }
@@ -126,7 +120,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         draggableItem: View
     ) = with(binding) {
         if (draggableItem != this@UIActionConsoleWriteBlock) {
-            alphaPlusAnimation(parentConstraint)
+            scaleMinusAnimation(binding.firstCard)
 
             itemParent.removeView(draggableItem)
 
@@ -137,8 +131,10 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
                 visibility = INVISIBLE
             }
 
+            clearNestedBlocksFromParent(firstCard)
+
             nestedUIBlocks.add(draggableItem)
-            binding.firstCard.addView(draggableItem)
+            firstCard.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
                 _block.argument = it

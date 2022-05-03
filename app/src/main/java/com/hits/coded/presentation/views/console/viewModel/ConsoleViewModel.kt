@@ -24,5 +24,5 @@ class ConsoleViewModel @Inject constructor(
         get() = _isAvailableToInput
 
     fun submitStringToConsole(input: String) =
-        consoleUseCases.writeToConsoleUseCase.writeToConsole(input)
+        consoleUseCases.writeToConsoleUseCase.writeInputToConsole(input)
 }

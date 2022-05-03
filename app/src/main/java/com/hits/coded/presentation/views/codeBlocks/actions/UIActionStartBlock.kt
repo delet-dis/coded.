@@ -15,6 +15,7 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocks
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.databinding.ViewActionStartBinding
@@ -66,36 +67,39 @@ class UIActionStartBlock @JvmOverloads constructor(
             val itemParent = draggableItem.parent as ViewGroup
 
             with(binding) {
-                when (dragEvent.action) {
-                    DragEvent.ACTION_DRAG_STARTED,
-                    DragEvent.ACTION_DRAG_LOCATION -> true
+                if (draggableItem as? UINestedableCodeBlock == null) {
+                    when (dragEvent.action) {
+                        DragEvent.ACTION_DRAG_STARTED,
+                        DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
-                    DragEvent.ACTION_DRAG_ENTERED -> {
-                        scalePlusAnimation(binding.parentConstraint)
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            scalePlusAnimation(binding.parentConstraint)
 
-                        true
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            scaleMinusAnimation(parentConstraint)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DROP -> {
+                            handleDropEvent(itemParent, draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            handleDragEndedEvent(itemParent, draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        else -> return@setOnDragListener false
                     }
-
-                    DragEvent.ACTION_DRAG_EXITED -> {
-                        scaleMinusAnimation(parentConstraint)
-
-                        true
-                    }
-
-                    DragEvent.ACTION_DROP -> {
-                        handleDropEvent(itemParent, draggableItem)
-
-                        true
-                    }
-
-                    DragEvent.ACTION_DRAG_ENDED -> {
-                        handleDragEndedEvent(itemParent, draggableItem)
-
-                        true
-                    }
-
-                    else -> false
                 }
+                false
             }
         }
 
