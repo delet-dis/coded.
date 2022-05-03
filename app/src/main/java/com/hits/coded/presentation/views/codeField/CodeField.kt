@@ -59,7 +59,7 @@ class CodeField @JvmOverloads constructor(
         binding.fieldLayout.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            val itemParent = draggableItem.parent as ViewGroup
+            val itemParent = draggableItem.parent as? ViewGroup
 
             when (dragEvent.action) {
                 DragEvent.ACTION_DRAG_STARTED,
@@ -88,7 +88,7 @@ class CodeField @JvmOverloads constructor(
         }
 
     private fun handleDropEvent(
-        itemParent: ViewGroup,
+        itemParent: ViewGroup?,
         draggableItem: View,
         dragEvent: DragEvent
     ) =
@@ -104,9 +104,10 @@ class CodeField @JvmOverloads constructor(
                 draggableItem.y = dragEvent.y - (it.touchY)
             }
 
-            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
-
-            itemParent.removeView(draggableItem)
+            itemParent?.let {
+                processViewWithCustomRemoveProcessRemoval(it, draggableItem)
+                it.removeView(draggableItem)
+            }
 
             addView(draggableItem)
         }
