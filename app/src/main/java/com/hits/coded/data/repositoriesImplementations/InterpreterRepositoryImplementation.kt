@@ -336,6 +336,9 @@ constructor(
                         }!!
                     }
                     is String -> {
+                        val currentStoredVariable = variable.variableParams?.name?.let {
+                            heapUseCases.getVariableUseCase.getVariable(it)
+                        }
                         if (!((variable.valueToSet as String)[0] == '"' && (variable.valueToSet as String)[(variable.valueToSet as String).lastIndex] == '"')) {
                             val foundedStoredVariable =
                                 heapUseCases.getVariableUseCase.getVariable(variable.valueToSet as String)
@@ -367,7 +370,7 @@ constructor(
                             }
                         } else {
                             when {
-                                variable.variableParams?.type == VariableType.STRING -> {
+                                currentStoredVariable?.type == VariableType.STRING -> {
                                     variable.variableParams?.name?.let {
                                         heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                             it,
@@ -376,7 +379,7 @@ constructor(
                                     }
                                 }
                                 (variable.valueToSet as String).toIntOrNull() is Int -> {
-                                    variable.variableParams?.name?.let {
+                                    currentStoredVariable?.name?.let {
                                         heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                             it, (variable.valueToSet as String).toInt()
                                         )
