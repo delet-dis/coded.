@@ -85,13 +85,13 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
                     DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
                     DragEvent.ACTION_DRAG_ENTERED -> {
-                        alphaMinusAnimation(binding.root)
+                        scalePlusAnimation(binding.firstCard)
 
                         return@setOnDragListener true
                     }
 
                     DragEvent.ACTION_DRAG_EXITED -> {
-                        alphaPlusAnimation(binding.root)
+                        scaleMinusAnimation(binding.firstCard)
 
                         return@setOnDragListener true
                     }
@@ -120,7 +120,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         draggableItem: View
     ) = with(binding) {
         if (draggableItem != this@UIActionConsoleWriteBlock) {
-            alphaPlusAnimation(parentConstraint)
+            scaleMinusAnimation(binding.firstCard)
 
             itemParent.removeView(draggableItem)
 
