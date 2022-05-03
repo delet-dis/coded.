@@ -58,4 +58,6 @@
     <string name="array">array</string>
     <string name="consoleInput">Console input</string>
     <string name="readFromConsole">read from console</string>
+    <string name="set">set</string>
+    <string name="to">to</string>
 </resources>
