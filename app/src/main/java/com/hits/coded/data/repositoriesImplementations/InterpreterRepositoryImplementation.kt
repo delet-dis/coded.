@@ -296,8 +296,11 @@ constructor(
             VariableBlockType.VARIABLE_SET -> {
                 when (variable.valueToSet) {
                     is ExpressionBlock -> {
+                        val currentStoredVariable = variable.variableParams?.name?.let {
+                            heapUseCases.getVariableUseCase.getVariable(it)
+                        }
                         val expressionValueType = getTypeOfAny(variable.valueToSet)
-                        if (expressionValueType == variable.variableParams?.type) {
+                        if (expressionValueType ==  currentStoredVariable?.type) {
                             variable.variableParams?.name?.let {
                                 when (expressionValueType) {
                                     VariableType.INT -> {
@@ -350,7 +353,7 @@ constructor(
                                     )
                                 }!!
                             } else {
-                                if (foundedStoredVariable.type == variable.variableParams?.type) {
+                                if (foundedStoredVariable.type == currentStoredVariable?.type) {
                                     foundedStoredVariable.value?.let {
                                         variable.variableParams?.name?.let { it1 ->
                                             heapUseCases.reAssignVariableUseCase.reAssignVariable(
