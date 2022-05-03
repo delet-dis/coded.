@@ -22,11 +22,11 @@ import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.databinding.ViewVariableChangeByBlockBinding
+import com.hits.coded.databinding.ViewVariableSetToBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UIVariableChangeByBlock @JvmOverloads constructor(
+class UIVariableSetToBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -35,13 +35,13 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
     UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface {
-    private val binding: ViewVariableChangeByBlockBinding
+    private val binding: ViewVariableSetToBlockBinding
 
     override val nestedUIBlocks: ArrayList<View> = ArrayList()
 
     private var variableParams = StoredVariable()
 
-    private var _block = VariableBlock(VariableBlockType.VARIABLE_CHANGE, variableParams)
+    private var _block = VariableBlock(VariableBlockType.VARIABLE_SET, variableParams)
     override val block: BlockBase
         get() = _block
 
@@ -53,10 +53,10 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     init {
         inflate(
             context,
-            R.layout.view_variable_change_by_block,
+            R.layout.view_variable_set_to_block,
             this
         ).also { view ->
-            binding = ViewVariableChangeByBlockBinding.bind(view)
+            binding = ViewVariableSetToBlockBinding.bind(view)
         }
 
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
@@ -134,7 +134,7 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        if (draggableItem != this@UIVariableChangeByBlock) {
+        if (draggableItem != this@UIVariableSetToBlock) {
             scaleMinusAnimation(binding.secondCard)
 
             itemParent.removeView(draggableItem)
@@ -186,6 +186,6 @@ class UIVariableChangeByBlock @JvmOverloads constructor(
     }
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "VARIABLE_CHANGE_BY_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "VARIABLE_SET_TO_BLOCK_"
     }
 }

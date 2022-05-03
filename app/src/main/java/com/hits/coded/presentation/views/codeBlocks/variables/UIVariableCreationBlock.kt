@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.views.codeBlocks.variables.creationBlock
+package com.hits.coded.presentation.views.codeBlocks.variables
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -9,7 +9,8 @@ import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomShe
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.databinding.FragmentVariablesItemsPickingBinding
 import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock
-import com.hits.coded.presentation.views.codeBlocks.variables.creationBlock.UIVariableCreationBlock
+import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableCreationBlock
+import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableSetToBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,6 +45,7 @@ class VariablesItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInte
             addView(UIVariableCreationBlock(requireContext()).apply {
                 initCallback(requireActivity() as UIEditorActivityShowBottomSheetCallback)
             })
+            addView(UIVariableSetToBlock(requireContext()))
             addView(UIVariableChangeByBlock(requireContext()))
         }
     }
