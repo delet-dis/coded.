@@ -11,9 +11,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.contains
 import com.hits.coded.R
+import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
@@ -33,7 +35,8 @@ class UIActionStartBlock @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
     UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
     UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface,
-    UICodeBlockSavesNestedBlocksInterface {
+    UICodeBlockSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
+    UICodeBlockWithCustomRemoveViewProcessInterface {
     private val binding: ViewActionStartBinding
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
@@ -126,23 +129,32 @@ class UIActionStartBlock @JvmOverloads constructor(
 
             if (dropPosition != null) {
                 nestedBlocksLayout.getChildAt(dropPosition!!).setPadding(0, 0, 0, 0)
+
                 if (draggableItem != nestedBlocksLayout.getChildAt(dropPosition!!)) {
+                    itemParent?.let { processViewWithCustomRemoveProcessRemoval(it, draggableItem) }
                     itemParent?.removeView(draggableItem)
 
                     nestedUIBlocks.add(dropPosition!!, draggableItem)
                     nestedBlocksLayout.addView(draggableItem, dropPosition!!)
+
+                    (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                        nestedBlocksAsBlockBase.add(dropPosition!!, it)
+
+                        _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                    }
                 }
             } else {
+                itemParent?.let { processViewWithCustomRemoveProcessRemoval(it, draggableItem) }
                 itemParent?.removeView(draggableItem)
 
                 nestedUIBlocks.add(draggableItem)
                 nestedBlocksLayout.addView(draggableItem)
-            }
 
-            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                nestedBlocksAsBlockBase.add(it)
+                (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                    nestedBlocksAsBlockBase.add(it)
 
-                _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                    _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                }
             }
         }
     }
@@ -175,6 +187,7 @@ class UIActionStartBlock @JvmOverloads constructor(
 
                     draggableItem.y = childRect.top.toFloat()
                 } else {
+
                     if (childCount - 1 == 0) {
                         draggableItem.y = 0f
                     } else {
@@ -201,7 +214,13 @@ class UIActionStartBlock @JvmOverloads constructor(
         dragEvent: DragEvent,
         draggableItem: View
     ) {
+        draggableItem.post {
+            draggableItem.animate().alpha(0f).duration =
+                UIMoveableCodeBlockInterface.ITEM_DISAPPEAR_ANIMATION_DURATION
+        }
+
         if (itemParent?.contains(draggableItem) == true) {
+            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
             itemParent.removeView(draggableItem)
         }
 
@@ -214,8 +233,9 @@ class UIActionStartBlock @JvmOverloads constructor(
             handlerView, dragEvent
         )
 
-        if (dropPosition != null) {
-            val intersectionView = binding.nestedBlocksLayout.getChildAt(dropPosition!!)
+        dropPosition?.let {
+            val intersectionView = binding.nestedBlocksLayout.getChildAt(it)
+
             if (draggableItem != intersectionView) {
                 intersectionView.setPadding(0, draggableItem.height, 0, 0)
             }
@@ -230,7 +250,9 @@ class UIActionStartBlock @JvmOverloads constructor(
 
         val eventRect = Rect(
             touchPosition.x,
-            touchPosition.y, (touchPosition.x + 1), (touchPosition.y + 1)
+            touchPosition.y,
+            (touchPosition.x + 1),
+            (touchPosition.y + 1)
         )
 
         binding.nestedBlocksLayout.children.forEachIndexed { position, item ->
@@ -260,6 +282,9 @@ class UIActionStartBlock @JvmOverloads constructor(
 
     private companion object {
         const val DRAG_AND_DROP_TAG = "ACTION_START_BLOCK_"
-        const val MOCK_VIEW_TAG = "MOCK_VIEW_TAG"
+    }
+
+    override fun customRemoveView(view: View) {
+        removeView(view)
     }
 }

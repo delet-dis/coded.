@@ -104,9 +104,9 @@ class CodeField @JvmOverloads constructor(
                 draggableItem.y = dragEvent.y - (it.touchY)
             }
 
-            if (itemParent != null) {
-                processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
-                itemParent.removeView(draggableItem)
+            itemParent?.let {
+                processViewWithCustomRemoveProcessRemoval(it, draggableItem)
+                it.removeView(draggableItem)
             }
 
             addView(draggableItem)
