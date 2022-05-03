@@ -337,9 +337,8 @@ constructor(
                     }
                     is String -> {
                         if (!((variable.valueToSet as String)[0] == '"' && (variable.valueToSet as String)[(variable.valueToSet as String).lastIndex] == '"')) {
-                            val variableName = (variable.valueToSet as String).drop(1).dropLast(1)
                             val foundedStoredVariable =
-                                heapUseCases.getVariableUseCase.getVariable(variableName)
+                                heapUseCases.getVariableUseCase.getVariable(variable.valueToSet as String)
                             if (foundedStoredVariable == null) {
                                 throw variable.id?.let {
                                     InterpreterException(
