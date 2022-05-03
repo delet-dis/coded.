@@ -8,6 +8,8 @@ import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.children
+import androidx.core.view.contains
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
@@ -19,6 +21,7 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.databinding.ViewActionStartBinding
+import com.hits.coded.domain.extensions.getTouchPositionFromDragEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -46,6 +49,8 @@ class UIActionStartBlock @JvmOverloads constructor(
 
     override val animationSet = AnimatorSet()
 
+    private var dropPosition: Int? = null
+
     init {
         inflate(
             context,
@@ -61,16 +66,25 @@ class UIActionStartBlock @JvmOverloads constructor(
     }
 
     override fun initDragAndDropListener() =
-        binding.parentConstraint.setOnDragListener { _, dragEvent ->
+        binding.parentConstraint.setOnDragListener { handlerView, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            val itemParent = draggableItem.parent as ViewGroup
+            val itemParent = draggableItem.parent as? ViewGroup
 
             with(binding) {
                 if (draggableItem as? UINestedableCodeBlock == null) {
                     when (dragEvent.action) {
-                        DragEvent.ACTION_DRAG_STARTED,
-                        DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
+                        DragEvent.ACTION_DRAG_STARTED -> return@setOnDragListener true
+                        DragEvent.ACTION_DRAG_LOCATION -> {
+                            handleDragLocationEvent(
+                                itemParent,
+                                handlerView,
+                                dragEvent,
+                                draggableItem
+                            )
+
+                            return@setOnDragListener true
+                        }
 
                         DragEvent.ACTION_DRAG_ENTERED -> {
                             scalePlusAnimation(binding.parentConstraint)
@@ -104,16 +118,26 @@ class UIActionStartBlock @JvmOverloads constructor(
         }
 
     private fun handleDropEvent(
-        itemParent: ViewGroup,
+        itemParent: ViewGroup?,
         draggableItem: View
     ) = with(binding) {
         if (draggableItem != this@UIActionStartBlock) {
             scaleMinusAnimation(parentConstraint)
 
-            itemParent.removeView(draggableItem)
+            if (dropPosition != null) {
+                nestedBlocksLayout.getChildAt(dropPosition!!).setPadding(0, 0, 0, 0)
+                if (draggableItem != nestedBlocksLayout.getChildAt(dropPosition!!)) {
+                    itemParent?.removeView(draggableItem)
 
-            nestedUIBlocks.add(draggableItem)
-            nestedBlocksLayout.addView(draggableItem)
+                    nestedUIBlocks.add(dropPosition!!, draggableItem)
+                    nestedBlocksLayout.addView(draggableItem, dropPosition!!)
+                }
+            } else {
+                itemParent?.removeView(draggableItem)
+
+                nestedUIBlocks.add(draggableItem)
+                nestedBlocksLayout.addView(draggableItem)
+            }
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
                 nestedBlocksAsBlockBase.add(it)
@@ -124,7 +148,7 @@ class UIActionStartBlock @JvmOverloads constructor(
     }
 
     private fun handleDragEndedEvent(
-        itemParent: ViewGroup,
+        itemParent: ViewGroup?,
         draggableItem: View
     ) {
         draggableItem.post {
@@ -138,23 +162,88 @@ class UIActionStartBlock @JvmOverloads constructor(
             if (itemParent == this) {
                 draggableItem.x = 0f
 
-                if (childCount == 0) {
-                    draggableItem.y = 0f
-                } else {
+                if (dropPosition != null) {
                     val childRect = Rect()
-                    getChildAt(childCount - 1)
+                    getChildAt(dropPosition!!)
                         .getDrawingRect(childRect)
 
                     offsetDescendantRectToMyCoords(
                         getChildAt(
-                            childCount - 1
+                            dropPosition!!
                         ), childRect
                     )
 
                     draggableItem.y = childRect.top.toFloat()
+                } else {
+                    if (childCount - 1 == 0) {
+                        draggableItem.y = 0f
+                    } else {
+                        val childRect = Rect()
+                        getChildAt(childCount - 1)
+                            .getDrawingRect(childRect)
+
+                        offsetDescendantRectToMyCoords(
+                            getChildAt(
+                                childCount - 1
+                            ), childRect
+                        )
+
+                        draggableItem.y = childRect.top.toFloat()
+                    }
                 }
             }
         }
+    }
+
+    private fun handleDragLocationEvent(
+        itemParent: ViewGroup?,
+        handlerView: View,
+        dragEvent: DragEvent,
+        draggableItem: View
+    ) {
+        if (itemParent?.contains(draggableItem) == true) {
+            itemParent.removeView(draggableItem)
+        }
+
+        dropPosition?.let {
+            binding.nestedBlocksLayout.getChildAt(it)
+                .setPadding(0, 0, 0, 0)
+        }
+
+        dropPosition = checkForDraggableElementIntersectionWithLinearLayoutElements(
+            handlerView, dragEvent
+        )
+
+        if (dropPosition != null) {
+            val intersectionView = binding.nestedBlocksLayout.getChildAt(dropPosition!!)
+            if (draggableItem != intersectionView) {
+                intersectionView.setPadding(0, draggableItem.height, 0, 0)
+            }
+        }
+    }
+
+    private fun checkForDraggableElementIntersectionWithLinearLayoutElements(
+        viewToCheck: View,
+        eventToCheck: DragEvent
+    ): Int? {
+        val touchPosition = getTouchPositionFromDragEvent(viewToCheck, eventToCheck)
+
+        val eventRect = Rect(
+            touchPosition.x,
+            touchPosition.y, (touchPosition.x + 1), (touchPosition.y + 1)
+        )
+
+        binding.nestedBlocksLayout.children.forEachIndexed { position, item ->
+            if (viewToCheck != item) {
+                val elementRect = Rect()
+                item.getGlobalVisibleRect(elementRect)
+
+                if (eventRect.intersect(elementRect)) {
+                    return position
+                }
+            }
+        }
+        return null
     }
 
     override fun removeView(view: View?) {
@@ -171,5 +260,6 @@ class UIActionStartBlock @JvmOverloads constructor(
 
     private companion object {
         const val DRAG_AND_DROP_TAG = "ACTION_START_BLOCK_"
+        const val MOCK_VIEW_TAG = "MOCK_VIEW_TAG"
     }
 }
