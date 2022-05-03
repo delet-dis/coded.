@@ -1,4 +1,4 @@
-package com.hits.coded.data.models.interpreter.arrays
+package com.hits.coded.data.models.arrays.bases
 
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
@@ -15,7 +15,7 @@ abstract class ArrayBase() {
     abstract fun push(value: Any)
 
     fun pop(): StoredVariable {
-        if(array.size == 0)
+        if (array.size == 0)
             throw InterpreterException(
                 interpreterUseCases.getCurrentBlockIdUseCase.getId(),
                 ExceptionType.ARRAY_OUT_OF_BOUNDS

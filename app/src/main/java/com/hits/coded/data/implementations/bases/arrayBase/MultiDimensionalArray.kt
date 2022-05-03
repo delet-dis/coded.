@@ -1,7 +1,7 @@
-package com.hits.coded.data.models.interpreter.arrays.arrayImplementations
+package com.hits.coded.data.implementations.bases.arrayBase
 
+import com.hits.coded.data.models.arrays.bases.ArrayBase
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.data.models.interpreter.arrays.ArrayBase
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 

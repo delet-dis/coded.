@@ -1,4 +1,4 @@
-package com.hits.coded.data.repositoriesImplementations
+package com.hits.coded.data.implementations.repositories
 
 import android.util.Log
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase

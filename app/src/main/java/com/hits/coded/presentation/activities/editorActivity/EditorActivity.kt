@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hits.coded.R
+import com.hits.coded.data.implementations.bases.arrayBase.MultiDimensionalArray
 import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.sharedTypes.VariableType
@@ -69,6 +70,10 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         initBottomBarButtonsOnClicks()
 
         initIsConsoleInputAvailableObserver()
+
+        val test = MultiDimensionalArray()
+
+        print("test")
     }
 
     private fun initBinding() {

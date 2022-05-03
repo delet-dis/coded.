@@ -1,34 +1,38 @@
-package com.hits.coded.data.models.interpreter.arrays.arrayImplementations
+package com.hits.coded.data.implementations.bases.arrayBase
 
+import com.hits.coded.data.models.arrays.bases.ArrayBase
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.data.models.interpreter.arrays.ArrayBase
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
 
-class DoubleArray() : ArrayBase() {
-    constructor(preparedArray: ArrayList<Double>) : this() {
+
+class StringArray() : ArrayBase() {
+
+    constructor(preparedArray: ArrayList<String>) : this() {
         for (value in preparedArray) {
-            array.add(StoredVariable(null, VariableType.DOUBLE, false, value))
+            array.add(StoredVariable(null, VariableType.STRING, false, value))
         }
     }
 
     override fun parseString(inputString: String): ArrayBase {
-        val parsedArray = ArrayList<Double>()
-        val pattern = Regex("(?:-?\\d+(?:\\.\\d*)?)*")
+        val parsedArray = ArrayList<String>()
+        val pattern = Regex("(?:\"[\\S\\s]+?\")*")
         for (match in pattern.findAll(inputString)) {
-            parsedArray.add(match.value.toDouble())
+            parsedArray.add(match.value.drop(1).dropLast(1))
         }
-        return DoubleArray(parsedArray)
+
+        return StringArray(parsedArray)
     }
 
     override fun push(value: Any) {
-        if (value !is Double)
+        if (value !is String)
             throw InterpreterException(
                 interpreterUseCases.getCurrentBlockIdUseCase.getId(),
                 ExceptionType.TYPE_MISMATCH
             )
 
-        array.add(StoredVariable(null, VariableType.DOUBLE, false, value))
+
+        array.add(StoredVariable(null, VariableType.STRING, false, value))
     }
 }

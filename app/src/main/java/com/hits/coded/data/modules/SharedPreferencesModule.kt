@@ -1,7 +1,7 @@
 package com.hits.coded.data.modules
 
 import com.hits.coded.data.models.sharedPreferences.useCases.SharedPreferencesUseCases
-import com.hits.coded.data.repositoriesImplementations.SharedPreferencesRepositoryImplementation
+import com.hits.coded.data.implementations.repositories.SharedPreferencesRepositoryImplementation
 import com.hits.coded.domain.repositories.SharedPreferencesRepository
 import com.hits.coded.domain.useCases.sharedPreferences.ChangeOnboardingPassedStateUseCase
 import com.hits.coded.domain.useCases.sharedPreferences.CheckIsOnboardingPassedUseCase
