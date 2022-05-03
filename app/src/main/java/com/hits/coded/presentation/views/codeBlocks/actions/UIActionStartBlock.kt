@@ -2,17 +2,16 @@ package com.hits.coded.presentation.views.codeBlocks.actions
 
 import android.animation.AnimatorSet
 import android.content.Context
-import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.children
-import androidx.core.view.contains
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.UIElementHandlesReorderingInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
@@ -23,7 +22,6 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.databinding.ViewActionStartBinding
-import com.hits.coded.domain.extensions.getTouchPositionFromDragEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -36,7 +34,7 @@ class UIActionStartBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
     UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
-    UICodeBlockWithCustomRemoveViewProcessInterface {
+    UICodeBlockWithCustomRemoveViewProcessInterface, UIElementHandlesReorderingInterface {
     private val binding: ViewActionStartBinding
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
@@ -52,7 +50,9 @@ class UIActionStartBlock @JvmOverloads constructor(
 
     override val animationSet = AnimatorSet()
 
-    private var dropPosition: Int? = null
+    override var layoutListView: LinearLayout? = null
+
+    override var dropPosition: Int? = null
 
     init {
         inflate(
@@ -63,7 +63,9 @@ class UIActionStartBlock @JvmOverloads constructor(
             binding = ViewActionStartBinding.bind(view)
         }
 
-        this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
+        initLayoutListView()
+
+        initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initDragAndDropListener()
     }
@@ -159,113 +161,8 @@ class UIActionStartBlock @JvmOverloads constructor(
         }
     }
 
-    private fun handleDragEndedEvent(
-        itemParent: ViewGroup?,
-        draggableItem: View
-    ) {
-        draggableItem.post {
-            draggableItem.animate().alpha(1f).duration =
-                UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
-        }
-
-        this@UIActionStartBlock.invalidate()
-
-        with(binding.nestedBlocksLayout) {
-            if (itemParent == this) {
-                draggableItem.x = 0f
-
-                if (dropPosition != null) {
-                    val childRect = Rect()
-                    getChildAt(dropPosition!!)
-                        .getDrawingRect(childRect)
-
-                    offsetDescendantRectToMyCoords(
-                        getChildAt(
-                            dropPosition!!
-                        ), childRect
-                    )
-
-                    draggableItem.y = childRect.top.toFloat()
-                } else {
-
-                    if (childCount - 1 == 0) {
-                        draggableItem.y = 0f
-                    } else {
-                        val childRect = Rect()
-                        getChildAt(childCount - 1)
-                            .getDrawingRect(childRect)
-
-                        offsetDescendantRectToMyCoords(
-                            getChildAt(
-                                childCount - 1
-                            ), childRect
-                        )
-
-                        draggableItem.y = childRect.top.toFloat()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun handleDragLocationEvent(
-        itemParent: ViewGroup?,
-        handlerView: View,
-        dragEvent: DragEvent,
-        draggableItem: View
-    ) {
-        draggableItem.post {
-            draggableItem.animate().alpha(0f).duration =
-                UIMoveableCodeBlockInterface.ITEM_DISAPPEAR_ANIMATION_DURATION
-        }
-
-        if (itemParent?.contains(draggableItem) == true) {
-            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
-            itemParent.removeView(draggableItem)
-        }
-
-        dropPosition?.let {
-            binding.nestedBlocksLayout.getChildAt(it)
-                .setPadding(0, 0, 0, 0)
-        }
-
-        dropPosition = checkForDraggableElementIntersectionWithLinearLayoutElements(
-            handlerView, dragEvent
-        )
-
-        dropPosition?.let {
-            val intersectionView = binding.nestedBlocksLayout.getChildAt(it)
-
-            if (draggableItem != intersectionView) {
-                intersectionView.setPadding(0, draggableItem.height, 0, 0)
-            }
-        }
-    }
-
-    private fun checkForDraggableElementIntersectionWithLinearLayoutElements(
-        viewToCheck: View,
-        eventToCheck: DragEvent
-    ): Int? {
-        val touchPosition = getTouchPositionFromDragEvent(viewToCheck, eventToCheck)
-
-        val eventRect = Rect(
-            touchPosition.x,
-            touchPosition.y,
-            (touchPosition.x + 1),
-            (touchPosition.y + 1)
-        )
-
-        binding.nestedBlocksLayout.children.forEachIndexed { position, item ->
-            if (viewToCheck != item) {
-                val elementRect = Rect()
-                item.getGlobalVisibleRect(elementRect)
-
-                if (eventRect.intersect(elementRect)) {
-                    return position
-                }
-            }
-        }
-        return null
+    private fun initLayoutListView() {
+        layoutListView = binding.nestedBlocksLayout
     }
 
     override fun removeView(view: View?) {
