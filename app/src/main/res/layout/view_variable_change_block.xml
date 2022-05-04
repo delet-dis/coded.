@@ -17,13 +17,13 @@
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/secondCard"
-        app:layout_constraintStart_toStartOf="@+id/setVariable"
+        app:layout_constraintStart_toStartOf="@+id/firstText"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/variable_block"
         tools:ignore="ImageContrastCheck" />
 
     <TextView
-        android:id="@+id/setVariable"
+        android:id="@+id/firstText"
         style="@style/buttonBoldText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +33,6 @@
         android:maxLength="20"
         android:maxLines="0"
         android:singleLine="true"
-        android:text="@string/set"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_marginStart="@dimen/codeBlockElementsSpacing"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/setVariable"
+        app:layout_constraintStart_toEndOf="@+id/firstText"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.42">
 
@@ -64,7 +63,7 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/to"
+        android:id="@+id/secondText"
         style="@style/buttonBoldText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -74,7 +73,6 @@
         android:maxLength="20"
         android:maxLines="0"
         android:singleLine="true"
-        android:text="@string/to"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/firstCard"
@@ -90,7 +88,7 @@
         android:layout_marginEnd="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/to"
+        app:layout_constraintStart_toEndOf="@+id/secondText"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.42">
 
