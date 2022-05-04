@@ -88,7 +88,6 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
             changeTopBarHeight(statusBarHeight)
             changeBottomBarHeight(navigationBarHeight)
-
             updateParentLayoutMargins(navigationBarsInsets.left, 0, navigationBarsInsets.right, 0)
 
             WindowInsetsCompat.CONSUMED
@@ -197,7 +196,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
     private fun initBottomBarButtonsOnClicks() =
         with(binding) {
             menuButton.setOnClickListener {
-                itemsPickingBottomSheetController.show()
+                itemsPickingBottomSheetController.show(navigationBarHeight)
             }
 
             consoleButton.setOnClickListener {
@@ -285,7 +284,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
     private fun showConsole() = consoleBottomSheetController.show(navigationBarHeight)
 
     override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) =
-        typeChangerBottomSheetController.show(closureToInvoke)
+        typeChangerBottomSheetController.show(closureToInvoke, navigationBarHeight)
 
     override fun hideTypeChangerBottomSheet() =
         typeChangerBottomSheetController.hide()

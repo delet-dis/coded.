@@ -1,6 +1,8 @@
 package com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet
 
 import android.app.Activity
+import android.view.ViewGroup
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
@@ -8,9 +10,10 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetWithViewPagerInterface
 import com.hits.coded.data.interfaces.ui.bottomSheets.typeChangerBottomSheet.UIBottomSheetTypeChangerFragmentInterface
-import com.hits.coded.data.models.typeChangerBottomSheet.enums.BottomSheetTypeChangersScreens
 import com.hits.coded.data.models.sharedTypes.VariableType
+import com.hits.coded.data.models.typeChangerBottomSheet.enums.BottomSheetTypeChangersScreens
 import com.hits.coded.databinding.IncludeVariableTypeChangerBottomSheetBinding
+import com.hits.coded.domain.extensions.dpToPx
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.fragmentStateAdapters.VariableTypeChangerViewPagerAdapter
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.viewModel.VariableTypeChangerViewModel
 
@@ -57,16 +60,29 @@ class VariableTypeChangerBottomSheetController(
 
         }.attach()
 
-    override fun show() {
+    override fun show(navigationBarHeight: Int) {
         behaviour.isFitToContents = false
-        behaviour.expandedOffset =
-            binding.root.resources.getDimension(R.dimen.bottomSheetTopOffset).toInt()
+        behaviour.expandedOffset = 50.dpToPx(binding.root.context)
+
+        behaviour.state = BottomSheetBehavior.STATE_EXPANDED
+
+        binding.typeChangerViewPager.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            setMargins(
+                leftMargin,
+                topMargin,
+                rightMargin,
+                ((navigationBarHeight + binding.root.resources.getDimension(R.dimen.bottomSheetBottomMargin)).toInt())
+            )
+        }
 
         behaviour.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    fun show(closureToInvokeAfterTypePick: (VariableType, Boolean) -> Unit) {
-        show()
+    fun show(
+        closureToInvokeAfterTypePick: (VariableType, Boolean) -> Unit,
+        navigationBarHeight: Int
+    ) {
+        show(navigationBarHeight)
 
         initFragmentsRecyclers(closureToInvokeAfterTypePick)
     }

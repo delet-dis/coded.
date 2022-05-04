@@ -21,22 +21,18 @@ class ConsoleBottomSheetController(private val binding: IncludeConsoleBottomShee
             behaviour.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-    override fun show() {
+    override fun show(navigationBarHeight: Int) {
         behaviour.isFitToContents = false
         behaviour.expandedOffset = 50.dpToPx(binding.root.context)
 
         behaviour.state = BottomSheetBehavior.STATE_EXPANDED
-    }
-
-    fun show(navigationBarHeight: Int) {
-        show()
 
         binding.console.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             setMargins(
                 leftMargin,
                 topMargin,
                 rightMargin,
-                ((navigationBarHeight + binding.root.resources.getDimension(R.dimen.consoleBottomMargin)).toInt())
+                ((navigationBarHeight + binding.root.resources.getDimension(R.dimen.bottomSheetBottomMargin)).toInt())
             )
         }
     }
