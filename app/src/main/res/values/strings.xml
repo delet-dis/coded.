@@ -60,4 +60,11 @@
     <string name="readFromConsole">read from console</string>
     <string name="set">set</string>
     <string name="to">to</string>
+
+    <string name="plus">+</string>
+    <string name="minus">+</string>
+    <string name="multiply">•</string>
+    <string name="divide">/</string>
+    <string name="divideWithRemainder">%</string>
+    <string name="number">number</string>
 </resources>
