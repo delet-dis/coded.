@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.databinding.FragmentVariablesItemsPickingBinding
-import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeByBlock
+import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableChangeBlock
 import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableCreationBlock
-import com.hits.coded.presentation.views.codeBlocks.variables.UIVariableSetToBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,8 +45,12 @@ class VariablesItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInte
             addView(UIVariableCreationBlock(requireContext()).apply {
                 initCallback(requireActivity() as UIEditorActivityShowBottomSheetCallback)
             })
-            addView(UIVariableSetToBlock(requireContext()))
-            addView(UIVariableChangeByBlock(requireContext()))
+            addView(UIVariableChangeBlock(requireContext()).apply {
+                blockType = VariableBlockType.VARIABLE_SET
+            })
+            addView(UIVariableChangeBlock(requireContext()).apply {
+                blockType = VariableBlockType.VARIABLE_CHANGE
+            })
         }
     }
 }

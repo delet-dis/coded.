@@ -5,5 +5,5 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
 
 abstract class IOBlockBase : BlockBase() {
     abstract val ioBlockType: IOBlockType
-    abstract var argument: Any?
+    abstract val argument: Any?
 }

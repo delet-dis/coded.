@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
@@ -79,12 +80,15 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
     private fun initSystemBarsDimensionChangesListener() =
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _: View?, insets: WindowInsetsCompat ->
+            val navigationBarsInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+
             statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             navigationBarHeight =
-                insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+                navigationBarsInsets.bottom
 
             changeTopBarHeight(statusBarHeight)
             changeBottomBarHeight(navigationBarHeight)
+            updateParentLayoutMargins(navigationBarsInsets.left, 0, navigationBarsInsets.right, 0)
 
             WindowInsetsCompat.CONSUMED
         }
@@ -192,7 +196,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
     private fun initBottomBarButtonsOnClicks() =
         with(binding) {
             menuButton.setOnClickListener {
-                itemsPickingBottomSheetController.show()
+                itemsPickingBottomSheetController.show(navigationBarHeight)
             }
 
             consoleButton.setOnClickListener {
@@ -271,15 +275,21 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
             }
         }
 
+    private fun updateParentLayoutMargins(left: Int, top: Int, right: Int, bottom: Int) {
+        binding.coordinatorLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            setMargins(left, top, right, bottom)
+        }
+    }
+
     private fun showConsole() = consoleBottomSheetController.show(navigationBarHeight)
 
     override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) =
-        typeChangerBottomSheetController.show(closureToInvoke)
+        typeChangerBottomSheetController.show(closureToInvoke, navigationBarHeight)
 
     override fun hideTypeChangerBottomSheet() =
         typeChangerBottomSheetController.hide()
 
     private companion object {
-        const val BUTTONS_ANIMATION_DURATION:Long = 200
+        const val BUTTONS_ANIMATION_DURATION: Long = 200
     }
 }
