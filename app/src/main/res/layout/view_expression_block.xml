@@ -4,59 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parentConstraint"
     android:layout_width="wrap_content"
-    android:animateLayoutChanges="true"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true">
 
     <ImageView
         android:id="@+id/backgroundImage"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginStart="-16dp"
-        android:layout_marginEnd="-20dp"
-        android:contentDescription="@string/buttonBackgroundImage"
+        android:layout_marginEnd="-16dp"
+        android:adjustViewBounds="true"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/secondCard"
-        app:layout_constraintStart_toStartOf="@+id/changeVariable"
+        app:layout_constraintEnd_toEndOf="@+id/rightCard"
+        app:layout_constraintStart_toStartOf="@+id/leftCard"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/variable_block"
-        tools:ignore="ImageContrastCheck" />
-
-    <TextView
-        android:id="@+id/changeVariable"
-        style="@style/buttonBoldText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:ellipsize="end"
-        android:maxWidth="@dimen/variableBlockMaxWidth"
-        android:maxLength="20"
-        android:maxLines="0"
-        android:singleLine="true"
-        android:text="@string/change"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.45"
-        tools:ignore="TextContrastCheck" />
+        app:srcCompat="@drawable/expression_block" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/firstCard"
+        android:id="@+id/leftCard"
         style="@style/variableNameCard"
         android:layout_width="match_parent"
-        android:layout_marginStart="@dimen/codeBlockElementsSpacing"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/changeVariable"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.42">
 
         <EditText
-            android:id="@+id/variableName"
+            android:id="@+id/leftCardText"
             style="@style/variableNameEditText"
             android:layout_width="wrap_content"
             android:background="@null"
-            android:hint="@string/variableName"
+            android:hint="@string/value"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
             android:inputType="text"
@@ -64,7 +45,7 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/by"
+        android:id="@+id/centerText"
         style="@style/buttonBoldText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -74,28 +55,28 @@
         android:maxLength="20"
         android:maxLines="0"
         android:singleLine="true"
-        android:text="@string/by"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/firstCard"
+        app:layout_constraintStart_toEndOf="@+id/leftCard"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.45"
         tools:ignore="TextContrastCheck" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/secondCard"
+        android:id="@+id/rightCard"
         style="@style/variableNameCard"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/codeBlockElementsSpacing"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/by"
+        app:layout_constraintStart_toEndOf="@+id/centerText"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.42">
 
         <EditText
-            android:id="@+id/variableChangeValue"
+            android:id="@+id/rightSideText"
             style="@style/variableNameEditText"
             android:layout_width="wrap_content"
             android:background="@null"

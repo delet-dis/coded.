@@ -1,9 +1,11 @@
 package com.hits.coded.data.models.codeBlocks.types.subBlocks
 
-enum class ExpressionBlockType {
-    PLUS,
-    MINUS,
-    MULTIPLY,
-    DIVIDE,
-    DIVIDE_WITH_REMAINDER,
+import com.hits.coded.R
+
+enum class ExpressionBlockType(val resourceId: Int) {
+    PLUS(R.string.plus),
+    MINUS(R.string.minus),
+    MULTIPLY(R.string.multiply),
+    DIVIDE(R.string.divide),
+    DIVIDE_WITH_REMAINDER(R.string.divideWithRemainder),
 }
