@@ -34,7 +34,7 @@
                 style="@style/bottomSheetItemsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/bottomSheetContentVarticalMargin"
+                android:layout_marginTop="@dimen/bottomSheetContentMargin"
                 android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>
