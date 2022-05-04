@@ -76,7 +76,7 @@
         app:layout_constraintVertical_bias="0.42">
 
         <EditText
-            android:id="@+id/rightSideText"
+            android:id="@+id/rightCardText"
             style="@style/variableNameEditText"
             android:layout_width="wrap_content"
             android:background="@null"

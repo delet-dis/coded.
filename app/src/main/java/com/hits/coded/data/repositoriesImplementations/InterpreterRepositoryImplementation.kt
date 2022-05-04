@@ -9,7 +9,6 @@ import com.hits.coded.data.models.codeBlocks.dataClasses.LoopBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 import com.hits.coded.data.models.codeBlocks.types.BlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
@@ -479,76 +478,76 @@ constructor(
         }
         val leftSideType: VariableType? = getTypeOfAny(expression.leftSide)
         val rightSideType: VariableType? = getTypeOfAny(expression.rightSide)
-        if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
-            when (expression.expressionBlockType) {
-                ExpressionBlockType.PLUS -> return (convertAnyToDouble(expression.leftSide) + convertAnyToDouble(
-                    expression.rightSide
-                ))
-                ExpressionBlockType.MULTIPLY -> return (convertAnyToDouble(expression.leftSide) * convertAnyToDouble(
-                    expression.rightSide
-                ))
-                ExpressionBlockType.DIVIDE -> {
-                    if (convertAnyToDouble(
-                            expression.rightSide
-                        ) != 0.0
-                    ) {
-                        return (convertAnyToDouble(expression.leftSide) / convertAnyToDouble(
-                            expression.rightSide
-                        ))
-                    } else {
-                        throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
-                    }
-                }
-                ExpressionBlockType.MINUS -> return (convertAnyToDouble(expression.leftSide) - convertAnyToDouble(
-                    expression.rightSide
-                ))
-                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> throw expression.id?.let {
-                    InterpreterException(
-                        it, ExceptionType.WRONG_OPERAND_USE_CASE
-                    )
-                }!!
-            }
-        }
-        if (leftSideType == VariableType.INT && VariableType.INT == rightSideType) {
-            when (expression.expressionBlockType) {
-                ExpressionBlockType.PLUS -> return (convertAnyToInt(expression.leftSide) + convertAnyToInt(
-                    expression.rightSide
-                ))
-                ExpressionBlockType.MULTIPLY -> return (convertAnyToInt(expression.leftSide) * convertAnyToInt(
-                    expression.rightSide
-                ))
-                ExpressionBlockType.DIVIDE -> {
-                    if (convertAnyToInt(
-                            expression.rightSide
-                        ) != 0
-                    ) {
-                        return (convertAnyToInt(expression.leftSide) / convertAnyToInt(
-                            expression.rightSide
-                        ))
-                    } else {
-                        throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
-                    }
-                }
-                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> {
-                    if (convertAnyToInt(
-                            expression.rightSide
-                        ) != 0
-                    ) {
-                        return (convertAnyToInt(expression.leftSide) % convertAnyToInt(
-                            expression.rightSide
-                        ))
-                    } else {
-                        throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
-                    }
-                }
-                ExpressionBlockType.MINUS -> return (convertAnyToInt(expression.leftSide) - convertAnyToInt(
-                    expression.rightSide
-                ))
-            }
-        }
-        if (leftSideType == VariableType.STRING && VariableType.STRING == rightSideType && expression.expressionBlockType == ExpressionBlockType.PLUS) {
-            return convertAnyToString(expression.leftSide) + convertAnyToString(expression.rightSide)
-        }
+//        if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
+//            when (expression.expressionBlockType) {
+//                ExpressionBlockType.PLUS -> return (convertAnyToDouble(expression.leftSide) + convertAnyToDouble(
+//                    expression.rightSide
+//                ))
+//                ExpressionBlockType.MULTIPLY -> return (convertAnyToDouble(expression.leftSide) * convertAnyToDouble(
+//                    expression.rightSide
+//                ))
+//                ExpressionBlockType.DIVIDE -> {
+//                    if (convertAnyToDouble(
+//                            expression.rightSide
+//                        ) != 0.0
+//                    ) {
+//                        return (convertAnyToDouble(expression.leftSide) / convertAnyToDouble(
+//                            expression.rightSide
+//                        ))
+//                    } else {
+//                        throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
+//                    }
+//                }
+//                ExpressionBlockType.MINUS -> return (convertAnyToDouble(expression.leftSide) - convertAnyToDouble(
+//                    expression.rightSide
+//                ))
+//                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> throw expression.id?.let {
+//                    InterpreterException(
+//                        it, ExceptionType.WRONG_OPERAND_USE_CASE
+//                    )
+//                }!!
+//            }
+//        }
+//        if (leftSideType == VariableType.INT && VariableType.INT == rightSideType) {
+//            when (expression.expressionBlockType) {
+//                ExpressionBlockType.PLUS -> return (convertAnyToInt(expression.leftSide) + convertAnyToInt(
+//                    expression.rightSide
+//                ))
+//                ExpressionBlockType.MULTIPLY -> return (convertAnyToInt(expression.leftSide) * convertAnyToInt(
+//                    expression.rightSide
+//                ))
+//                ExpressionBlockType.DIVIDE -> {
+//                    if (convertAnyToInt(
+//                            expression.rightSide
+//                        ) != 0
+//                    ) {
+//                        return (convertAnyToInt(expression.leftSide) / convertAnyToInt(
+//                            expression.rightSide
+//                        ))
+//                    } else {
+//                        throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
+//                    }
+//                }
+//                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> {
+//                    if (convertAnyToInt(
+//                            expression.rightSide
+//                        ) != 0
+//                    ) {
+//                        return (convertAnyToInt(expression.leftSide) % convertAnyToInt(
+//                            expression.rightSide
+//                        ))
+//                    } else {
+//                        throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
+//                    }
+//                }
+//                ExpressionBlockType.MINUS -> return (convertAnyToInt(expression.leftSide) - convertAnyToInt(
+//                    expression.rightSide
+//                ))
+//            }
+//        }
+//        if (leftSideType == VariableType.STRING && VariableType.STRING == rightSideType && expression.expressionBlockType == ExpressionBlockType.PLUS) {
+//            return convertAnyToString(expression.leftSide) + convertAnyToString(expression.rightSide)
+//        }
         throw  expression.id?.let { InterpreterException(it, ExceptionType.TYPE_MISMATCH) }!!
     }
 
