@@ -107,9 +107,9 @@ class UIVariableChangeBlock @JvmOverloads constructor(
         }
 
     override fun initDragAndDropListener() {
-//        binding.variableChangeValue.setOnDragListener { _, _ ->
-//            true
-//        }
+        binding.variableChangeValue.setOnDragListener { _, _ ->
+            true
+        }
 
         binding.variableName.setOnDragListener { _, _ ->
             true
@@ -205,6 +205,8 @@ class UIVariableChangeBlock @JvmOverloads constructor(
         nestedUIBlocks.remove(view)
         binding.secondCard.removeView(view)
 
+        view.tag = null
+
         _block.valueToSet = null
 
         binding.variableChangeValue.apply {
@@ -213,10 +215,10 @@ class UIVariableChangeBlock @JvmOverloads constructor(
         }
     }
 
-    override fun displayError() =
+    override fun hideError() =
         binding.backgroundImage.setImageResource(R.drawable.variable_block)
 
-    override fun hideError() =
+    override fun displayError() =
         binding.backgroundImage.setImageResource(R.drawable.error_block)
 
     private companion object {

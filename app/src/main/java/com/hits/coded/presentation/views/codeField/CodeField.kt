@@ -30,7 +30,7 @@ class CodeField @JvmOverloads constructor(
 
     private val startBlock = UIActionStartBlock(context)
 
-    private var previousErrorBlockId: Int? = null
+    private var previousErrorBlock: UICodeBlockSupportsErrorDisplaying? = null
 
     init {
         inflate(
@@ -148,15 +148,16 @@ class CodeField @JvmOverloads constructor(
     fun displayError(blockId: Int) {
         hideError()
 
-        (findViewWithTag<View>(VIEW_HIERARCHY_ID + blockId) as? UICodeBlockSupportsErrorDisplaying)?.displayError()
+        val foundedView =
+            findViewWithTag<View>(VIEW_HIERARCHY_ID + blockId) as? UICodeBlockSupportsErrorDisplaying
 
-        previousErrorBlockId = blockId
+        foundedView?.displayError()
+
+        previousErrorBlock = foundedView
     }
 
     fun hideError() =
-        previousErrorBlockId?.let {
-            (findViewWithTag<View>(VIEW_HIERARCHY_ID + it) as? UICodeBlockSupportsErrorDisplaying)?.hideError()
-        }
+        previousErrorBlock?.hideError()
 
     private companion object {
         const val VIEW_HIERARCHY_ID = "VIEW_HIERARCHY_ID_"
