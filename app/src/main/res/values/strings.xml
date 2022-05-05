@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">coded.</string>
+
     <string name="exploreCodingInBiteSizedPieces">Explore coding in bite-sized pieces</string>
     <string name="learnRealProgrammingInAWayYouCanUnderstand">learn real programming in a way you can understand</string>
     <string name="experienceHowSoftwareIsMade">Experience how software is made</string>
@@ -22,33 +23,42 @@
     <string name="invalidStringError">Hmm, I can\'t quite understand what do you mean here</string>
     <string name="invalidBlockError"> *CRAAACK* It seems that this block doesn\'t fit here!</string>
 
-
     <string name="project">Project</string>
+
     <string name="dragAndDropTheComponentToAdd">Drag and drop the component to add</string>
     <string name="close">Close</string>
     <string name="componentType">Component type</string>
     <string name="variables">Variables</string>
+    <string name="expressions">Expressions</string>
     <string name="logic">Logic</string>
     <string name="loops">Loops</string>
     <string name="actions">Actions</string>
     <string name="menu">Menu</string>
+
     <string name="start">start</string>
     <string name="console">Console</string>
+
     <string name="variablesActions">Variables actions</string>
     <string name="createVariable">create variable</string>
     <string name="variablesList">Variables list</string>
     <string name="variableName">name</string>
     <string name="variableCall">Variable call</string>
-    <string name="change">change</string>
-    <string name="by">by</string>
-    <string name="value">value</string>
-    <string name="print">print</string>
-    <string name="toConsole">to console</string>
-    <string name="consoleActions">Console actions</string>
     <string name="create">create</string>
     <string name="variable">variable</string>
     <string name="changeVariableType">Change variable type</string>
     <string name="variableType">variable type</string>
+
+    <string name="change">change</string>
+    <string name="by">by</string>
+    <string name="set">set</string>
+    <string name="to">to</string>
+
+    <string name="value">value</string>
+
+    <string name="print">print</string>
+    <string name="toConsole">to console</string>
+    <string name="consoleActions">Console actions</string>
+
     <string name="arrayType">array type</string>
 
     <string name="stringType">String</string>
@@ -58,8 +68,6 @@
     <string name="array">array</string>
     <string name="consoleInput">Console input</string>
     <string name="readFromConsole">read from console</string>
-    <string name="set">set</string>
-    <string name="to">to</string>
 
     <string name="plus">+</string>
     <string name="minus">+</string>
