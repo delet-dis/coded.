@@ -44,6 +44,7 @@ class UIExpressionBlock @JvmOverloads constructor(
 
             _block.leftSide = value
         }
+
     private var rightSide: Any? = Any()
         set(value) {
             field = value
@@ -266,7 +267,7 @@ class UIExpressionBlock @JvmOverloads constructor(
         if ((rightSide as? BlockBase) == removingViewBlock) {
             binding.rightCard.removeView(view)
 
-            leftSide = null
+            rightSide = null
 
             with(binding.rightCardText) {
                 setText("")
@@ -275,10 +276,10 @@ class UIExpressionBlock @JvmOverloads constructor(
         }
     }
 
-    override fun displayError() =
+    override fun hideError() =
         binding.backgroundImage.setImageResource(R.drawable.expression_block)
 
-    override fun hideError() =
+    override fun displayError() =
         binding.backgroundImage.setImageResource(R.drawable.error_small_block)
 
     private companion object {
