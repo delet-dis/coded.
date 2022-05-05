@@ -1,9 +1,15 @@
 package com.hits.coded.data.models.arrays.bases
 
+import com.hits.coded.data.implementations.bases.arrayBase.BooleanArray
+import com.hits.coded.data.implementations.bases.arrayBase.DoubleArray
+import com.hits.coded.data.implementations.bases.arrayBase.IntArray
+import com.hits.coded.data.implementations.bases.arrayBase.MultiDimensionalArray
+import com.hits.coded.data.implementations.bases.arrayBase.StringArray
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.data.models.sharedTypes.ExceptionType
+import com.hits.coded.data.models.sharedTypes.VariableType
 import javax.inject.Inject
 
 abstract class ArrayBase() {
@@ -13,6 +19,9 @@ abstract class ArrayBase() {
 
     abstract fun parseString(inputString: String): ArrayBase
     abstract fun push(value: Any)
+
+    val size: Int
+        get() = array.size
 
     fun pop(): StoredVariable {
         if (array.size == 0)
@@ -25,6 +34,19 @@ abstract class ArrayBase() {
     }
 
 
+    fun concat(other: ArrayBase) {
+        if(array::class != other::class)
+            throw InterpreterException(
+                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
+                ExceptionType.TYPE_MISMATCH
+            )
+
+        for(i in other.array) {
+            this.array.add(i)
+        }
+    }
+
+
     operator fun get(index: Int): StoredVariable {
         if (index < 0 || index >= array.size)
             throw InterpreterException(
@@ -33,6 +55,19 @@ abstract class ArrayBase() {
             )
 
         return array[index]
+    }
+
+    companion object {
+        fun constructByType(variableType: VariableType): ArrayBase {
+            return when(variableType) {
+                VariableType.INT -> IntArray()
+                VariableType.STRING -> StringArray()
+                VariableType.DOUBLE -> DoubleArray()
+                VariableType.BOOLEAN -> BooleanArray()
+                VariableType.ARRAY -> MultiDimensionalArray()
+            }
+
+        }
     }
 
 }
