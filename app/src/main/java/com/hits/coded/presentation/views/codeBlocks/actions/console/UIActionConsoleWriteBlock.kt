@@ -70,11 +70,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
 
 
     override fun initDragAndDropListener() {
-        binding.variableName.setOnDragListener { _, _ ->
-            true
-        }
-
-        binding.parentConstraint.setOnDragListener { _, dragEvent ->
+        binding.variableName.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             (draggableItem as? UINestedableCodeBlock)?.let {
