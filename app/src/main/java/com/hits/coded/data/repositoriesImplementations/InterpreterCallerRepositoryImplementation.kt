@@ -49,6 +49,7 @@ class InterpreterCallerRepositoryImplementation
 
     override suspend fun callInterpreter(start: StartBlock) {
         heapUseCases.clearUseCase.clear()
+        _executionResult.emit(null)
         try {
             interpreterUseCases.interpretStartBlock.interpretStartBlock(start)
         } catch (error: InterpreterException) {
