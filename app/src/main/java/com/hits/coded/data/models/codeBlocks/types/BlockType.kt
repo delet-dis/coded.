@@ -6,5 +6,6 @@ enum class BlockType {
     EXPRESSION,
     CONDITION,
     IO,
-    START
+    START,
+    ARRAY
 }
