@@ -323,7 +323,7 @@ constructor(
                                     VariableType.STRING -> {
                                         heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                             it,
-                                            convertAnyToString(variable.valueToSet as ExpressionBlock)
+                                            convertAnyToString(variable.valueToSet as ExpressionBlock).drop(1).dropLast(1)
                                         )
                                     }
                                     VariableType.BOOLEAN -> {}
@@ -717,7 +717,7 @@ constructor(
             }
         }
         if (leftSideType == VariableType.STRING && VariableType.STRING == rightSideType && expression.expressionBlockType == ExpressionBlockType.PLUS) {
-            return convertAnyToString(expression.leftSide!!) + convertAnyToString(expression.rightSide!!)
+            return '"'+convertAnyToString(expression.leftSide!!) + convertAnyToString(expression.rightSide!!)+'"'
         }
         if (leftSideType == null || rightSideType == null) {
             throw InterpreterException(currentId, ExceptionType.LACK_OF_ARGUMENTS)
@@ -946,7 +946,7 @@ constructor(
                         }
                     }
                 } else {
-                    return value
+                    return value.drop(1).dropLast(1)
                 }
             }
         }
