@@ -55,6 +55,7 @@
     <string name="doubleType">Double</string>
     <string name="integerType">Int</string>
     <string name="booleanType">Boolean</string>
+    <string name="multidimensionalArrayType">Nested arrays</string>
     <string name="array">array</string>
     <string name="consoleInput">Console input</string>
     <string name="readFromConsole">read from console</string>
