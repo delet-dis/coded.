@@ -74,37 +74,39 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
             val draggableItem = dragEvent?.localState as View
 
             (draggableItem as? UINestedableCodeBlock)?.let {
-                val itemParent = draggableItem.parent as ViewGroup
+                val itemParent = draggableItem.parent as? ViewGroup
 
-                when (dragEvent.action) {
-                    DragEvent.ACTION_DRAG_STARTED,
-                    DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
+                itemParent?.let {
+                    when (dragEvent.action) {
+                        DragEvent.ACTION_DRAG_STARTED,
+                        DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
-                    DragEvent.ACTION_DRAG_ENTERED -> {
-                        scalePlusAnimation(binding.firstCard)
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            scalePlusAnimation(binding.firstCard)
 
-                        return@setOnDragListener true
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            scaleMinusAnimation(binding.firstCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DROP -> {
+                            handleDropEvent(itemParent, draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            handleDragEndedEvent(draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        else -> return@setOnDragListener false
                     }
-
-                    DragEvent.ACTION_DRAG_EXITED -> {
-                        scaleMinusAnimation(binding.firstCard)
-
-                        return@setOnDragListener true
-                    }
-
-                    DragEvent.ACTION_DROP -> {
-                        handleDropEvent(itemParent, draggableItem)
-
-                        return@setOnDragListener true
-                    }
-
-                    DragEvent.ACTION_DRAG_ENDED -> {
-                        handleDragEndedEvent(draggableItem)
-
-                        return@setOnDragListener true
-                    }
-
-                    else -> return@setOnDragListener false
                 }
             }
             false
