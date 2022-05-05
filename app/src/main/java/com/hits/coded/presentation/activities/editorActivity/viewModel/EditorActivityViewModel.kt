@@ -1,6 +1,5 @@
 package com.hits.coded.presentation.activities.editorActivity.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +10,6 @@ import com.hits.coded.data.models.console.useCases.ConsoleUseCases
 import com.hits.coded.data.models.interpreterCaller.useCases.InterpreterCallerUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,17 +38,6 @@ class EditorActivityViewModel @Inject constructor(
 
     fun toggleBars() = _isBarsCollapsed.value?.let {
         _isBarsCollapsed.postValue(!it)
-    }
-
-    init {
-        viewModelScope.launch {
-            interpreterCallerUseCases.getExecutionResultsUseCase.getExecutionResult().collect {
-
-                if (it != null) {
-                    Log.d("test", it.blockID.toString())
-                }
-            }
-        }
     }
 
     fun executeCode(startBlock: StartBlock) {

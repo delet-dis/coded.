@@ -149,6 +149,8 @@ class CodeField @JvmOverloads constructor(
         hideError()
 
         (findViewWithTag<View>(VIEW_HIERARCHY_ID + blockId) as? UICodeBlockSupportsErrorDisplaying)?.displayError()
+
+        previousErrorBlockId = blockId
     }
 
     fun hideError() =
