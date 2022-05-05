@@ -3,7 +3,9 @@ package com.hits.coded.presentation.views.codeBlocks.expressions
 import android.animation.AnimatorSet
 import android.content.Context
 import android.util.AttributeSet
+import android.view.DragEvent
 import android.view.View
+import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
@@ -76,6 +78,8 @@ class UIExpressionBlock @JvmOverloads constructor(
 
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
+        initDragAndDropListener()
+
         initCardsTextsListeners()
     }
 
@@ -96,25 +100,150 @@ class UIExpressionBlock @JvmOverloads constructor(
     }
 
     override fun initDragAndDropListener() {
-//        binding.leftCardText.setOnDragListener { _, dragEvent ->
-//            val draggableItem = dragEvent?.localState as View
-//
-//            (draggableItem as? UINestedableCodeBlock)?.let {
-//                val itemParent = draggableItem.parent as? ViewGroup
-//
-//                when (dragEvent.action) {
-//                    DragEvent.ACTION_DRAG_STARTED,
-//                    DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
-//
-//                    DragEvent.ACTION_DRAG_ENTERED->{
-//                        scalePlusAnimation(binding.leftCard)
-//
-//                        return
-//                    }
-//                }
-//            }
-//            false
-//        }
+        binding.leftCardText.setOnDragListener { _, dragEvent ->
+            val draggableItem = dragEvent?.localState as View
+
+            (draggableItem as? UINestedableCodeBlock)?.let {
+                val itemParent = draggableItem.parent as? ViewGroup
+
+                itemParent?.let {
+                    when (dragEvent.action) {
+                        DragEvent.ACTION_DRAG_STARTED,
+                        DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
+
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            scalePlusAnimation(binding.leftCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            scaleMinusAnimation(binding.leftCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DROP -> {
+                            handleDropEvent(binding.leftCard, itemParent, draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            handleDragEndedEvent(draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        else -> return@setOnDragListener true
+                    }
+                }
+            }
+            false
+        }
+
+        binding.rightCardText.setOnDragListener { _, dragEvent ->
+            val draggableItem = dragEvent?.localState as View
+
+            (draggableItem as? UINestedableCodeBlock)?.let {
+                val itemParent = draggableItem.parent as? ViewGroup
+
+                itemParent?.let {
+                    when (dragEvent.action) {
+                        DragEvent.ACTION_DRAG_STARTED,
+                        DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
+
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            scalePlusAnimation(binding.rightCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            scaleMinusAnimation(binding.rightCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DROP -> {
+                            handleDropEvent(binding.rightCard, itemParent, draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            handleDragEndedEvent(draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        else -> return@setOnDragListener true
+                    }
+                }
+            }
+            false
+        }
+    }
+
+    private fun handleDropEvent(
+        parentCard: ViewGroup,
+        itemParent: ViewGroup,
+        draggableItem: View
+    ) = with(binding) {
+        if (draggableItem != this@UIExpressionBlock) {
+            scaleMinusAnimation(parentCard)
+
+            itemParent.removeView(draggableItem)
+
+            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
+
+            val draggableBlockWithData = draggableItem as? UICodeBlockWithDataInterface
+
+            if (parentCard == leftCard) {
+                leftCardText.apply {
+                    setText("")
+                    visibility = INVISIBLE
+                }
+
+                draggableBlockWithData?.block?.let {
+                    leftSide = it
+                }
+            }
+
+            if (parentCard == rightCard) {
+                rightCardText.apply {
+                    setText("")
+                    visibility = INVISIBLE
+                }
+
+                draggableBlockWithData?.block?.let {
+                    rightSide = it
+                }
+            }
+
+            clearNestedBlocksFromParent(parentCard)
+
+            nestedUIBlocks.add(draggableItem)
+            parentCard.addView(draggableItem)
+        }
+    }
+
+    private fun handleDragEndedEvent(
+        draggableItem: View
+    ) {
+        draggableItem.post {
+            draggableItem.animate().alpha(1f).duration =
+                UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
+        }
+
+        val draggableItemBlock = (draggableItem as? UICodeBlockWithDataInterface)?.block
+
+        if (draggableItemBlock == _block.leftSide || draggableItemBlock == _block.rightSide) {
+            draggableItem.x = 0f
+            draggableItem.y = 0f
+        }
+
+        this.invalidate()
     }
 
     override fun customRemoveView(view: View) {
@@ -122,7 +251,7 @@ class UIExpressionBlock @JvmOverloads constructor(
 
         val removingViewBlock = (view as? UICodeBlockWithDataInterface)?.block
 
-        if (leftSide == removingViewBlock) {
+        if ((leftSide as? BlockBase) == removingViewBlock) {
             binding.leftCard.removeView(view)
 
             leftSide = null
@@ -133,7 +262,7 @@ class UIExpressionBlock @JvmOverloads constructor(
             }
         }
 
-        if (rightSide == removingViewBlock) {
+        if ((rightSide as? BlockBase) == removingViewBlock) {
             binding.rightCard.removeView(view)
 
             leftSide = null
