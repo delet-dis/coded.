@@ -20,20 +20,20 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/variablesActions"
+                android:id="@+id/expressions"
                 style="@style/bottomSheetBoldText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/variablesActions"
-                android:textColor="@color/blueFourth"
+                android:text="@string/expressions"
+                android:textColor="@color/darkGreen"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/variablesActionsLinearLayout"
+                android:id="@+id/expressionsLinearLayout"
                 style="@style/bottomSheetItemsList"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>

@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
-import com.hits.coded.databinding.FragmentLogicItemsPickingBinding
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
+import com.hits.coded.databinding.FragmentExpressionsItemsPickingBinding
+import com.hits.coded.presentation.views.codeBlocks.expressions.UIExpressionBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LogicItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterface {
-    private lateinit var binding: FragmentLogicItemsPickingBinding
+class ExpressionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterface {
+    private lateinit var binding: FragmentExpressionsItemsPickingBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -19,7 +21,7 @@ class LogicItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterfac
         savedInstanceState: Bundle?
     ): View? {
         return if (savedInstanceState == null) {
-            binding = FragmentLogicItemsPickingBinding.inflate(layoutInflater)
+            binding = FragmentExpressionsItemsPickingBinding.inflate(layoutInflater)
 
             binding.root
         } else {
@@ -31,11 +33,18 @@ class LogicItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterfac
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
-
+            redrawElements()
         }
     }
 
-    override fun redrawElements() {
+    override fun redrawElements() =
+        with(binding.expressionsLinearLayout) {
+            removeAllViews()
 
-    }
+            ExpressionBlockType.values().forEach {
+                addView(UIExpressionBlock(requireContext()).apply {
+                    blockType = it
+                })
+            }
+        }
 }

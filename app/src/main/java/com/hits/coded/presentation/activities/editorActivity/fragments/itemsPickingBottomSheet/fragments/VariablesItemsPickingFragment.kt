@@ -39,12 +39,14 @@ class VariablesItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInte
         }
     }
 
-    override fun redrawElements() {
-        binding.variablesActionsLinearLayout.apply {
+    override fun redrawElements() =
+        with(binding.variablesActionsLinearLayout) {
             removeAllViews()
+
             addView(UIVariableCreationBlock(requireContext()).apply {
                 initCallback(requireActivity() as UIEditorActivityShowBottomSheetCallback)
             })
+
             addView(UIVariableChangeBlock(requireContext()).apply {
                 blockType = VariableBlockType.VARIABLE_SET
             })
@@ -52,5 +54,4 @@ class VariablesItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInte
                 blockType = VariableBlockType.VARIABLE_CHANGE
             })
         }
-    }
 }

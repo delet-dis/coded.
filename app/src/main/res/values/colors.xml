@@ -20,4 +20,6 @@
     <color name="lightRed">#EA8388</color>
     <color name="lightGreen">#13B778</color>
     <color name="lightBluePurple">#9697FB</color>
+
+    <color name="darkGreen">#389438</color>
 </resources>

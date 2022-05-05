@@ -41,7 +41,7 @@ class UIVariableChangeBlock @JvmOverloads constructor(
 
     private var variableParams = StoredVariable()
 
-    private var _block = VariableBlock()
+    private var _block = VariableBlock(null, variableParams)
     override val block: BlockBase
         get() = _block
 
@@ -54,7 +54,9 @@ class UIVariableChangeBlock @JvmOverloads constructor(
         set(value) {
             field = value
 
-            value?.let { changeBlockType(it) }
+            value?.let {
+                changeBlockType(it)
+            }
         }
 
     init {
@@ -75,30 +77,26 @@ class UIVariableChangeBlock @JvmOverloads constructor(
         initVariableChangeValueListener()
     }
 
-    private fun changeBlockType(blockType: VariableBlockType) =
+    private fun changeBlockType(blockType: VariableBlockType) {
+        _block.variableBlockType = blockType
         when (blockType) {
             VariableBlockType.VARIABLE_SET -> {
                 binding.firstText.setText(R.string.set)
                 binding.secondText.setText(R.string.to)
-
-                _block = VariableBlock(VariableBlockType.VARIABLE_SET, variableParams)
             }
 
             VariableBlockType.VARIABLE_CHANGE -> {
                 binding.firstText.setText(R.string.change)
                 binding.secondText.setText(R.string.by)
-
-                _block = VariableBlock(VariableBlockType.VARIABLE_CHANGE, variableParams)
             }
 
             else -> {}
         }
+    }
 
     private fun initVariableNameChangeListener() =
         binding.variableName.addTextChangedListener {
             variableParams.name = it.toString()
-
-            _block.variableParams = variableParams
         }
 
     private fun initVariableChangeValueListener() =
@@ -107,49 +105,51 @@ class UIVariableChangeBlock @JvmOverloads constructor(
         }
 
     override fun initDragAndDropListener() {
-        binding.variableChangeValue.setOnDragListener { _, _ ->
-            true
-        }
+//        binding.variableChangeValue.setOnDragListener { _, _ ->
+//            true
+//        }
 
         binding.variableName.setOnDragListener { _, _ ->
             true
         }
 
-        binding.parentConstraint.setOnDragListener { _, dragEvent ->
+        binding.variableChangeValue.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             (draggableItem as? UINestedableCodeBlock)?.let {
-                val itemParent = draggableItem.parent as ViewGroup
+                val itemParent = draggableItem.parent as? ViewGroup
 
-                when (dragEvent.action) {
-                    DragEvent.ACTION_DRAG_STARTED,
-                    DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
+                itemParent?.let {
+                    when (dragEvent.action) {
+                        DragEvent.ACTION_DRAG_STARTED,
+                        DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
-                    DragEvent.ACTION_DRAG_ENTERED -> {
-                        scalePlusAnimation(binding.secondCard)
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            scalePlusAnimation(binding.secondCard)
 
-                        return@setOnDragListener true
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            scaleMinusAnimation(binding.secondCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DROP -> {
+                            handleDropEvent(itemParent, draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            handleDragEndedEvent(draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        else -> return@setOnDragListener false
                     }
-
-                    DragEvent.ACTION_DRAG_EXITED -> {
-                        scaleMinusAnimation(binding.secondCard)
-
-                        return@setOnDragListener true
-                    }
-
-                    DragEvent.ACTION_DROP -> {
-                        handleDropEvent(itemParent, draggableItem)
-
-                        return@setOnDragListener true
-                    }
-
-                    DragEvent.ACTION_DRAG_ENDED -> {
-                        handleDragEndedEvent(draggableItem)
-
-                        return@setOnDragListener true
-                    }
-
-                    else -> return@setOnDragListener false
                 }
             }
             false
