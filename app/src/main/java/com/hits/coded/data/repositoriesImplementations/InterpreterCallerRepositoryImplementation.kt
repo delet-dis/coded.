@@ -55,9 +55,8 @@ class InterpreterCallerRepositoryImplementation
             error.msg = context.getString(errorStrings[error.errorCode.ordinal])
             consoleUseCases.writeToConsoleUseCase.writeErrorToConsole(error.msg)
             _executionResult.emit(error)
-        } finally {
-            _executionResult.emit(null)
         }
+
     }
 
 }
