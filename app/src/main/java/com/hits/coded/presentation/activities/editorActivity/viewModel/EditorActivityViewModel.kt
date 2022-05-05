@@ -1,5 +1,6 @@
 package com.hits.coded.presentation.activities.editorActivity.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,13 +11,14 @@ import com.hits.coded.data.models.console.useCases.ConsoleUseCases
 import com.hits.coded.data.models.interpreterCaller.useCases.InterpreterCallerUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class EditorActivityViewModel @Inject constructor(
     private val interpreterCallerUseCases: InterpreterCallerUseCases,
-    private val consoleUseCases: ConsoleUseCases,
+    consoleUseCases: ConsoleUseCases,
 ) :
     ViewModel() {
     private val _isBarsCollapsed = MutableLiveData(false)
@@ -30,12 +32,25 @@ class EditorActivityViewModel @Inject constructor(
     val isConsoleInputAvailable =
         consoleUseCases.checkIsInputAvailableUseCase.checkIsInputAvailable().asLiveData()
 
+    val codeExecutionResult = interpreterCallerUseCases.getExecutionResultsUseCase.getExecutionResult().asLiveData()
+
     private lateinit var processingJob: Job
 
     fun hideBars() = _isBarsCollapsed.postValue(true)
 
     fun toggleBars() = _isBarsCollapsed.value?.let {
         _isBarsCollapsed.postValue(!it)
+    }
+
+    init {
+        viewModelScope.launch {
+            interpreterCallerUseCases.getExecutionResultsUseCase.getExecutionResult().collect {
+
+                if (it != null) {
+                    Log.d("test", it.blockID.toString())
+                }
+            }
+        }
     }
 
     fun executeCode(startBlock: StartBlock) {

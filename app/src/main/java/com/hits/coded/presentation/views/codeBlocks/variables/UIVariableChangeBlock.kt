@@ -13,6 +13,7 @@ import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcess
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
@@ -34,7 +35,8 @@ class UIVariableChangeBlock @JvmOverloads constructor(
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
-    UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface {
+    UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface,
+    UICodeBlockSupportsErrorDisplaying {
     private val binding: ViewVariableChangeBlockBinding
 
     override val nestedUIBlocks: ArrayList<View> = ArrayList()
@@ -210,6 +212,12 @@ class UIVariableChangeBlock @JvmOverloads constructor(
             visibility = VISIBLE
         }
     }
+
+    override fun displayError() =
+        binding.backgroundImage.setImageResource(R.drawable.variable_block)
+
+    override fun hideError() =
+        binding.backgroundImage.setImageResource(R.drawable.error_block)
 
     private companion object {
         const val DRAG_AND_DROP_TAG = "VARIABLE_CHANGE_BY_BLOCK_"
