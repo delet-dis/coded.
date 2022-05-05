@@ -205,6 +205,8 @@ class UIVariableChangeBlock @JvmOverloads constructor(
         nestedUIBlocks.remove(view)
         binding.secondCard.removeView(view)
 
+        view.tag = null
+
         _block.valueToSet = null
 
         binding.variableChangeValue.apply {

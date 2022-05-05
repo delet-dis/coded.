@@ -14,6 +14,7 @@ import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesReorderingInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
@@ -33,7 +34,7 @@ class UIActionStartBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
     UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
-    UIElementHandlesReorderingInterface {
+    UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface{
     private val binding: ViewActionStartBinding
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
@@ -167,13 +168,19 @@ class UIActionStartBlock @JvmOverloads constructor(
     override fun removeView(view: View?) {
         super.removeView(view)
 
+        view?.tag = null
+
+        nestedUIBlocks.remove(view)
+
         (view as? UICodeBlockWithDataInterface)?.block?.let {
             nestedBlocksAsBlockBase.remove(it)
 
-            nestedUIBlocks.remove(view)
-
             _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
         }
+    }
+
+    override fun customRemoveView(view: View) {
+        removeView(view)
     }
 
     private companion object {

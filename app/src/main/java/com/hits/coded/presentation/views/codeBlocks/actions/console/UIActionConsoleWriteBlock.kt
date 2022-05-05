@@ -162,6 +162,8 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         nestedUIBlocks.remove(view)
         binding.firstCard.removeView(view)
 
+        view.tag = null
+
         _block.argument = null
 
         with(binding.variableName) {
