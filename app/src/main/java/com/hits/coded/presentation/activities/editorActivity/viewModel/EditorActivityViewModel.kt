@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditorActivityViewModel @Inject constructor(
     private val interpreterCallerUseCases: InterpreterCallerUseCases,
-    private val consoleUseCases: ConsoleUseCases,
+    consoleUseCases: ConsoleUseCases,
 ) :
     ViewModel() {
     private val _isBarsCollapsed = MutableLiveData(false)
@@ -29,6 +29,8 @@ class EditorActivityViewModel @Inject constructor(
 
     val isConsoleInputAvailable =
         consoleUseCases.checkIsInputAvailableUseCase.checkIsInputAvailable().asLiveData()
+
+    val codeExecutionResult = interpreterCallerUseCases.getExecutionResultsUseCase.getExecutionResult().asLiveData()
 
     private lateinit var processingJob: Job
 

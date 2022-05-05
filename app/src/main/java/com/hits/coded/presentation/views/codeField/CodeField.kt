@@ -11,6 +11,7 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
@@ -28,6 +29,8 @@ class CodeField @JvmOverloads constructor(
     private val binding: ViewCodeFieldBinding
 
     private val startBlock = UIActionStartBlock(context)
+
+    private var previousErrorBlock: UICodeBlockSupportsErrorDisplaying? = null
 
     init {
         inflate(
@@ -141,6 +144,20 @@ class CodeField @JvmOverloads constructor(
         }
         return null
     }
+
+    fun displayError(blockId: Int) {
+        hideError()
+
+        val foundedView =
+            findViewWithTag<View>(VIEW_HIERARCHY_ID + blockId) as? UICodeBlockSupportsErrorDisplaying
+
+        foundedView?.displayError()
+
+        previousErrorBlock = foundedView
+    }
+
+    fun hideError() =
+        previousErrorBlock?.hideError()
 
     private companion object {
         const val VIEW_HIERARCHY_ID = "VIEW_HIERARCHY_ID_"

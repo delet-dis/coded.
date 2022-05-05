@@ -34,7 +34,7 @@ class UIActionStartBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
     UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
-    UICodeBlockWithCustomRemoveViewProcessInterface, UIElementHandlesReorderingInterface {
+    UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface{
     private val binding: ViewActionStartBinding
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
@@ -168,20 +168,22 @@ class UIActionStartBlock @JvmOverloads constructor(
     override fun removeView(view: View?) {
         super.removeView(view)
 
+        view?.tag = null
+
+        nestedUIBlocks.remove(view)
+
         (view as? UICodeBlockWithDataInterface)?.block?.let {
             nestedBlocksAsBlockBase.remove(it)
-
-            nestedUIBlocks.remove(view)
 
             _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
         }
     }
 
-    private companion object {
-        const val DRAG_AND_DROP_TAG = "ACTION_START_BLOCK_"
-    }
-
     override fun customRemoveView(view: View) {
         removeView(view)
+    }
+
+    private companion object {
+        const val DRAG_AND_DROP_TAG = "ACTION_START_BLOCK_"
     }
 }

@@ -7,6 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
@@ -23,7 +24,8 @@ class UIVariableCreationBlock @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
-    UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation {
+    UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
+    UICodeBlockSupportsErrorDisplaying {
     private val binding: ViewVariableCreateBlockBinding
 
     private var variableParams = StoredVariable()
@@ -74,6 +76,12 @@ class UIVariableCreationBlock @JvmOverloads constructor(
                 }
             }
         }
+
+    override fun hideError() =
+        binding.backgroundImage.setImageResource(R.drawable.variable_block)
+
+    override fun displayError() =
+        binding.backgroundImage.setImageResource(R.drawable.error_block)
 
     private companion object {
         const val DRAG_AND_DROP_TAG = "VARIABLE_CREATION_BLOCK_"
