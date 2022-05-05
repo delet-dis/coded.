@@ -23,7 +23,7 @@ class InterpreterCallerRepositoryImplementation
     private val interpreterUseCases: InterpreterUseCases,
     private val consoleUseCases: ConsoleUseCases,
     private val heapUseCases: HeapUseCases
-): InterpreterCallerRepository() {
+) : InterpreterCallerRepository() {
 
     private val errorStrings =
         arrayOf(
@@ -43,24 +43,21 @@ class InterpreterCallerRepositoryImplementation
     override val executionResult: Flow<InterpreterException?>
         get() = _executionResult
 
-
     init {
         _executionResult.tryEmit(null)
     }
 
     override suspend fun callInterpreter(start: StartBlock) {
         heapUseCases.clearUseCase.clear()
+        _executionResult.emit(null)
         try {
             interpreterUseCases.interpretStartBlock.interpretStartBlock(start)
-        }
-        catch (error: InterpreterException) {
+        } catch (error: InterpreterException) {
             error.msg = context.getString(errorStrings[error.errorCode.ordinal])
             consoleUseCases.writeToConsoleUseCase.writeErrorToConsole(error.msg)
             _executionResult.emit(error)
         }
-        finally {
-            _executionResult.emit(null)
-        }
+
     }
 
 }

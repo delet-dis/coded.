@@ -13,6 +13,7 @@ import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcess
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
@@ -32,7 +33,7 @@ class UIExpressionBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
     UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface,
-    UINestedableCodeBlock {
+    UINestedableCodeBlock, UICodeBlockSupportsErrorDisplaying {
     private val binding: ViewExpressionBlockBinding
 
     override val nestedUIBlocks: ArrayList<View> = ArrayList()
@@ -43,6 +44,7 @@ class UIExpressionBlock @JvmOverloads constructor(
 
             _block.leftSide = value
         }
+
     private var rightSide: Any? = Any()
         set(value) {
             field = value
@@ -265,7 +267,7 @@ class UIExpressionBlock @JvmOverloads constructor(
         if ((rightSide as? BlockBase) == removingViewBlock) {
             binding.rightCard.removeView(view)
 
-            leftSide = null
+            rightSide = null
 
             with(binding.rightCardText) {
                 setText("")
@@ -273,6 +275,12 @@ class UIExpressionBlock @JvmOverloads constructor(
             }
         }
     }
+
+    override fun hideError() =
+        binding.backgroundImage.setImageResource(R.drawable.expression_block)
+
+    override fun displayError() =
+        binding.backgroundImage.setImageResource(R.drawable.error_small_block)
 
     private companion object {
         const val DRAG_AND_DROP_TAG = "EXPRESSION_BLOCK_"
