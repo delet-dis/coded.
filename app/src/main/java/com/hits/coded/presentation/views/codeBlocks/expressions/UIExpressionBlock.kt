@@ -96,30 +96,49 @@ class UIExpressionBlock @JvmOverloads constructor(
     }
 
     override fun initDragAndDropListener() {
-        TODO("Not yet implemented")
+//        binding.leftCardText.setOnDragListener { _, dragEvent ->
+//            val draggableItem = dragEvent?.localState as View
+//
+//            (draggableItem as? UINestedableCodeBlock)?.let {
+//                val itemParent = draggableItem.parent as? ViewGroup
+//
+//                when (dragEvent.action) {
+//                    DragEvent.ACTION_DRAG_STARTED,
+//                    DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
+//
+//                    DragEvent.ACTION_DRAG_ENTERED->{
+//                        scalePlusAnimation(binding.leftCard)
+//
+//                        return
+//                    }
+//                }
+//            }
+//            false
+//        }
     }
 
     override fun customRemoveView(view: View) {
         nestedUIBlocks.remove(view)
 
-        binding.leftCard.removeView(view)
-        binding.rightCard.removeView(view)
-
         val removingViewBlock = (view as? UICodeBlockWithDataInterface)?.block
 
         if (leftSide == removingViewBlock) {
+            binding.leftCard.removeView(view)
+
             leftSide = null
 
-            binding.leftCardText.apply {
+            with(binding.leftCardText) {
                 setText("")
                 visibility = VISIBLE
             }
         }
 
         if (rightSide == removingViewBlock) {
+            binding.rightCard.removeView(view)
+
             leftSide = null
 
-            binding.rightCardText.apply {
+            with(binding.rightCardText) {
                 setText("")
                 visibility = VISIBLE
             }
@@ -127,6 +146,6 @@ class UIExpressionBlock @JvmOverloads constructor(
     }
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "EXPRESSION_BLOCK"
+        const val DRAG_AND_DROP_TAG = "EXPRESSION_BLOCK_"
     }
 }
