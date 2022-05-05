@@ -91,7 +91,7 @@ class UIExpressionBlock @JvmOverloads constructor(
         }
 
         binding.rightCardText.addTextChangedListener {
-            leftSide = it.toString()
+            rightSide = it.toString()
         }
     }
 
