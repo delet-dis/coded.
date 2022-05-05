@@ -55,8 +55,8 @@
             android:id="@+id/variableType"
             style="@style/variableNameEditText"
             android:layout_width="wrap_content"
+            android:layout_gravity="center"
             android:background="@null"
-            android:gravity="center"
             android:text="@string/variableType"
             android:textColor="@android:color/darker_gray"
             tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
