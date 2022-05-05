@@ -819,6 +819,8 @@ constructor(
                     throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                 }
             }
+            is IOBlockBase->{return interpretIOBlocks(value)?.let { convertAnyToDouble(it) }!!
+            }
         }
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
     }
@@ -862,6 +864,8 @@ constructor(
                 } else {
                     throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                 }
+            }
+            is IOBlockBase->{return interpretIOBlocks(value)?.let { convertAnyToInt(it) }!!
             }
         }
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
@@ -908,7 +912,10 @@ constructor(
                     }
                 }
             }
+            is IOBlockBase->{return interpretIOBlocks(value)?.let { convertAnyToBoolean(it) }!!
+            }
         }
+
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
     }
 
@@ -949,6 +956,8 @@ constructor(
                     return value.drop(1).dropLast(1)
                 }
             }
+            is IOBlockBase->{return interpretIOBlocks(value)?.let { convertAnyToString(it) }!!
+            }
         }
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
     }
@@ -983,10 +992,11 @@ constructor(
 
                 }
             }
+            is IOBlockBase->{return getTypeOfAny(interpretIOBlocks(value))}
             is Double -> return VariableType.DOUBLE
             is Int -> return VariableType.INT
             is Boolean -> return VariableType.BOOLEAN
-            is ExpressionBlock -> return getTypeOfAny(interpretExpressionBlocks(value))
+            is ExpressionBlockBase -> return getTypeOfAny(interpretExpressionBlocks(value))
             is VariableBlock -> return value.variableParams?.type
         }
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
