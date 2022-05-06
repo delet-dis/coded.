@@ -784,7 +784,9 @@ constructor(
 
             IOBlockType.READ -> {
                 Log.d("InIO", "here2?")
-                return consoleUseCases.readFromConsoleUseCase.readFromConsole()
+                val input = consoleUseCases.readFromConsoleUseCase.readFromConsole()
+                IO.argument = input
+                return input
             }
         }
     }
