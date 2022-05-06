@@ -5,6 +5,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -17,6 +18,8 @@ import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCodeBlocksDeletingInterface
+import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.databinding.ActivityEditorBinding
@@ -33,7 +36,8 @@ import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallback,
-    UIElementHandlesCodeBlocksDeletingInterface {
+    UIElementHandlesCodeBlocksDeletingInterface, UIElementHandlesCustomRemoveViewProcessInterface,
+    UICodeBlockElementHandlesDragAndDropInterface {
     private lateinit var binding: ActivityEditorBinding
 
     private val viewModel: EditorActivityViewModel by viewModels()
@@ -47,7 +51,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
     private var statusBarHeight by Delegates.notNull<Int>()
     private var navigationBarHeight by Delegates.notNull<Int>()
 
-    private var animatorSet = AnimatorSet()
+    override var animationSet = AnimatorSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +81,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         initIsConsoleInputAvailableObserver()
 
         initCodeExecutionResultObserver()
+
+        initTrashButtonDragAndDropListener()
     }
 
     private fun initBinding() {
@@ -301,6 +307,50 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
             }
         }
 
+    private fun initTrashButtonDragAndDropListener() =
+        binding.bottomBarContentLayout.setOnDragListener { _, dragEvent ->
+            val draggableItem = dragEvent?.localState as View
+
+            val itemParent = draggableItem.parent as? ViewGroup
+
+            when (dragEvent.action) {
+                DragEvent.ACTION_DRAG_LOCATION,
+                DragEvent.ACTION_DRAG_ENDED ->
+                    return@setOnDragListener true
+
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    scaleMinusAnimation(binding.trashButton)
+
+                    return@setOnDragListener true
+                }
+
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    scalePlusAnimation(binding.trashButton)
+
+                    return@setOnDragListener true
+                }
+
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    scaleMinusAnimation(binding.trashButton)
+
+                    return@setOnDragListener true
+                }
+
+                DragEvent.ACTION_DROP -> {
+                    itemParent?.let {
+                        processViewWithCustomRemoveProcessRemoval(it, draggableItem)
+                        it.removeView(draggableItem)
+                    }
+
+                    return@setOnDragListener true
+                }
+
+                else -> {
+                    return@setOnDragListener false
+                }
+            }
+        }
+
     override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) =
         typeChangerBottomSheetController.show(closureToInvoke, navigationBarHeight)
 
@@ -316,7 +366,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
             })
         }
 
-        animatorSet.apply {
+        animationSet.apply {
             playTogether(animationsArray as Collection<Animator>?)
 
             start()

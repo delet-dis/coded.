@@ -72,7 +72,7 @@ class CodeField @JvmOverloads constructor(
                 DragEvent.ACTION_DRAG_LOCATION,
                 DragEvent.ACTION_DRAG_EXITED -> true
 
-                DragEvent.ACTION_DRAG_STARTED->{
+                DragEvent.ACTION_DRAG_STARTED -> {
                     parentView?.startDeleting()
 
                     true
@@ -168,6 +168,14 @@ class CodeField @JvmOverloads constructor(
 
     fun hideError() =
         previousErrorBlock?.hideError()
+
+
+    override fun removeView(view: View?) {
+        if (view !== startBlock) {
+            super.removeView(view)
+
+        }
+    }
 
     private companion object {
         const val VIEW_HIERARCHY_ID = "VIEW_HIERARCHY_ID_"
