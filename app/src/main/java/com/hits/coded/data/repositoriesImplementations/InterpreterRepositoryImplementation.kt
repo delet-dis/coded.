@@ -646,14 +646,8 @@ constructor(
         expression.id?.let {
             currentId = it
         }
-        var leftSideAsString = expression.leftSide
-        var rightSideAsString = expression.rightSide
-        if (expression.leftSide is IOBlockBase) {
-            leftSideAsString = expression.leftSide?.let { convertAnyToString(it) }
-        }
-        if (expression.rightSide is IOBlockBase) {
-            rightSideAsString = expression.rightSide?.let { convertAnyToString(it) }
-        }
+        val leftSideAsString = expression.leftSide
+        val rightSideAsString = expression.rightSide
         val leftSideType: VariableType? = getTypeOfAny(leftSideAsString)
         val rightSideType: VariableType? = getTypeOfAny(rightSideAsString)
         Log.d(leftSideType.toString(), rightSideType.toString())
@@ -783,9 +777,8 @@ constructor(
             }
 
             IOBlockType.READ -> {
-                Log.d("InIO", "here2?")
                 val input = consoleUseCases.readFromConsoleUseCase.readFromConsole()
-                IO.argument = input
+                (IO as IOBlock).argument = input
                 return input
             }
         }
@@ -838,7 +831,12 @@ constructor(
                 }
             }
             is IOBlockBase -> {
-                return interpretIOBlocks(value)?.let { convertAnyToDouble(it) }!!
+                if(value.argument!=null){
+                    return convertAnyToDouble(value.argument!!)
+                }
+                else {
+                    return interpretIOBlocks(value)?.let { convertAnyToDouble(it) }!!
+                }
             }
         }
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
@@ -856,10 +854,12 @@ constructor(
                 throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
             }
             is IOBlockBase -> {
-                Log.d("IOVONVERTOR", value.toString())
-                val test = interpretIOBlocks(value)
-                Log.d("???", test.toString())
-                return convertAnyToInt(test!!)
+                if(value.argument!=null){
+                    return convertAnyToInt(value.argument!!)
+                }
+                else {
+                    return interpretIOBlocks(value)?.let { convertAnyToInt(it) }!!
+                }
             }
             is String -> {
                 if (value.toIntOrNull() is Int) {
@@ -939,7 +939,12 @@ constructor(
                 }
             }
             is IOBlockBase -> {
-                return interpretIOBlocks(value)?.let { convertAnyToBoolean(it) }!!
+                if(value.argument!=null){
+                    return convertAnyToBoolean(value.argument!!)
+                }
+                else {
+                    return interpretIOBlocks(value)?.let { convertAnyToBoolean(it) }!!
+                }
             }
         }
 
@@ -991,7 +996,12 @@ constructor(
                 }
             }
             is IOBlockBase -> {
-                return interpretIOBlocks(value)?.let { convertAnyToString(it) }!!
+                if(value.argument!=null){
+                    return convertAnyToString(value.argument!!)
+                }
+                else {
+                    return interpretIOBlocks(value)?.let { convertAnyToString(it) }!!
+                }
             }
         }
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
@@ -1029,7 +1039,12 @@ constructor(
                 }
             }
             is IOBlockBase -> {
-                return getTypeOfAny(interpretIOBlocks(value))
+                if(value.argument!=null){
+                    return getTypeOfAny(value.argument!!)
+                }
+                else {
+                    return interpretIOBlocks(value)?.let { getTypeOfAny(it) }!!
+                }
             }
             is Double -> return VariableType.DOUBLE
             is Int -> return VariableType.INT
