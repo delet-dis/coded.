@@ -652,7 +652,7 @@ constructor(
             leftSideAsString = expression.leftSide?.let { convertAnyToString(it) }
         }
         if (expression.rightSide is IOBlockBase) {
-            rightSideAsString = expression.leftSide?.let { convertAnyToString(it) }
+            rightSideAsString = expression.rightSide?.let { convertAnyToString(it) }
         }
         val leftSideType: VariableType? = getTypeOfAny(leftSideAsString)
         val rightSideType: VariableType? = getTypeOfAny(rightSideAsString)
