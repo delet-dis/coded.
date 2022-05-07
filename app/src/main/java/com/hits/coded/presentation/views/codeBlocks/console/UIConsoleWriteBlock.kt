@@ -26,7 +26,7 @@ import com.hits.coded.databinding.ViewConsoleWriteBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UIActionConsoleWriteBlock @JvmOverloads constructor(
+class UIConsoleWriteBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -119,7 +119,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        if (draggableItem != this@UIActionConsoleWriteBlock) {
+        if (draggableItem != this@UIConsoleWriteBlock) {
             scaleMinusAnimation(binding.firstCard)
 
             itemParent.removeView(draggableItem)

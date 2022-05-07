@@ -17,7 +17,7 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
-import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
+import com.hits.coded.presentation.views.codeBlocks.start.UIActionStartBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
