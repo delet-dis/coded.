@@ -1,9 +1,11 @@
 package com.hits.coded.presentation.activities.editorActivity
 
 import android.animation.Animator
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -15,6 +17,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.callbacks.ui.UIEditorActivityShowBottomSheetCallback
+import com.hits.coded.data.interfaces.ui.UIElementHandlesCodeBlocksDeletingInterface
+import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.databinding.ActivityEditorBinding
@@ -30,7 +35,9 @@ import kotlin.properties.Delegates
 
 
 @AndroidEntryPoint
-class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallback {
+class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallback,
+    UIElementHandlesCodeBlocksDeletingInterface, UIElementHandlesCustomRemoveViewProcessInterface,
+    UICodeBlockElementHandlesDragAndDropInterface {
     private lateinit var binding: ActivityEditorBinding
 
     private val viewModel: EditorActivityViewModel by viewModels()
@@ -43,6 +50,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
     private var statusBarHeight by Delegates.notNull<Int>()
     private var navigationBarHeight by Delegates.notNull<Int>()
+
+    override var animationSet = AnimatorSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +81,8 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         initIsConsoleInputAvailableObserver()
 
         initCodeExecutionResultObserver()
+
+        initTrashButtonDragAndDropListener()
     }
 
     private fun initBinding() {
@@ -145,7 +156,9 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         }
 
     private fun initCodeField() {
-        codeField = CodeField(this)
+        codeField = CodeField(this).apply {
+            parentView = this@EditorActivity
+        }
 
         binding.zoomLayout.addView(codeField)
 
@@ -224,7 +237,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
         )
     }
 
-    private fun showButton(isStopDisplaying: Boolean) {
+    private fun showStartStopButton(isStopDisplaying: Boolean) {
         val viewToHide: ImageButton
         val viewToShow: ImageButton
 
@@ -267,7 +280,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
 
     private fun initIsCodeExecutingObserver() =
         viewModel.isCodeExecuting.observe(this) {
-            showButton(!it)
+            showStartStopButton(!it)
         }
 
     private fun initIsConsoleInputAvailableObserver() =
@@ -294,11 +307,133 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
             }
         }
 
+    private fun initTrashButtonDragAndDropListener() =
+        binding.bottomBarContentLayout.setOnDragListener { _, dragEvent ->
+            val draggableItem = dragEvent?.localState as View
+
+            val itemParent = draggableItem.parent as? ViewGroup
+
+            when (dragEvent.action) {
+                DragEvent.ACTION_DRAG_LOCATION,
+                DragEvent.ACTION_DRAG_ENDED ->
+                    return@setOnDragListener true
+
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    scaleMinusAnimation(binding.trashButton)
+
+                    return@setOnDragListener true
+                }
+
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    scalePlusAnimation(binding.trashButton)
+
+                    return@setOnDragListener true
+                }
+
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    scaleMinusAnimation(binding.trashButton)
+
+                    return@setOnDragListener true
+                }
+
+                DragEvent.ACTION_DROP -> {
+                    itemParent?.let {
+                        processViewWithCustomRemoveProcessRemoval(it, draggableItem)
+                        it.removeView(draggableItem)
+                    }
+
+                    return@setOnDragListener true
+                }
+
+                else -> {
+                    return@setOnDragListener false
+                }
+            }
+        }
+
     override fun showTypeChangingBottomSheet(closureToInvoke: (VariableType, Boolean) -> Unit) =
         typeChangerBottomSheetController.show(closureToInvoke, navigationBarHeight)
 
     override fun hideTypeChangerBottomSheet() =
         typeChangerBottomSheetController.hide()
+
+    override fun startDeleting() {
+        val animationsArray = ArrayList<ObjectAnimator>()
+
+        binding.bottomButtonsGroup.referencedIds.forEach {
+            animationsArray.add(ObjectAnimator.ofFloat(findViewById(it), "alpha", 1f, 0f).apply {
+                duration = BUTTONS_ANIMATION_DURATION
+            })
+        }
+
+        animationSet.apply {
+            playTogether(animationsArray as Collection<Animator>?)
+
+            start()
+
+            if (viewModel.isCodeExecuting.value == false) {
+                binding.stopButton.visibility = View.GONE
+            }
+
+            addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(p0: Animator?) {}
+
+                override fun onAnimationEnd(p0: Animator?) {
+                    binding.bottomButtonsGroup.visibility = View.GONE
+
+                    binding.trashButton.visibility = View.VISIBLE
+
+                    val trashButtonShowAnimation =
+                        ObjectAnimator.ofFloat(binding.trashButton, "alpha", 0f, 1f).apply {
+                            duration = BUTTONS_ANIMATION_DURATION
+                        }
+
+                    trashButtonShowAnimation.start()
+                }
+
+                override fun onAnimationCancel(p0: Animator?) {}
+
+                override fun onAnimationRepeat(p0: Animator?) {}
+            })
+        }
+    }
+
+    override fun stopDeleting() {
+        binding.trashButton.visibility = View.VISIBLE
+
+        val trashButtonHideAnimation =
+            ObjectAnimator.ofFloat(binding.trashButton, "alpha", 1f, 0f).apply {
+                duration = BUTTONS_ANIMATION_DURATION
+            }
+        trashButtonHideAnimation.start()
+
+        binding.bottomButtonsGroup.visibility = View.VISIBLE
+        binding.trashButton.visibility = View.GONE
+
+        val animationsArray = ArrayList<ObjectAnimator>()
+        binding.bottomButtonsGroup.referencedIds.forEach {
+            animationsArray.add(
+                ObjectAnimator.ofFloat(
+                    findViewById(it),
+                    "alpha",
+                    0f,
+                    1f
+                ).apply {
+                    duration = BUTTONS_ANIMATION_DURATION
+                })
+        }
+
+        AnimatorSet().apply {
+            playTogether(animationsArray as Collection<Animator>?)
+            start()
+        }
+
+        if (viewModel.isCodeExecuting.value == true) {
+            binding.startButton.visibility = View.GONE
+        } else {
+            binding.stopButton.visibility = View.GONE
+        }
+    }
 
     private companion object {
         const val BUTTONS_ANIMATION_DURATION: Long = 200

@@ -32,7 +32,8 @@ class UIActionStartBlock @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
     UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
-    UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface,
+    UICodeBlockWithLastTouchInformation,
+    UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
     UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface{
     private val binding: ViewActionStartBinding

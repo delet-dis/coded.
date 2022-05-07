@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
+import com.hits.coded.data.interfaces.ui.UIElementHandlesCodeBlocksDeletingInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
@@ -31,6 +32,8 @@ class CodeField @JvmOverloads constructor(
     private val startBlock = UIActionStartBlock(context)
 
     private var previousErrorBlock: UICodeBlockSupportsErrorDisplaying? = null
+
+    var parentView: UIElementHandlesCodeBlocksDeletingInterface? = null
 
     init {
         inflate(
@@ -65,10 +68,15 @@ class CodeField @JvmOverloads constructor(
             val itemParent = draggableItem.parent as? ViewGroup
 
             when (dragEvent.action) {
-                DragEvent.ACTION_DRAG_STARTED,
                 DragEvent.ACTION_DRAG_ENTERED,
                 DragEvent.ACTION_DRAG_LOCATION,
                 DragEvent.ACTION_DRAG_EXITED -> true
+
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    parentView?.startDeleting()
+
+                    true
+                }
 
                 DragEvent.ACTION_DROP -> {
                     handleDropEvent(itemParent, draggableItem, dragEvent)
@@ -81,6 +89,8 @@ class CodeField @JvmOverloads constructor(
                         draggableItem.animate().alpha(1f).duration =
                             UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
                     }
+
+                    parentView?.stopDeleting()
 
                     this.invalidate()
                     true
@@ -158,6 +168,14 @@ class CodeField @JvmOverloads constructor(
 
     fun hideError() =
         previousErrorBlock?.hideError()
+
+
+    override fun removeView(view: View?) {
+        if (view !== startBlock) {
+            super.removeView(view)
+
+        }
+    }
 
     private companion object {
         const val VIEW_HIERARCHY_ID = "VIEW_HIERARCHY_ID_"
