@@ -114,11 +114,12 @@ class UIConditionBlock @JvmOverloads constructor(
         binding.centerText.setText(logicalBlock.logicalBlockType.resourceId)
 
         if (logicalBlock.logicalBlockType == LogicalBlockType.NOT) {
-            binding.leftCard.visibility = GONE
+            binding.rightCard.layoutParams.width = 0
 
-            binding.backgroundImage.updateLayoutParams<MarginLayoutParams> {
-                setMargins(0, topMargin, rightMargin, bottomMargin)
-            }
+            binding.rightCard.visibility = INVISIBLE
+            binding.centerText.visibility = GONE
+
+            binding.leftText.visibility = VISIBLE
         }
     }
 
