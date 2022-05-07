@@ -1,7 +1,7 @@
 package com.hits.coded.data.implementations.bases.arrayBase
 
-import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.arrays.bases.ArrayBase
+import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
@@ -13,7 +13,7 @@ class DoubleArray() : ArrayBase() {
         }
     }
 
-    override fun parseString(inputString: String): ArrayBase {
+    override fun parseArray(inputString: String): ArrayBase {
         val parsedArray = ArrayList<Double>()
         val pattern = Regex("(?:-?\\d+(?:\\.\\d*)?)*")
         for (match in pattern.findAll(inputString)) {
@@ -22,13 +22,27 @@ class DoubleArray() : ArrayBase() {
         return DoubleArray(parsedArray)
     }
 
-    override fun push(value: Any) {
-        if (value !is Double)
+    override fun parseSingleValue(inputString: String): Any {
+        val pattern = Regex("-?\\d+(?:\\.\\d*)?")
+        val match = pattern.find(inputString)
+            ?: throw InterpreterException(
+                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
+                ExceptionType.INVALID_STRING
+            )
+        return match.value.toDouble()
+    }
+
+    override fun push(value: Any?) {
+        var newElement = value
+        if (newElement is String)
+            newElement = parseSingleValue(newElement)
+
+        if (newElement !is Double)
             throw InterpreterException(
                 interpreterUseCases.getCurrentBlockIdUseCase.getId(),
                 ExceptionType.TYPE_MISMATCH
             )
 
-        array.add(StoredVariable(null, VariableType.DOUBLE, false, value))
+        array.add(StoredVariable(null, VariableType.DOUBLE, false, newElement))
     }
 }

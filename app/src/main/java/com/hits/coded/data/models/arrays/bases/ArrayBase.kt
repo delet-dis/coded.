@@ -17,8 +17,9 @@ abstract class ArrayBase() {
     lateinit var interpreterUseCases: InterpreterUseCases
     protected val array = ArrayList<StoredVariable>()
 
-    abstract fun parseString(inputString: String): ArrayBase
-    abstract fun push(value: Any)
+    abstract fun parseArray(inputString: String): ArrayBase
+    abstract fun parseSingleValue(inputString: String): Any
+    abstract fun push(value: Any?)
 
     val size: Int
         get() = array.size
@@ -34,7 +35,13 @@ abstract class ArrayBase() {
     }
 
 
-    fun concat(other: ArrayBase) {
+    fun concat(other: ArrayBase?) {
+        if (other == null)
+            throw InterpreterException(
+                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
+                ExceptionType.LACK_OF_ARGUMENTS
+            )
+
         if(array::class != other::class)
             throw InterpreterException(
                 interpreterUseCases.getCurrentBlockIdUseCase.getId(),

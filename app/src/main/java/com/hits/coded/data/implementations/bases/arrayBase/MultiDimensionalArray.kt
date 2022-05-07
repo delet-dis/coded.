@@ -8,7 +8,7 @@ import com.hits.coded.data.models.sharedTypes.VariableType
 
 class MultiDimensionalArray(): ArrayBase() {
 
-    override fun parseString(inputString: String): ArrayBase {
+    override fun parseArray(inputString: String): ArrayBase {
         val parsedArray = MultiDimensionalArray()
         var arrayFound = false
         var openedBrackets = 0
@@ -32,7 +32,7 @@ class MultiDimensionalArray(): ArrayBase() {
             if (arrayFound && openedBrackets == 0) {
                 arrayFound = false
                 var nestedArray = constructByType(deductType(arrayString))
-                nestedArray = nestedArray.parseString(arrayString)
+                nestedArray = nestedArray.parseArray(arrayString)
                 parsedArray.push(nestedArray)
                 arrayString = ""
             }
@@ -65,14 +65,20 @@ class MultiDimensionalArray(): ArrayBase() {
         return type
     }
 
-    override fun push(value: Any) {
-        if (value !is ArrayBase)
+    override fun parseSingleValue(inputString: String): Any = parseArray(inputString)
+
+    override fun push(value: Any?) {
+        var newElement = value
+        if (newElement is String)
+            newElement = parseSingleValue(newElement)
+
+        if (newElement !is ArrayBase)
             throw InterpreterException(
                 interpreterUseCases.getCurrentBlockIdUseCase.getId(),
                 ExceptionType.TYPE_MISMATCH
             )
 
 
-        array.add(StoredVariable(null, VariableType.ARRAY, true, value))
+        array.add(StoredVariable(null, VariableType.ARRAY, true, newElement))
     }
 }

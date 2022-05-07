@@ -13,7 +13,7 @@ class BooleanArray() : ArrayBase() {
         }
     }
 
-    override fun parseString(inputString: String): ArrayBase {
+    override fun parseArray(inputString: String): ArrayBase {
         val parsedArray = ArrayList<Boolean>()
         val pattern = Regex("(?:[10]|(?:true|false))*")
         for (match in pattern.findAll(inputString)) {
@@ -25,13 +25,29 @@ class BooleanArray() : ArrayBase() {
         return BooleanArray(parsedArray)
     }
 
-    override fun push(value: Any) {
-        if (value !is Boolean)
+    override fun parseSingleValue(inputString: String): Any {
+        val pattern = Regex("[10]|(?:true|false)")
+        val match = pattern.find(inputString)
+            ?: throw InterpreterException(
+                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
+                ExceptionType.INVALID_STRING
+            )
+        if (match.value[0] == '1' || match.value[0] == 't')
+            return true
+        return false
+    }
+
+    override fun push(value: Any?) {
+        var newElement = value
+        if (newElement is String)
+            newElement = parseSingleValue(newElement)
+
+        if (newElement !is Boolean)
             throw InterpreterException(
                 interpreterUseCases.getCurrentBlockIdUseCase.getId(),
                 ExceptionType.TYPE_MISMATCH
             )
 
-        array.add(StoredVariable(null, VariableType.BOOLEAN, false, value))
+        array.add(StoredVariable(null, VariableType.BOOLEAN, false, newElement))
     }
 }

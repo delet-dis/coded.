@@ -15,7 +15,7 @@ class StringArray() : ArrayBase() {
         }
     }
 
-    override fun parseString(inputString: String): ArrayBase {
+    override fun parseArray(inputString: String): ArrayBase {
         val parsedArray = ArrayList<String>()
         val pattern = Regex("(?:\"[\\S\\s]+?\")*")
         for (match in pattern.findAll(inputString)) {
@@ -25,13 +25,27 @@ class StringArray() : ArrayBase() {
         return StringArray(parsedArray)
     }
 
-    override fun push(value: Any) {
+    override fun parseSingleValue(inputString: String): Any {
+        val pattern = Regex("\"[\\S\\s]+?\"")
+        val match = pattern.find(inputString)
+            ?: throw InterpreterException(
+                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
+                ExceptionType.INVALID_STRING
+            )
+        return match.value.drop(1).dropLast(1)
+    }
+
+    override fun push(value: Any?) {
         if (value !is String)
             throw InterpreterException(
                 interpreterUseCases.getCurrentBlockIdUseCase.getId(),
                 ExceptionType.TYPE_MISMATCH
             )
 
+        if (value.first() == '"')
+            value.drop(1)
+        if (value.last() == '"')
+            value.dropLast(1)
 
         array.add(StoredVariable(null, VariableType.STRING, false, value))
     }
