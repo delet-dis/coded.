@@ -1,7 +1,9 @@
 package com.hits.coded.data.implementations.repositories
 
 import android.util.Log
+import com.hits.coded.data.models.arrays.bases.ArrayBase
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
+import com.hits.coded.data.models.codeBlocks.dataClasses.ArrayBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.ConditionBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.ExpressionBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
@@ -9,12 +11,14 @@ import com.hits.coded.data.models.codeBlocks.dataClasses.LoopBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 import com.hits.coded.data.models.codeBlocks.types.BlockType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.ArrayBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
 import com.hits.coded.data.models.console.useCases.ConsoleUseCases
+import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.data.models.sharedTypes.ExceptionType
@@ -48,6 +52,7 @@ constructor(
                     )
                 }!!
                 BlockType.IO -> interpretIOBlocks(nestedBlock as IOBlock)
+                BlockType.ARRAY -> interpretArrayBlock(nestedBlock as ArrayBlock)
             }
         }
     }
@@ -408,7 +413,7 @@ constructor(
                             variable.variableParams?.name?.let {
                                 heapUseCases.reAssignVariableUseCase.reAssignVariable(
                                     it,
-                                    (variable.variableParams?.value as String).toInt() + toAdd
+                                    (variable.variableParams?.value as String).toInt() + toAdd //TODO: ????
                                 )
                             }
                         }
@@ -443,7 +448,17 @@ constructor(
                 }
             }
             VariableBlockType.VARIABLE_CREATE -> {
+
                 variable.variableParams?.let {
+                    if (it.type == null)
+                        throw InterpreterException(
+                            currentId,
+                            ExceptionType.LACK_OF_ARGUMENTS
+                        )
+
+                    if (it.isArray == true)
+                        it.value = ArrayBase.constructByType(it.type!!) //TODO: СНОВА ЭТА ШТУКА
+
                     heapUseCases.addVariableUseCase.addVariable(it)
                 }
             }
@@ -588,6 +603,42 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
+    private suspend fun interpretArrayBlock(block: ArrayBlock): Any {
+        block.id?.let {
+            currentId = it
+        }
+
+        val storedArray = when (block.array) {
+            is String -> heapUseCases.getVariableUseCase.getVariable(block.array)
+            is ArrayBlock -> (interpretArrayBlock(block.array) as? StoredVariable) //TODO: check
+            else -> null
+        }
+        ?: throw InterpreterException(
+            currentId,
+            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+        )
+
+
+        if (storedArray.isArray != true)
+            throw InterpreterException(
+                currentId,
+                ExceptionType.TYPE_MISMATCH
+            )
+
+
+        val array = storedArray.value!! as ArrayBase // array in heap -> it has been constructed
+
+        return when (block.arrayBlockType) {
+            ArrayBlockType.GET_SIZE -> array.size
+            ArrayBlockType.GET_ELEMENT -> array[convertAnyToInt(block.value)]
+            ArrayBlockType.PUSH -> array.push(block.value)
+            ArrayBlockType.POP -> array.pop()
+            ArrayBlockType.CONCAT -> array.concat(block.value as? ArrayBase)
+        }
+
+    }
+
+    @Throws(InterpreterException::class)
     private suspend fun interpretBlock(block: BlockBase): Any? {
         return when (block.type) {
             BlockType.CONDITION -> interpretConditionBlocks(block as ConditionBlock)
@@ -596,31 +647,32 @@ constructor(
             BlockType.LOOP -> interpretLoopBlocks(block as LoopBlock)
             BlockType.VARIABLE -> interpretVariableBlocks(block as VariableBlock)
             BlockType.START -> interpretStartBlock(block as StartBlock)
+            BlockType.ARRAY -> interpretArrayBlock(block as ArrayBlock)
         }
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun convertAnyToDouble(value: Any): Double {
+    private suspend fun convertAnyToDouble(value: Any?): Double {
         when (value) {
             is Double -> return value
-            is ExpressionBlock -> return interpretExpressionBlocks(value) as Double
+            is StoredVariable -> {
+                if (value.type == VariableType.DOUBLE) {
+                    return value.value as Double
+                } else {
+                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                }
+            }
+            is ExpressionBlock -> return interpretExpressionBlocks(value) as Double //TODO: а если не double?
             is String -> {
-                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
+                if (isVariable(value)) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         heapUseCases.getVariableUseCase.getVariable(variableName)
-                    if (foundedStoredVariable == null) {
-                        throw InterpreterException(
-                            currentId,
-                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                        )
-                    } else {
-                        if (foundedStoredVariable.type == VariableType.DOUBLE) {
-                            return foundedStoredVariable.value as Double
-                        } else {
-                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-                        }
-                    }
+                            ?: throw InterpreterException(
+                                currentId,
+                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                            )
+                    return convertAnyToDouble(foundedStoredVariable)
                 } else {
                     if (value.toDoubleOrNull() is Double) {
                         return value.toDouble()
@@ -629,37 +681,43 @@ constructor(
                     }
                 }
             }
+
+            is ArrayBlock -> return convertAnyToDouble(interpretArrayBlock(value))
+
         }
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun convertAnyToInt(value: Any): Int {
+    private suspend fun convertAnyToInt(value: Any?): Int {
         when (value) {
-            is Double -> throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+            is Double -> throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH) //TODO: а может кастить?
             is Int -> return value
-            is ExpressionBlock -> if (getTypeOfAny(value) == VariableType.INT) return interpretExpressionBlocks(
-                value
-            ) as Int else {
-                throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+            is StoredVariable -> {
+                if (value.type == VariableType.INT) {
+                    return value.value as Int
+                } else {
+                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                }
+            }
+            is ExpressionBlock -> {
+                if (getTypeOfAny(value) == VariableType.INT) {
+                    return interpretExpressionBlocks(value) as Int
+                }
+                else {
+                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                }
             }
             is String -> {
-                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
+                if (isVariable(value)) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         heapUseCases.getVariableUseCase.getVariable(variableName)
-                    if (foundedStoredVariable == null) {
-                        throw InterpreterException(
-                            currentId,
-                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                        )
-                    } else {
-                        if (foundedStoredVariable.type == VariableType.INT) {
-                            return foundedStoredVariable.value as Int
-                        } else {
-                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-                        }
-                    }
+                            ?: throw InterpreterException(
+                                currentId,
+                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                            )
+                    return convertAnyToInt(foundedStoredVariable)
                 } else {
                     if (value.toIntOrNull() is Int) {
                         return value.toInt()
@@ -668,6 +726,7 @@ constructor(
                     }
                 }
             }
+            is ArrayBlock -> return convertAnyToInt(interpretArrayBlock(value))
         }
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
     }
@@ -676,6 +735,13 @@ constructor(
     private suspend fun convertAnyToBoolean(value: Any): Boolean {
         when (value) {
             is Boolean -> return value
+            is StoredVariable -> {
+                if (value.type == VariableType.BOOLEAN) {
+                    return value.value as Boolean //TODO: а если value.value null?
+                } else {
+                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                }
+            }
             is ExpressionBlock -> {
                 if (getTypeOfAny(value) == VariableType.BOOLEAN) return interpretExpressionBlocks(
                     value
@@ -684,22 +750,15 @@ constructor(
                 }
             }
             is String -> {
-                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
+                if (isVariable(value)) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         heapUseCases.getVariableUseCase.getVariable(variableName)
-                    if (foundedStoredVariable == null) {
-                        throw InterpreterException(
-                            currentId,
-                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                        )
-                    } else {
-                        if (foundedStoredVariable.type == VariableType.BOOLEAN) {
-                            return foundedStoredVariable.value as Boolean
-                        } else {
-                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-                        }
-                    }
+                            ?: throw InterpreterException(
+                                currentId,
+                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                            )
+                    return convertAnyToBoolean(foundedStoredVariable)
                 } else {
                     if (value.toBooleanStrictOrNull() is Boolean) {
                         return value.toBooleanStrict()
@@ -708,6 +767,7 @@ constructor(
                     }
                 }
             }
+            is ArrayBlock -> return convertAnyToBoolean(interpretArrayBlock(value))
         }
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
     }
@@ -724,30 +784,25 @@ constructor(
                 )
             }
             is String -> {
-                if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
+                if (isVariable(value)) {
                     val variableName = value.drop(1).dropLast(1)
                     val foundedStoredVariable =
                         heapUseCases.getVariableUseCase.getVariable(variableName)
-                    if (foundedStoredVariable == null) {
-                        throw InterpreterException(
-                            currentId,
-                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                        )
-                    } else {
-                        if (foundedStoredVariable.type == VariableType.STRING) {
-                            return foundedStoredVariable.value as String
-                        } else {
-                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-                        }
-                    }
+                            ?: throw InterpreterException(
+                                currentId,
+                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                            )
+                    return convertAnyToString(foundedStoredVariable)
                 } else {
                     return value
                 }
             }
+            is ArrayBlock -> return convertAnyToString(interpretArrayBlock(value))
         }
         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
     }
 
+    //TODO: сделать более толерантной?
     @Throws(InterpreterException::class)
     private suspend fun getTypeOfAny(value: Any?): VariableType? {
         when (value) {
@@ -757,7 +812,7 @@ constructor(
                     value.toDoubleOrNull() is Double -> return VariableType.DOUBLE
                     value.toBooleanStrictOrNull() is Boolean ->return VariableType.BOOLEAN
                     else -> {
-                        if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
+                        if (isVariable(value)) {
                             val variableName = value.drop(1).dropLast(1)
                             val foundedStoredVariable =
                                 heapUseCases.getVariableUseCase.getVariable(variableName)
