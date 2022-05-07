@@ -57,10 +57,16 @@ class OnboardingActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    private fun initViewPager() {
-        binding.viewPager.adapter =
-            OnboardingViewPagerAdapter(this@OnboardingActivity, viewModel.getOnboardingScreens())
-    }
+    private fun initViewPager() =
+        with(binding.viewPager) {
+            adapter =
+                OnboardingViewPagerAdapter(
+                    this@OnboardingActivity,
+                    viewModel.getOnboardingScreens()
+                )
+
+            offscreenPageLimit = viewModel.getOnboardingScreens().size
+        }
 
     private fun initNavigationToOnboarding() =
         with(viewModel) {
