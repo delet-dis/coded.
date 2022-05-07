@@ -75,4 +75,15 @@
     <string name="divide">/</string>
     <string name="divideWithRemainder">%</string>
     <string name="number">number</string>
+
+    <string name="greaterThan">&gt;</string>
+    <string name="lowerThan">&lt;</string>
+    <string name="equal">==</string>
+    <string name="nonEqual">!=</string>
+    <string name="greaterOrEqualThan">&gt;=</string>
+    <string name="lowerOrEqualThan">&lt;=</string>
+
+    <string name="and">&amp;&amp;</string>
+    <string name="or">||</string>
+    <string name="not">!</string>
 </resources>
