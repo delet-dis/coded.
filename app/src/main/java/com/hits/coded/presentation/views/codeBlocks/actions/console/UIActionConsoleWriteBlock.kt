@@ -13,10 +13,12 @@ import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcess
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
@@ -32,7 +34,8 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
-    UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface {
+    UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface,
+    UICodeBlockSupportsErrorDisplaying {
     private val binding: ViewConsoleWriteBlockBinding
 
     override val nestedUIBlocks: ArrayList<View> = ArrayList()
@@ -69,47 +72,43 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
 
 
     override fun initDragAndDropListener() {
-        binding.variableName.setOnDragListener { _, _ ->
-            true
-        }
-
-        binding.parentConstraint.setOnDragListener { _, dragEvent ->
+        binding.variableName.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            if (draggableItem == draggableItem) {
-                //TODO: Добавить проверку на то, закидывается ли условие или выражение
+            (draggableItem as? UINestedableCodeBlock)?.let {
+                val itemParent = draggableItem.parent as? ViewGroup
 
-                val itemParent = draggableItem.parent as ViewGroup
+                itemParent?.let {
+                    when (dragEvent.action) {
+                        DragEvent.ACTION_DRAG_STARTED,
+                        DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
-                when (dragEvent.action) {
-                    DragEvent.ACTION_DRAG_STARTED,
-                    DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            scalePlusAnimation(binding.firstCard)
 
-                    DragEvent.ACTION_DRAG_ENTERED -> {
-                        alphaMinusAnimation(binding.root)
+                            return@setOnDragListener true
+                        }
 
-                        return@setOnDragListener true
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            scaleMinusAnimation(binding.firstCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DROP -> {
+                            handleDropEvent(itemParent, draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            handleDragEndedEvent(draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        else -> return@setOnDragListener false
                     }
-
-                    DragEvent.ACTION_DRAG_EXITED -> {
-                        alphaPlusAnimation(binding.root)
-
-                        return@setOnDragListener true
-                    }
-
-                    DragEvent.ACTION_DROP -> {
-                        handleDropEvent(itemParent, draggableItem)
-
-                        return@setOnDragListener true
-                    }
-
-                    DragEvent.ACTION_DRAG_ENDED -> {
-                        handleDragEndedEvent(draggableItem)
-
-                        return@setOnDragListener true
-                    }
-
-                    else -> return@setOnDragListener false
                 }
             }
             false
@@ -121,7 +120,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         draggableItem: View
     ) = with(binding) {
         if (draggableItem != this@UIActionConsoleWriteBlock) {
-            alphaPlusAnimation(parentConstraint)
+            scaleMinusAnimation(binding.firstCard)
 
             itemParent.removeView(draggableItem)
 
@@ -132,8 +131,10 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
                 visibility = INVISIBLE
             }
 
+            clearNestedBlocksFromParent(firstCard)
+
             nestedUIBlocks.add(draggableItem)
-            binding.firstCard.addView(draggableItem)
+            firstCard.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
                 _block.argument = it
@@ -161,6 +162,8 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         nestedUIBlocks.remove(view)
         binding.firstCard.removeView(view)
 
+        view.tag = null
+
         _block.argument = null
 
         with(binding.variableName) {
@@ -168,6 +171,12 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
             visibility = VISIBLE
         }
     }
+
+    override fun displayError() =
+        binding.backgroundImage.setImageResource(R.drawable.error_block)
+
+    override fun hideError() =
+        binding.backgroundImage.setImageResource(R.drawable.console_write_block)
 
     private companion object {
         const val DRAG_AND_DROP_TAG = "ACTION_CONSOLE_WRITE_BLOCK_"

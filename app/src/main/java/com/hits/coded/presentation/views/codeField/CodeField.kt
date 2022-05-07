@@ -11,6 +11,7 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
@@ -28,6 +29,8 @@ class CodeField @JvmOverloads constructor(
     private val binding: ViewCodeFieldBinding
 
     private val startBlock = UIActionStartBlock(context)
+
+    private var previousErrorBlock: UICodeBlockSupportsErrorDisplaying? = null
 
     init {
         inflate(
@@ -59,7 +62,7 @@ class CodeField @JvmOverloads constructor(
         binding.fieldLayout.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            val itemParent = draggableItem.parent as ViewGroup
+            val itemParent = draggableItem.parent as? ViewGroup
 
             when (dragEvent.action) {
                 DragEvent.ACTION_DRAG_STARTED,
@@ -88,7 +91,7 @@ class CodeField @JvmOverloads constructor(
         }
 
     private fun handleDropEvent(
-        itemParent: ViewGroup,
+        itemParent: ViewGroup?,
         draggableItem: View,
         dragEvent: DragEvent
     ) =
@@ -104,9 +107,10 @@ class CodeField @JvmOverloads constructor(
                 draggableItem.y = dragEvent.y - (it.touchY)
             }
 
-            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
-
-            itemParent.removeView(draggableItem)
+            itemParent?.let {
+                processViewWithCustomRemoveProcessRemoval(it, draggableItem)
+                it.removeView(draggableItem)
+            }
 
             addView(draggableItem)
         }
@@ -140,6 +144,20 @@ class CodeField @JvmOverloads constructor(
         }
         return null
     }
+
+    fun displayError(blockId: Int) {
+        hideError()
+
+        val foundedView =
+            findViewWithTag<View>(VIEW_HIERARCHY_ID + blockId) as? UICodeBlockSupportsErrorDisplaying
+
+        foundedView?.displayError()
+
+        previousErrorBlock = foundedView
+    }
+
+    fun hideError() =
+        previousErrorBlock?.hideError()
 
     private companion object {
         const val VIEW_HIERARCHY_ID = "VIEW_HIERARCHY_ID_"

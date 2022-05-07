@@ -22,7 +22,9 @@
     <dimen name="openedBottomBarHeight">60dp</dimen>
     <dimen name="collapsedBottomBarHeight">0dp</dimen>
 
-    <dimen name="bottomSheetContentHorizontalMargin">15dp</dimen>
+    <dimen name="bottomSheetContentMargin">15dp</dimen>
+
+    <dimen name="bottomBarHorizontalMargin">15dp</dimen>
 
     <dimen name="bottomSheetElementsSpacing">20dp</dimen>
 
@@ -34,5 +36,5 @@
     <dimen name="codeBlockElementsSpacing">8dp</dimen>
 
     <dimen name="bottomSheetTopOffset">50dp</dimen>
-    <dimen name="consoleBottomMargin">60dp</dimen>
+    <dimen name="bottomSheetBottomMargin">60dp</dimen>
 </resources>
