@@ -38,7 +38,7 @@ class UIConditionBlock @JvmOverloads constructor(
     UINestedableCodeBlock, UICodeBlockSupportsErrorDisplaying {
     private val binding: ViewConditionBlockBinding
 
-    override val nestedUIBlocks: ArrayList<View> = ArrayList()
+    override val nestedUIBlocks: ArrayList<View?> = arrayListOf(null, null)
 
     private var leftSide: Any? = Any()
         set(value) {
@@ -240,11 +240,7 @@ class UIConditionBlock @JvmOverloads constructor(
                     leftSide = it
                 }
 
-                if (nestedUIBlocks.size > 0) {
-                    nestedUIBlocks.removeAt(0)
-                }
-
-                nestedUIBlocks.add(0, draggableItem)
+                nestedUIBlocks[0] = draggableItem
             }
 
             if (parentCard == rightCard) {
@@ -257,11 +253,7 @@ class UIConditionBlock @JvmOverloads constructor(
                     rightSide = it
                 }
 
-                if (nestedUIBlocks.size > 1) {
-                    nestedUIBlocks.removeAt(1)
-                }
-
-                nestedUIBlocks.add(1, draggableItem)
+                nestedUIBlocks[1] = draggableItem
             }
 
             parentCard.addView(draggableItem)

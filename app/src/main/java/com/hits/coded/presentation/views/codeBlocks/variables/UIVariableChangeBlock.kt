@@ -38,7 +38,7 @@ class UIVariableChangeBlock @JvmOverloads constructor(
     UICodeBlockSupportsErrorDisplaying {
     private val binding: ViewVariableChangeBlockBinding
 
-    override val nestedUIBlocks: ArrayList<View> = ArrayList()
+    override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
     private var variableParams = StoredVariable()
 
