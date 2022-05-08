@@ -51,6 +51,8 @@ class UIVariableCreationBlock @JvmOverloads constructor(
         initVariableNameChangeListener()
 
         initEditTextsDragAndDropGesture()
+
+        initVariableNameChangeDragListener()
     }
 
     private fun initEditTextsDragAndDropGesture() =
@@ -59,6 +61,11 @@ class UIVariableCreationBlock @JvmOverloads constructor(
     private fun initVariableNameChangeListener() =
         binding.variableName.addTextChangedListener {
             variableParams.name = it.toString()
+        }
+
+    private fun initVariableNameChangeDragListener() =
+        binding.variableName.setOnDragListener { _, _ ->
+            true
         }
 
     @SuppressLint("SetTextI18n")

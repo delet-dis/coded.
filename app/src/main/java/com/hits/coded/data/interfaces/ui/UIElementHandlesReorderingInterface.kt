@@ -7,11 +7,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.children
 import androidx.core.view.contains
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.domain.extensions.getTouchPositionFromDragEvent
 
-interface UIElementHandlesReorderingInterface : UICodeBlockSavesNestedBlocksInterface,
+interface UIElementHandlesReorderingInterface : UIElementSavesNestedBlocksInterface,
     UIElementHandlesCustomRemoveViewProcessInterface {
     var layoutListView: LinearLayout?
 
