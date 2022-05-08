@@ -118,18 +118,14 @@ constructor(
         }
 
         conditionBlock.mathematicalBlock?.let {
-            if (leftSideType == rightSideType) {
+            if (leftSideType == rightSideType || areNumericTypes(leftSideType, rightSideType)) {
                 val resultOfComparison = when (leftSideType) {
                     VariableType.STRING -> convertAnyToString(conditionBlock.leftSide!!).compareTo(
                         convertAnyToString(conditionBlock.rightSide!!)
                     )
 
-                    VariableType.DOUBLE -> convertAnyToDouble(conditionBlock.leftSide!!).compareTo(
+                    VariableType.DOUBLE, VariableType.INT -> convertAnyToDouble(conditionBlock.leftSide!!).compareTo(
                         convertAnyToDouble(conditionBlock.rightSide!!)
-                    )
-
-                    VariableType.INT -> convertAnyToInt(conditionBlock.leftSide!!).compareTo(
-                        convertAnyToInt(conditionBlock.rightSide!!)
                     )
 
                     VariableType.BOOLEAN -> convertAnyToBoolean(conditionBlock.leftSide!!).compareTo(
@@ -551,18 +547,24 @@ constructor(
             }
             VariableBlockType.VARIABLE_CREATE -> {
                 variable.variableParams?.let {
+                    it.value = when (it.type) {
+                        VariableType.DOUBLE -> 0.0
+                        VariableType.INT -> 0
+                        VariableType.STRING -> ""
+                        VariableType.BOOLEAN -> false
+                        null -> throw InterpreterException(
+                            currentId,
+                            ExceptionType.LACK_OF_ARGUMENTS
+                        )
+                    }
                     heapUseCases.addVariableUseCase.addVariable(it)
                 }
             }
 
-            else -> {
-                throw variable.id?.let {
-                    InterpreterException(
-                        it,
-                        ExceptionType.WRONG_OPERAND_USE_CASE
-                    )
-                }!!
-            }
+            else -> throw InterpreterException(
+                currentId,
+                ExceptionType.WRONG_OPERAND_USE_CASE
+            )
         }
     }
 
@@ -578,92 +580,48 @@ constructor(
         val leftSideType = getTypeOfAny(leftSide)
         val rightSideType = getTypeOfAny(rightSide)
 
-        if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
-            when (expressionBlock.expressionBlockType) {
-                ExpressionBlockType.PLUS -> {
-                    return (convertAnyToDouble(
-                        leftSide!!
-                    ) + convertAnyToDouble(
-                        rightSide!!
-                    ))
-                }
-                ExpressionBlockType.MULTIPLY -> return (convertAnyToDouble(leftSide!!) * convertAnyToDouble(
-                    rightSide!!
-                ))
+
+        if (areNumericTypes(leftSideType, rightSideType)) {
+
+            val leftSideUnwrapped = convertAnyToDouble(leftSide!!)
+            val rightSideUnwrapped = convertAnyToDouble(rightSide!!)
+
+            return when (expressionBlock.expressionBlockType) {
+                ExpressionBlockType.PLUS -> leftSideUnwrapped + rightSideUnwrapped
+
+                ExpressionBlockType.MULTIPLY -> leftSideUnwrapped * rightSideUnwrapped
+
                 ExpressionBlockType.DIVIDE -> {
-                    if (convertAnyToDouble(
-                            rightSide!!
-                        ) != 0.0
-                    ) {
-                        return (convertAnyToDouble(leftSide!!) / convertAnyToDouble(
-                            rightSide
-                        ))
-                    } else {
+                    if (rightSideUnwrapped == 0.0) {
                         throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
                     }
+
+                    leftSideUnwrapped / rightSideUnwrapped
                 }
-                ExpressionBlockType.MINUS -> return (convertAnyToDouble(leftSide!!) - convertAnyToDouble(
-                    rightSide!!
-                ))
-                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> throw expressionBlock.id?.let {
-                    InterpreterException(
-                        it, ExceptionType.WRONG_OPERAND_USE_CASE
-                    )
-                }!!
-            }
-        }
-        if (leftSideType == VariableType.INT && VariableType.INT == rightSideType) {
-            when (expressionBlock.expressionBlockType) {
-                ExpressionBlockType.PLUS -> return (convertAnyToInt(leftSide!!) + convertAnyToInt(
-                    rightSide!!
-                ))
-                ExpressionBlockType.MULTIPLY -> return (convertAnyToInt(leftSide!!) * convertAnyToInt(
-                    rightSide!!
-                ))
-                ExpressionBlockType.DIVIDE -> {
-                    if (convertAnyToInt(
-                            rightSide!!
-                        ) != 0
-                    ) {
-                        return (convertAnyToInt(leftSide!!) / convertAnyToInt(
-                            rightSide
-                        ))
-                    } else {
-                        throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
-                    }
-                }
+
+                ExpressionBlockType.MINUS -> leftSideUnwrapped - rightSideUnwrapped
+
                 ExpressionBlockType.DIVIDE_WITH_REMAINDER -> {
-                    if (convertAnyToInt(
-                            rightSide!!
-                        ) != 0
-                    ) {
-                        return (convertAnyToInt(leftSide!!) % convertAnyToInt(
-                            rightSide
-                        ))
-                    } else {
+                    if (rightSideUnwrapped == 0.0) {
                         throw InterpreterException(currentId, ExceptionType.DIVISION_BY_ZERO)
                     }
+
+                    leftSideUnwrapped % rightSideUnwrapped
                 }
-                ExpressionBlockType.MINUS -> return (convertAnyToInt(leftSide!!) - convertAnyToInt(
-                    rightSide!!
-                ))
+
+                null -> throw InterpreterException(currentId, ExceptionType.LACK_OF_ARGUMENTS)
             }
         }
-        if (leftSideType == VariableType.STRING && VariableType.STRING == rightSideType && expressionBlock.expressionBlockType == ExpressionBlockType.PLUS) {
-            return '"' + convertAnyToString(leftSide!!) + convertAnyToString(
-                rightSide!!
-            ) + '"'
+
+        if (leftSideType == VariableType.STRING &&
+            rightSideType == VariableType.STRING &&
+            expressionBlock.expressionBlockType == ExpressionBlockType.PLUS
+        ) {
+
+            return '"' + convertAnyToString(leftSide!!) + convertAnyToString(rightSide!!) + '"'
         }
-        if (leftSideType == null || rightSideType == null) {
-            throw InterpreterException(currentId, ExceptionType.LACK_OF_ARGUMENTS)
-        } else {
-            throw  expressionBlock.id?.let {
-                InterpreterException(
-                    it,
-                    ExceptionType.TYPE_MISMATCH
-                )
-            }!!
-        }
+
+        throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
     }
 
     @Throws(InterpreterException::class)
@@ -731,33 +689,44 @@ constructor(
     @Throws(InterpreterException::class)
     private suspend fun convertAnyToDouble(value: Any): Double {
         when (value) {
-            is Double -> return value
-            is ExpressionBlock -> return interpretExpressionBlocks(value) as Double
+            is ExpressionBlock -> {
+                val result = interpretExpressionBlocks(value)
+                if (result is Number)
+                    return result.toDouble()
+                else
+                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+            }
+
             is String -> {
                 if (value.toDoubleOrNull() is Double) {
                     return value.toDouble()
-                } else if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
+                } else if (isVariable(value)) {
                     val foundedStoredVariable =
                         heapUseCases.getVariableUseCase.getVariable(value)
-                    if (foundedStoredVariable == null) {
-                        throw InterpreterException(
-                            currentId,
-                            ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                        )
-                    } else {
-                        when {
-                            foundedStoredVariable.type == VariableType.DOUBLE && foundedStoredVariable.value != null -> return foundedStoredVariable.value.toString()
-                                .toDouble()
-                            foundedStoredVariable.value != null -> throw InterpreterException(
+                            ?: throw InterpreterException(
                                 currentId,
-                                ExceptionType.TYPE_MISMATCH
+                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                             )
-                            else -> throw InterpreterException(
-                                currentId,
-                                ExceptionType.TYPE_MISMATCH
-                            )
+                    foundedStoredVariable.value.let {
+                        if (it is Number) {
+                            return it.toDouble()
+                        } else {
+                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                         }
                     }
+//                        when {
+//                            foundedStoredVariable.type == VariableType.DOUBLE && foundedStoredVariable.value != null -> return foundedStoredVariable.value.toString()
+//                                .toDouble()
+//                            foundedStoredVariable.value != null -> throw InterpreterException(
+//                                currentId,
+//                                ExceptionType.TYPE_MISMATCH
+//                            )
+//                            else -> throw InterpreterException(
+//                                currentId,
+//                                ExceptionType.TYPE_MISMATCH
+//                            )
+//                        }
+
                 } else {
                     throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                 }
@@ -995,6 +964,10 @@ constructor(
 
         return true
     }
+
+    private fun areNumericTypes(firstType: VariableType?, secondType: VariableType?): Boolean =
+        (firstType == VariableType.DOUBLE || firstType == VariableType.INT) &&
+                (secondType == VariableType.DOUBLE || secondType == VariableType.INT)
 
 
     private fun tryToConvertString(value: String, type: VariableType): Any? {
