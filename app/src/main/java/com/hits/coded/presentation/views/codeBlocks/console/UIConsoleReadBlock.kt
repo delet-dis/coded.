@@ -16,7 +16,7 @@ import com.hits.coded.databinding.ViewConsoleReadBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UIActionConsoleReadBlock @JvmOverloads constructor(
+class UIConsoleReadBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

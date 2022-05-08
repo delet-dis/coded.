@@ -1,6 +1,5 @@
 package com.hits.coded.presentation.views.codeBlocks.actions.console
 
-import android.animation.AnimatorSet
 import android.content.Context
 import android.util.AttributeSet
 import android.view.DragEvent
@@ -12,7 +11,7 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.UIElementSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
@@ -26,7 +25,7 @@ import com.hits.coded.databinding.ViewConsoleWriteBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UIActionConsoleWriteBlock @JvmOverloads constructor(
+class UIConsoleWriteBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -34,11 +33,11 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
-    UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface,
+    UIElementHandlesCustomRemoveViewProcessInterface, UIElementSavesNestedBlocksInterface,
     UICodeBlockSupportsErrorDisplaying {
     private val binding: ViewConsoleWriteBlockBinding
 
-    override val nestedUIBlocks: ArrayList<View> = ArrayList()
+    override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
     private var _block = IOBlock(IOBlockType.WRITE)
     override val block: BlockBase
@@ -46,8 +45,6 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
 
     override var touchX: Int = 0
     override var touchY: Int = 0
-
-    override val animationSet = AnimatorSet()
 
     init {
         inflate(
@@ -119,7 +116,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        if (draggableItem != this@UIActionConsoleWriteBlock) {
+        if (draggableItem != this@UIConsoleWriteBlock) {
             scaleMinusAnimation(binding.firstCard)
 
             itemParent.removeView(draggableItem)

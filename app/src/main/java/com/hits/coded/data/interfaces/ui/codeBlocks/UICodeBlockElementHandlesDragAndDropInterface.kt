@@ -6,8 +6,6 @@ import android.animation.ObjectAnimator
 import android.view.View
 
 interface UICodeBlockElementHandlesDragAndDropInterface {
-    val animationSet: AnimatorSet
-
     fun scalePlusAnimation(view: View) {
         val scaleY = ObjectAnimator.ofFloat(view, "scaleY", SCALE_START, SCALE_END)
         val scaleX = ObjectAnimator.ofFloat(view, "scaleX", SCALE_START, SCALE_END)
@@ -35,7 +33,7 @@ interface UICodeBlockElementHandlesDragAndDropInterface {
     }
 
     fun playAnimations(vararg items: Animator) =
-        animationSet.apply {
+        AnimatorSet().apply {
             playTogether(*items)
             duration = ANIMATION_DURATION
             start()

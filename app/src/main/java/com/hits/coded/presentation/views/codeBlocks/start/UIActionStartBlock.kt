@@ -1,6 +1,5 @@
-package com.hits.coded.presentation.views.codeBlocks.actions
+package com.hits.coded.presentation.views.codeBlocks.start
 
-import android.animation.AnimatorSet
 import android.content.Context
 import android.util.AttributeSet
 import android.view.DragEvent
@@ -13,7 +12,7 @@ import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcess
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesReorderingInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.UIElementSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
@@ -34,13 +33,13 @@ class UIActionStartBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
     UICodeBlockWithLastTouchInformation,
     UICodeBlockElementHandlesDragAndDropInterface,
-    UICodeBlockSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
+    UIElementSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
     UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface{
     private val binding: ViewActionStartBinding
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
 
-    override val nestedUIBlocks: ArrayList<View> = ArrayList()
+    override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
     private var _block = StartBlock()
     override val block: BlockBase
@@ -48,8 +47,6 @@ class UIActionStartBlock @JvmOverloads constructor(
 
     override var touchX: Int = 0
     override var touchY: Int = 0
-
-    override val animationSet = AnimatorSet()
 
     override var layoutListView: LinearLayout? = null
 

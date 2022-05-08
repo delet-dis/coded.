@@ -7,12 +7,11 @@ import android.os.Build
 import android.view.MotionEvent
 import android.view.View
 import com.hits.coded.presentation.views.codeBlocks.shadowBuilder.BlockDragShadowBuilder
-import kotlin.random.Random
 
 interface UIMoveableCodeBlockInterface {
     @SuppressLint("ClickableViewAccessibility")
     fun initDragAndDropGesture(view: View, tag: String) {
-        view.tag = tag + Random.Default.nextInt().toString()
+        view.tag = tag + (0..MAXIMUM_RANDOM_NUMBER).random()
 
         var touchX = 0
         var touchY = 0
@@ -55,5 +54,7 @@ interface UIMoveableCodeBlockInterface {
     companion object {
         const val ITEM_APPEAR_ANIMATION_DURATION: Long = 400
         const val ITEM_DISAPPEAR_ANIMATION_DURATION: Long = 500
+
+        const val MAXIMUM_RANDOM_NUMBER = 100
     }
 }
