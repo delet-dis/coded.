@@ -177,18 +177,19 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun interpretLoopBlocks(loop: LoopBlockBase) {
-        loop.id?.let {
+    private suspend fun interpretLoopBlocks(loopBlock: LoopBlockBase) {
+        loopBlock.id?.let {
             currentId = it
         }
-        if (loop.nestedBlocks != null) {
-            while (interpretConditionBlocks(loop.conditionBlock as ConditionBlock)) {
-                for (nestedBlock in loop.nestedBlocks!!) {
-                    when (nestedBlock.type) {
-                        BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlock)
-                        BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
-                        BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlock)
-                        BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlock)
+
+        loopBlock.nestedBlocks?.let {
+            while (interpretConditionBlocks(loopBlock.conditionBlock)) {
+                it.forEach { blockBase ->
+                    when (blockBase.type) {
+                        BlockType.VARIABLE -> interpretVariableBlocks(blockBase as VariableBlockBase)
+                        BlockType.CONDITION -> interpretConditionBlocks(blockBase as ConditionBlockBase)
+                        BlockType.LOOP -> interpretLoopBlocks(blockBase as LoopBlockBase)
+                        BlockType.EXPRESSION -> interpretExpressionBlocks(blockBase as ExpressionBlockBase)
                         else -> {
                             throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
                         }
@@ -856,7 +857,7 @@ constructor(
                         }
                     }
                 } else {
-                        throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                    throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
 
                 }
             }
