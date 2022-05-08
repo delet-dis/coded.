@@ -2,7 +2,6 @@ package com.hits.coded.presentation.views.codeField
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
@@ -144,7 +143,12 @@ class CodeField @JvmOverloads constructor(
 
                 (processingView as? UICodeBlockSavesNestedBlocksInterface)?.let {
                     it.nestedUIBlocks.forEach { block ->
-                        currentId = calculateElementsIds(block, currentId)
+                        currentId = block?.let { unwrappedBlock ->
+                            calculateElementsIds(
+                                unwrappedBlock,
+                                currentId
+                            )
+                        }
                     }
                 }
                 return currentId

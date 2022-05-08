@@ -39,7 +39,7 @@ class UIActionStartBlock @JvmOverloads constructor(
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
 
-    override val nestedUIBlocks: ArrayList<View> = ArrayList()
+    override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
     private var _block = StartBlock()
     override val block: BlockBase
