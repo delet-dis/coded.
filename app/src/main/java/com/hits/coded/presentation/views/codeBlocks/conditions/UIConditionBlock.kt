@@ -239,6 +239,9 @@ class UIConditionBlock @JvmOverloads constructor(
                 draggableBlockWithData?.block?.let {
                     leftSide = it
                 }
+
+                nestedUIBlocks.removeAt(0)
+                nestedUIBlocks.add(0, draggableItem)
             }
 
             if (parentCard == rightCard) {
@@ -250,11 +253,11 @@ class UIConditionBlock @JvmOverloads constructor(
                 draggableBlockWithData?.block?.let {
                     rightSide = it
                 }
+
+                nestedUIBlocks.removeAt(1)
+                nestedUIBlocks.add(1, draggableItem)
             }
 
-            clearNestedBlocksFromParent(parentCard)
-
-            nestedUIBlocks.add(draggableItem)
             parentCard.addView(draggableItem)
         }
     }

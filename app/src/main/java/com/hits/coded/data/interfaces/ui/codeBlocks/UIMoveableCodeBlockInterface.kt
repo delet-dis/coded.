@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipDescription
 import android.os.Build
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.hits.coded.presentation.views.codeBlocks.shadowBuilder.BlockDragShadowBuilder
@@ -20,6 +21,11 @@ interface UIMoveableCodeBlockInterface {
             if (motionEvent.actionMasked == MotionEvent.ACTION_DOWN) {
                 touchX = motionEvent.x.toInt()
                 touchY = motionEvent.y.toInt()
+
+                Log.d("x", motionEvent.x.toInt().toString())
+                Log.d("y", motionEvent.y.toInt().toString())
+                Log.d("rawX", motionEvent.rawX.toInt().toString())
+                Log.d("rawY", motionEvent.rawY.toInt().toString())
             }
 
             false
