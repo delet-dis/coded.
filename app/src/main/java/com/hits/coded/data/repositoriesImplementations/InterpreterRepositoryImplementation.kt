@@ -17,6 +17,8 @@ import com.hits.coded.data.models.codeBlocks.types.BlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalBlockType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalBlockType
 import com.hits.coded.data.models.console.useCases.ConsoleUseCases
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
@@ -64,195 +66,233 @@ constructor(
         var conditionIsTrue = false
         val leftSideType = getTypeOfAny(condition.leftSide)
         val rightSideType = getTypeOfAny(condition.rightSide)
-//        if (condition.logicalBlock != null) {
-//            when (condition.logicalBlock!!.logicalBlockType) {
-//
-//                LogicalBlockType.AND -> {
-//                    when {
-//                        condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN -> {
-//                            conditionIsTrue =
-//                                (convertAnyToBoolean(condition.leftSide) && convertAnyToBoolean(
-//                                    condition.rightSide!!
-//                                ))
-//                        }
-//                        condition.rightSide != null -> throw condition.id?.let {
-//                            InterpreterException(
-//                                it, ExceptionType.TYPE_MISMATCH
-//                            )
-//                        }!!
-//                        else -> throw condition.id?.let {
-//                            InterpreterException(
-//                                it,
-//                                ExceptionType.LACK_OF_ARGUMENTS
-//                            )
-//                        }!!
-//                    }
-//
-//                }
-//                LogicalBlockType.NOT -> {
-//                    if (leftSideType == VariableType.BOOLEAN) conditionIsTrue =
-//                        !(convertAnyToBoolean(condition.leftSide))
-//                    else {
-//                        throw condition.id?.let {
-//                            InterpreterException(
-//                                it,
-//                                ExceptionType.TYPE_MISMATCH
-//                            )
-//                        }!!
-//                    }
-//                }
-//                LogicalBlockType.OR -> {
-//                    when {
-//                        condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN -> {
-//                            conditionIsTrue =
-//                                (convertAnyToBoolean(condition.leftSide) || convertAnyToBoolean(
-//                                    condition.rightSide!!
-//                                ))
-//                        }
-//                        condition.rightSide != null -> throw condition.id?.let {
-//                            InterpreterException(
-//                                it, ExceptionType.TYPE_MISMATCH
-//                            )
-//                        }!!
-//                        else -> throw condition.id?.let {
-//                            InterpreterException(
-//                                it,
-//                                ExceptionType.LACK_OF_ARGUMENTS
-//                            )
-//                        }!!
-//                    }
-//
-//                }
-//            }
-//        } else {
-//            if (condition.rightSide != null) {
-//                condition.mathematicalBlock?.let {
-//                    when (it.mathematicalOperatorType) {
-//                        MathematicalBlockType.EQUAL -> {
-//                            if (rightSideType == leftSideType) {
-//                                conditionIsTrue =
-//                                    (convertAnyToDouble(condition.leftSide) == convertAnyToDouble(
-//                                        condition.rightSide!!
-//                                    ))
-//                            } else {
-//                                throw condition.id?.let { it1 ->
-//                                    InterpreterException(
-//                                        it1,
-//                                        ExceptionType.TYPE_MISMATCH
-//                                    )
-//                                }!!
-//                            }
-//                        }
-//                        MathematicalBlockType.GREATER_OR_EQUAL_THAN -> {
-//                            when {
-//                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
-//                                    conditionIsTrue =
-//                                        (convertAnyToDouble(condition.leftSide) >= convertAnyToDouble(
-//                                            condition.rightSide!!
-//                                        ))
-//                                }
-//                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
-//                                    InterpreterException(
-//                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
-//                                    )
-//                                }!!
-//                                else -> throw condition.id?.let { it1 ->
-//                                    InterpreterException(
-//                                        it1,
-//                                        ExceptionType.TYPE_MISMATCH
-//                                    )
-//                                }!!
-//                            }
-//                        }
-//                        MathematicalBlockType.GREATER_THAN -> {
-//                            when {
-//                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
-//                                    conditionIsTrue =
-//                                        (convertAnyToDouble(condition.leftSide) > convertAnyToDouble(
-//                                            condition.rightSide!!
-//                                        ))
-//                                }
-//                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
-//                                    InterpreterException(
-//                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
-//                                    )
-//                                }!!
-//                                else -> throw condition.id?.let { it1 ->
-//                                    InterpreterException(
-//                                        it1,
-//                                        ExceptionType.TYPE_MISMATCH
-//                                    )
-//                                }!!
-//                            }
-//                        }
-//                        MathematicalBlockType.LOWER_OR_EQUAL_THAN -> {
-//                            when {
-//                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
-//                                    conditionIsTrue =
-//                                        (convertAnyToDouble(condition.leftSide) <= convertAnyToDouble(
-//                                            condition.rightSide!!
-//                                        ))
-//                                }
-//                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
-//                                    InterpreterException(
-//                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
-//                                    )
-//                                }!!
-//                                else -> throw condition.id?.let { it1 ->
-//                                    InterpreterException(
-//                                        it1,
-//                                        ExceptionType.TYPE_MISMATCH
-//                                    )
-//                                }!!
-//                            }
-//                        }
-//                        MathematicalBlockType.LOWER_THAN -> {
-//                            when {
-//                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
-//                                    conditionIsTrue =
-//                                        (convertAnyToDouble(condition.rightSide!!) > convertAnyToDouble(
-//                                            condition.leftSide
-//                                        ))
-//                                }
-//                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
-//                                    InterpreterException(
-//                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
-//                                    )
-//                                }!!
-//                                else -> throw condition.id?.let { it1 ->
-//                                    InterpreterException(
-//                                        it1,
-//                                        ExceptionType.TYPE_MISMATCH
-//                                    )
-//                                }!!
-//                            }
-//                        }
-//                        MathematicalBlockType.NON_EQUAL -> {
-//                            if (rightSideType == leftSideType) {
-//                                conditionIsTrue =
-//                                    (convertAnyToDouble(condition.leftSide) != convertAnyToDouble(
-//                                        condition.rightSide!!
-//                                    ))
-//                            } else {
-//                                throw condition.id?.let { it1 ->
-//                                    InterpreterException(
-//                                        it1,
-//                                        ExceptionType.TYPE_MISMATCH
-//                                    )
-//                                }!!
-//                            }
-//                        }
-//                    }
-//                }
-//            } else {
-//                throw condition.id?.let {
-//                    InterpreterException(
-//                        it,
-//                        ExceptionType.LACK_OF_ARGUMENTS
-//                    )
-//                }!!
-//            }
-//        }
+        if (condition.logicalBlock != null) {
+            when (condition.logicalBlock!!.logicalBlockType) {
+
+                LogicalBlockType.AND -> {
+                    when {
+                        condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN -> {
+                            conditionIsTrue =
+                                (convertAnyToBoolean(condition.leftSide!!) && convertAnyToBoolean(
+                                    condition.rightSide!!
+                                ))
+                        }
+                        condition.rightSide != null -> throw condition.id?.let {
+                            InterpreterException(
+                                it, ExceptionType.TYPE_MISMATCH
+                            )
+                        }!!
+                        else -> throw condition.id?.let {
+                            InterpreterException(
+                                it,
+                                ExceptionType.LACK_OF_ARGUMENTS
+                            )
+                        }!!
+                    }
+
+                }
+                LogicalBlockType.NOT -> {
+                    if (leftSideType == VariableType.BOOLEAN) conditionIsTrue =
+                        !(convertAnyToBoolean(condition.leftSide!!))
+                    else {
+                        throw condition.id?.let {
+                            InterpreterException(
+                                it,
+                                ExceptionType.TYPE_MISMATCH
+                            )
+                        }!!
+                    }
+                }
+                LogicalBlockType.OR -> {
+                    when {
+                        condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN -> {
+                            conditionIsTrue =
+                                (convertAnyToBoolean(condition.leftSide!!) || convertAnyToBoolean(
+                                    condition.rightSide!!
+                                ))
+                        }
+                        condition.rightSide != null -> throw condition.id?.let {
+                            InterpreterException(
+                                it, ExceptionType.TYPE_MISMATCH
+                            )
+                        }!!
+                        else -> throw condition.id?.let {
+                            InterpreterException(
+                                it,
+                                ExceptionType.LACK_OF_ARGUMENTS
+                            )
+                        }!!
+                    }
+
+                }
+            }
+        } else {
+            if (condition.rightSide != null) {
+                condition.mathematicalBlock?.let {
+                    when (it.mathematicalBlockType) {
+                        MathematicalBlockType.EQUAL -> {
+                            if (rightSideType == leftSideType) {
+                                conditionIsTrue =
+                                    (convertAnyToDouble(condition.leftSide!!) == convertAnyToDouble(
+                                        condition.rightSide!!
+                                    ))
+                            } else {
+                                throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                        MathematicalBlockType.GREATER_OR_EQUAL_THAN -> {
+                            when {
+                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE) -> {
+                                    conditionIsTrue =
+                                        (convertAnyToDouble(condition.leftSide!!) >= convertAnyToDouble(
+                                            condition.rightSide!!
+                                        ))
+                                }
+                                rightSideType == leftSideType && (rightSideType == VariableType.INT)->{
+                                    conditionIsTrue =
+                                        (convertAnyToInt(condition.leftSide!!) >= convertAnyToInt(
+                                            condition.rightSide!!
+                                        ))
+                                }
+                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
+                                    )
+                                }!!
+                                else -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                        MathematicalBlockType.GREATER_THAN -> {
+                            when {
+                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE) -> {
+                                    conditionIsTrue =
+                                        (convertAnyToDouble(condition.leftSide!!) > convertAnyToDouble(
+                                            condition.rightSide!!
+                                        ))
+                                }
+                                rightSideType == leftSideType && (rightSideType == VariableType.INT)->{
+                                    conditionIsTrue =
+                                        (convertAnyToInt(condition.leftSide!!) > convertAnyToInt(
+                                            condition.rightSide!!
+                                        ))
+                                }
+                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
+                                    )
+                                }!!
+                                else -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                        MathematicalBlockType.LOWER_OR_EQUAL_THAN -> {
+                            when {
+                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE) -> {
+                                    conditionIsTrue =
+                                        (convertAnyToDouble(condition.leftSide!!) <= convertAnyToDouble(
+                                            condition.rightSide!!
+                                        ))
+                                }
+                                rightSideType == leftSideType && (rightSideType == VariableType.INT)->{
+                                    conditionIsTrue =
+                                        (convertAnyToInt(condition.leftSide!!) <= convertAnyToInt(
+                                            condition.rightSide!!
+                                        ))
+                                }
+                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
+                                    )
+                                }!!
+                                else -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                        MathematicalBlockType.LOWER_THAN -> {
+                            when {
+                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE) -> {
+                                    conditionIsTrue =
+                                        (convertAnyToDouble(condition.rightSide!!) > convertAnyToDouble(
+                                            condition.leftSide!!
+                                        ))
+                                }
+                                rightSideType == leftSideType && (rightSideType == VariableType.INT)->{
+                                    conditionIsTrue =
+                                        (convertAnyToInt(condition.rightSide!!) > convertAnyToInt(
+                                            condition.leftSide!!
+                                        ))
+                                }
+                                rightSideType == leftSideType -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1, ExceptionType.WRONG_OPERAND_USE_CASE
+                                    )
+                                }!!
+                                else -> throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                        MathematicalBlockType.NON_EQUAL -> {
+                            if (rightSideType == leftSideType) {
+                                when(rightSideType){
+                                    VariableType.INT->conditionIsTrue =
+                                        (convertAnyToInt(condition.leftSide!!) != convertAnyToInt(
+                                            condition.rightSide!!
+                                        ))
+                                    VariableType.DOUBLE->conditionIsTrue =
+                                        (convertAnyToDouble(condition.leftSide!!) != convertAnyToDouble(
+                                            condition.rightSide!!
+                                        ))
+                                    VariableType.BOOLEAN->conditionIsTrue =
+                                        (convertAnyToBoolean(condition.leftSide!!) != convertAnyToBoolean(
+                                            condition.rightSide!!
+                                        ))
+                                    VariableType.STRING->conditionIsTrue =
+                                        (convertAnyToString(condition.leftSide!!) != convertAnyToString(
+                                            condition.rightSide!!
+                                        ))
+                                }
+                            } else {
+                                throw condition.id?.let { it1 ->
+                                    InterpreterException(
+                                        it1,
+                                        ExceptionType.TYPE_MISMATCH
+                                    )
+                                }!!
+                            }
+                        }
+                    }
+                }
+            } else {
+                throw condition.id?.let {
+                    InterpreterException(
+                        it,
+                        ExceptionType.LACK_OF_ARGUMENTS
+                    )
+                }!!
+            }
+        }
         if (conditionIsTrue) {
             if (condition.nestedBlocks != null) {
                 for (nestedBlock in condition.nestedBlocks!!) {
