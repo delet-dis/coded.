@@ -966,7 +966,9 @@ constructor(
                 }
             }
             is String -> {
-
+                if (value.toBooleanStrictOrNull() is Boolean) {
+                    return value.toBooleanStrict()
+                }
                 if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
                     val foundedStoredVariable =
                         heapUseCases.getVariableUseCase.getVariable(value)
@@ -990,11 +992,8 @@ constructor(
                         }
                     }
                 } else {
-                    if (value.toBooleanStrictOrNull() is Boolean) {
-                        return value.toBooleanStrict()
-                    } else {
                         throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-                    }
+
                 }
             }
             is IOBlockBase -> {
