@@ -72,13 +72,16 @@ class ItemsPickingBottomSheetController(
         redrawCurrentViewPagerScreen()
     }
 
-    override fun initViewPager() {
-        binding.itemsPickingViewPager.adapter =
-            ItemsPickingViewPagerAdapter(
-                parentActivity as FragmentActivity,
-                viewModel.getItemsScreens()
-            )
-    }
+    override fun initViewPager() =
+        with(binding.itemsPickingViewPager) {
+            adapter =
+                ItemsPickingViewPagerAdapter(
+                    parentActivity as FragmentActivity,
+                    viewModel.getItemsScreens()
+                )
+
+            offscreenPageLimit = viewModel.getItemsScreens().size
+        }
 
     override fun initDismissButtonOnClickListener() =
         binding.itemsPickingxMarkButton.setOnClickListener {

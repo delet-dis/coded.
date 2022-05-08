@@ -51,6 +51,8 @@
             android:id="@+id/topBarWrapper"
             style="@style/translucentBarWrapper"
             android:layout_height="@dimen/openedTopBarHeight"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -107,6 +109,8 @@
             style="@style/translucentBarWrapper"
             android:layout_width="0dp"
             android:layout_height="@dimen/openedTopBarHeight"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -131,6 +135,16 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.Group
+                        android:id="@+id/bottomButtonsGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:constraint_referenced_ids="stopButton,consoleButton,startButton,menuButton"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/leftGuideline"
@@ -171,6 +185,20 @@
                         app:srcCompat="@drawable/ic_console" />
 
                     <ImageButton
+                        android:id="@+id/trashButton"
+                        style="@style/bottomBarButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/menu"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
+                        app:layout_constraintStart_toStartOf="@+id/leftGuideline"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_trash" />
+
+                    <ImageButton
                         android:id="@+id/startButton"
                         style="@style/bottomBarButton"
                         android:layout_width="wrap_content"
@@ -189,6 +217,7 @@
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:contentDescription="@string/start"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/rightGuideline"
                         app:layout_constraintTop_toTopOf="parent"

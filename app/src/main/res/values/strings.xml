@@ -30,6 +30,7 @@
     <string name="componentType">Component type</string>
     <string name="variables">Variables</string>
     <string name="expressions">Expressions</string>
+    <string name="conditions">Conditions</string>
     <string name="logic">Logic</string>
     <string name="loops">Loops</string>
     <string name="actions">Actions</string>
@@ -75,4 +76,18 @@
     <string name="divide">/</string>
     <string name="divideWithRemainder">%</string>
     <string name="number">number</string>
+
+    <string name="greaterThan">&gt;</string>
+    <string name="lowerThan">&lt;</string>
+    <string name="equal">==</string>
+    <string name="nonEqual">!=</string>
+    <string name="greaterOrEqualThan">&gt;=</string>
+    <string name="lowerOrEqualThan">&lt;=</string>
+
+    <string name="and">&amp;&amp;</string>
+    <string name="or">||</string>
+    <string name="not">!</string>
+    <string name="mathematicalOperators">Mathematical operators</string>
+    <string name="logicalOperators">Logical operators</string>
+    <string name="notText">"!   "</string>
 </resources>

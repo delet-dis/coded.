@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.hits.coded.R
+import com.hits.coded.data.interfaces.ui.UIElementHandlesCodeBlocksDeletingInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
@@ -16,7 +17,7 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
-import com.hits.coded.presentation.views.codeBlocks.actions.UIActionStartBlock
+import com.hits.coded.presentation.views.codeBlocks.start.UIActionStartBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,6 +32,8 @@ class CodeField @JvmOverloads constructor(
     private val startBlock = UIActionStartBlock(context)
 
     private var previousErrorBlock: UICodeBlockSupportsErrorDisplaying? = null
+
+    var parentView: UIElementHandlesCodeBlocksDeletingInterface? = null
 
     init {
         inflate(
@@ -65,10 +68,15 @@ class CodeField @JvmOverloads constructor(
             val itemParent = draggableItem.parent as? ViewGroup
 
             when (dragEvent.action) {
-                DragEvent.ACTION_DRAG_STARTED,
                 DragEvent.ACTION_DRAG_ENTERED,
                 DragEvent.ACTION_DRAG_LOCATION,
                 DragEvent.ACTION_DRAG_EXITED -> true
+
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    parentView?.startDeleting()
+
+                    true
+                }
 
                 DragEvent.ACTION_DROP -> {
                     handleDropEvent(itemParent, draggableItem, dragEvent)
@@ -81,6 +89,8 @@ class CodeField @JvmOverloads constructor(
                         draggableItem.animate().alpha(1f).duration =
                             UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
                     }
+
+                    parentView?.stopDeleting()
 
                     this.invalidate()
                     true
@@ -96,13 +106,10 @@ class CodeField @JvmOverloads constructor(
         dragEvent: DragEvent
     ) =
         with(binding) {
-            val draggableItemWithLastTouchInformation =
-                draggableItem as? UICodeBlockWithLastTouchInformation
-
             draggableItem.x = dragEvent.x - (draggableItem.width / 2)
             draggableItem.y = dragEvent.y - (draggableItem.height / 2)
 
-            draggableItemWithLastTouchInformation?.let {
+            (draggableItem as? UICodeBlockWithLastTouchInformation)?.let {
                 draggableItem.x = dragEvent.x - (it.touchX)
                 draggableItem.y = dragEvent.y - (it.touchY)
             }

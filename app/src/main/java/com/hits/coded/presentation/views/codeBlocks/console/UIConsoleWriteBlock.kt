@@ -1,6 +1,5 @@
 package com.hits.coded.presentation.views.codeBlocks.actions.console
 
-import android.animation.AnimatorSet
 import android.content.Context
 import android.util.AttributeSet
 import android.view.DragEvent
@@ -26,7 +25,7 @@ import com.hits.coded.databinding.ViewConsoleWriteBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UIActionConsoleWriteBlock @JvmOverloads constructor(
+class UIConsoleWriteBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -46,8 +45,6 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
 
     override var touchX: Int = 0
     override var touchY: Int = 0
-
-    override val animationSet = AnimatorSet()
 
     init {
         inflate(
@@ -119,7 +116,7 @@ class UIActionConsoleWriteBlock @JvmOverloads constructor(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        if (draggableItem != this@UIActionConsoleWriteBlock) {
+        if (draggableItem != this@UIConsoleWriteBlock) {
             scaleMinusAnimation(binding.firstCard)
 
             itemParent.removeView(draggableItem)
