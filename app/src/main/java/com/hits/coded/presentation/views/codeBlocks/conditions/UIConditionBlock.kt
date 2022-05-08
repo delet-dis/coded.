@@ -240,7 +240,10 @@ class UIConditionBlock @JvmOverloads constructor(
                     leftSide = it
                 }
 
-                nestedUIBlocks.removeAt(0)
+                if (nestedUIBlocks.size > 0) {
+                    nestedUIBlocks.removeAt(0)
+                }
+
                 nestedUIBlocks.add(0, draggableItem)
             }
 
@@ -254,7 +257,10 @@ class UIConditionBlock @JvmOverloads constructor(
                     rightSide = it
                 }
 
-                nestedUIBlocks.removeAt(1)
+                if (nestedUIBlocks.size > 1) {
+                    nestedUIBlocks.removeAt(1)
+                }
+
                 nestedUIBlocks.add(1, draggableItem)
             }
 
