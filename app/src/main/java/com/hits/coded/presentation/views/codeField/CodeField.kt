@@ -11,7 +11,7 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCodeBlocksDeletingInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.UIElementSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
@@ -26,7 +26,8 @@ class CodeField @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr),
-    UIElementHandlesDragAndDropInterface, UIElementHandlesCustomRemoveViewProcessInterface {
+    UIElementHandlesDragAndDropInterface, UIElementHandlesCustomRemoveViewProcessInterface,
+    UIElementSavesNestedBlocksInterface {
     private val binding: ViewCodeFieldBinding
 
     private val startBlock = UIActionStartBlock(context)
@@ -34,6 +35,11 @@ class CodeField @JvmOverloads constructor(
     private var previousErrorBlock: UICodeBlockSupportsErrorDisplaying? = null
 
     var parentView: UIElementHandlesCodeBlocksDeletingInterface? = null
+
+    private var savedXDropCoordinate = 0f
+    private var savedYDropCoordinate = 0f
+
+    override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
     init {
         inflate(
@@ -92,7 +98,11 @@ class CodeField @JvmOverloads constructor(
 
                     parentView?.stopDeleting()
 
-                    this.invalidate()
+                    if (nestedUIBlocks.contains(draggableItem)) {
+                        draggableItem.x = savedXDropCoordinate
+                        draggableItem.y = savedYDropCoordinate
+                    }
+
                     true
                 }
 
@@ -106,12 +116,12 @@ class CodeField @JvmOverloads constructor(
         dragEvent: DragEvent
     ) =
         with(binding) {
-            draggableItem.x = dragEvent.x - (draggableItem.width / 2)
-            draggableItem.y = dragEvent.y - (draggableItem.height / 2)
+            savedXDropCoordinate = dragEvent.x - (draggableItem.width / 2)
+            savedYDropCoordinate = dragEvent.y - (draggableItem.height / 2)
 
             (draggableItem as? UICodeBlockWithLastTouchInformation)?.let {
-                draggableItem.x = dragEvent.x - (it.touchX)
-                draggableItem.y = dragEvent.y - (it.touchY)
+                savedXDropCoordinate = dragEvent.x - it.touchX
+                savedYDropCoordinate = dragEvent.y - it.touchY
             }
 
             itemParent?.let {
@@ -119,6 +129,7 @@ class CodeField @JvmOverloads constructor(
                 it.removeView(draggableItem)
             }
 
+            nestedUIBlocks.add(draggableItem)
             addView(draggableItem)
         }
 
@@ -141,10 +152,10 @@ class CodeField @JvmOverloads constructor(
 
                 processingView.tag = VIEW_HIERARCHY_ID + currentId
 
-                (processingView as? UICodeBlockSavesNestedBlocksInterface)?.let {
+                (processingView as? UIElementSavesNestedBlocksInterface)?.let {
                     it.nestedUIBlocks.forEach { block ->
-                        currentId = block?.let { unwrappedBlock ->
-                            calculateElementsIds(
+                        block?.let { unwrappedBlock ->
+                            currentId = calculateElementsIds(
                                 unwrappedBlock,
                                 currentId
                             )
@@ -166,6 +177,12 @@ class CodeField @JvmOverloads constructor(
         foundedView?.displayError()
 
         previousErrorBlock = foundedView
+    }
+
+    override fun removeView(view: View?) {
+        super.removeView(view)
+
+        nestedUIBlocks.remove(view)
     }
 
     fun hideError() =

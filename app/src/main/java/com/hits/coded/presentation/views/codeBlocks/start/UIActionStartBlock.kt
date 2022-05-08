@@ -12,7 +12,7 @@ import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcess
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesReorderingInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.UIElementSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
@@ -33,7 +33,7 @@ class UIActionStartBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
     UICodeBlockWithLastTouchInformation,
     UICodeBlockElementHandlesDragAndDropInterface,
-    UICodeBlockSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
+    UIElementSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
     UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface{
     private val binding: ViewActionStartBinding
 

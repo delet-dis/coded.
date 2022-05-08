@@ -11,7 +11,7 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.UIElementSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
@@ -31,7 +31,7 @@ class UIExpressionBlock @JvmOverloads constructor(
     UICodeBlockWithDataInterface, UICodeBlockWithLastTouchInformation,
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
-    UIElementHandlesCustomRemoveViewProcessInterface, UICodeBlockSavesNestedBlocksInterface,
+    UIElementHandlesCustomRemoveViewProcessInterface, UIElementSavesNestedBlocksInterface,
     UINestedableCodeBlock, UICodeBlockSupportsErrorDisplaying {
     private val binding: ViewExpressionBlockBinding
 
@@ -248,7 +248,7 @@ class UIExpressionBlock @JvmOverloads constructor(
     }
 
     override fun customRemoveView(view: View) {
-        nestedUIBlocks.remove(view)
+        nestedUIBlocks[nestedUIBlocks.indexOf(view)] = null
 
         val removingViewBlock = (view as? UICodeBlockWithDataInterface)?.block
 
