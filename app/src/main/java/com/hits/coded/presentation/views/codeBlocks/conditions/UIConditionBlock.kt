@@ -1,13 +1,11 @@
 package com.hits.coded.presentation.views.codeBlocks.conditions
 
-import android.animation.AnimatorSet
 import android.content.Context
 import android.util.AttributeSet
 import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
@@ -62,7 +60,6 @@ class UIConditionBlock @JvmOverloads constructor(
 
     override var touchX: Int = 0
     override var touchY: Int = 0
-    override val animationSet: AnimatorSet = AnimatorSet()
 
     var mathematicalBlockType: MathematicalBlockType? = null
         set(value) {

@@ -106,13 +106,10 @@ class CodeField @JvmOverloads constructor(
         dragEvent: DragEvent
     ) =
         with(binding) {
-            val draggableItemWithLastTouchInformation =
-                draggableItem as? UICodeBlockWithLastTouchInformation
-
             draggableItem.x = dragEvent.x - (draggableItem.width / 2)
             draggableItem.y = dragEvent.y - (draggableItem.height / 2)
 
-            draggableItemWithLastTouchInformation?.let {
+            (draggableItem as? UICodeBlockWithLastTouchInformation)?.let {
                 draggableItem.x = dragEvent.x - (it.touchX)
                 draggableItem.y = dragEvent.y - (it.touchY)
             }

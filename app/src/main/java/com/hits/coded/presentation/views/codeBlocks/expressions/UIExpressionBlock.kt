@@ -1,6 +1,5 @@
 package com.hits.coded.presentation.views.codeBlocks.expressions
 
-import android.animation.AnimatorSet
 import android.content.Context
 import android.util.AttributeSet
 import android.view.DragEvent
@@ -58,7 +57,6 @@ class UIExpressionBlock @JvmOverloads constructor(
 
     override var touchX: Int = 0
     override var touchY: Int = 0
-    override val animationSet: AnimatorSet = AnimatorSet()
 
     var blockType: ExpressionBlockType? = null
         set(value) {

@@ -51,8 +51,6 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
     private var statusBarHeight by Delegates.notNull<Int>()
     private var navigationBarHeight by Delegates.notNull<Int>()
 
-    override var animationSet = AnimatorSet()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -366,7 +364,7 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
             })
         }
 
-        animationSet.apply {
+        AnimatorSet().apply {
             playTogether(animationsArray as Collection<Animator>?)
 
             start()
