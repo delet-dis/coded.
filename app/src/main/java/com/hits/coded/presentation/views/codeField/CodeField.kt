@@ -154,8 +154,8 @@ class CodeField @JvmOverloads constructor(
 
                 (processingView as? UIElementSavesNestedBlocksInterface)?.let {
                     it.nestedUIBlocks.forEach { block ->
-                        currentId = block?.let { unwrappedBlock ->
-                            calculateElementsIds(
+                        block?.let { unwrappedBlock ->
+                            currentId = calculateElementsIds(
                                 unwrappedBlock,
                                 currentId
                             )
