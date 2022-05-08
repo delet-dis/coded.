@@ -7,6 +7,7 @@ import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.bottomSheets.UIBottomSheetInterface
 import com.hits.coded.databinding.IncludeConsoleBottomSheetBinding
 import com.hits.coded.domain.extensions.dpToPx
+import com.hits.coded.domain.extensions.pxToDp
 
 class ConsoleBottomSheetController(private val binding: IncludeConsoleBottomSheetBinding) :
     UIBottomSheetInterface {
@@ -23,7 +24,8 @@ class ConsoleBottomSheetController(private val binding: IncludeConsoleBottomShee
 
     override fun show(navigationBarHeight: Int) {
         behaviour.isFitToContents = false
-        behaviour.expandedOffset = 50.dpToPx(binding.root.context)
+        behaviour.expandedOffset =
+            (navigationBarHeight.pxToDp(binding.root.context) + 50.dpToPx(binding.root.context)).toInt()
 
         behaviour.state = BottomSheetBehavior.STATE_EXPANDED
 
