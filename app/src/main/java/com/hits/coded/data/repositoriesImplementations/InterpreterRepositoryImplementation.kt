@@ -567,16 +567,19 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun interpretExpressionBlocks(expression: ExpressionBlockBase): Any {
-        expression.id?.let {
+    private suspend fun interpretExpressionBlocks(expressionBlock: ExpressionBlockBase): Any {
+        expressionBlock.id?.let {
             currentId = it
         }
-        val leftSide = expression.leftSide
-        val rightSide = expression.rightSide
-        val leftSideType: VariableType? = getTypeOfAny(leftSide)
-        val rightSideType: VariableType? = getTypeOfAny(rightSide)
+
+        val leftSide = expressionBlock.leftSide
+        val rightSide = expressionBlock.rightSide
+
+        val leftSideType = getTypeOfAny(leftSide)
+        val rightSideType = getTypeOfAny(rightSide)
+
         if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
-            when (expression.expressionBlockType) {
+            when (expressionBlock.expressionBlockType) {
                 ExpressionBlockType.PLUS -> {
                     return (convertAnyToDouble(
                         leftSide!!
@@ -602,7 +605,7 @@ constructor(
                 ExpressionBlockType.MINUS -> return (convertAnyToDouble(leftSide!!) - convertAnyToDouble(
                     rightSide!!
                 ))
-                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> throw expression.id?.let {
+                ExpressionBlockType.DIVIDE_WITH_REMAINDER -> throw expressionBlock.id?.let {
                     InterpreterException(
                         it, ExceptionType.WRONG_OPERAND_USE_CASE
                     )
@@ -610,7 +613,7 @@ constructor(
             }
         }
         if (leftSideType == VariableType.INT && VariableType.INT == rightSideType) {
-            when (expression.expressionBlockType) {
+            when (expressionBlock.expressionBlockType) {
                 ExpressionBlockType.PLUS -> return (convertAnyToInt(leftSide!!) + convertAnyToInt(
                     rightSide!!
                 ))
@@ -646,7 +649,7 @@ constructor(
                 ))
             }
         }
-        if (leftSideType == VariableType.STRING && VariableType.STRING == rightSideType && expression.expressionBlockType == ExpressionBlockType.PLUS) {
+        if (leftSideType == VariableType.STRING && VariableType.STRING == rightSideType && expressionBlock.expressionBlockType == ExpressionBlockType.PLUS) {
             return '"' + convertAnyToString(leftSide!!) + convertAnyToString(
                 rightSide!!
             ) + '"'
@@ -654,7 +657,12 @@ constructor(
         if (leftSideType == null || rightSideType == null) {
             throw InterpreterException(currentId, ExceptionType.LACK_OF_ARGUMENTS)
         } else {
-            throw  expression.id?.let { InterpreterException(it, ExceptionType.TYPE_MISMATCH) }!!
+            throw  expressionBlock.id?.let {
+                InterpreterException(
+                    it,
+                    ExceptionType.TYPE_MISMATCH
+                )
+            }!!
         }
     }
 
@@ -922,9 +930,10 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun getTypeOfAny(value: Any?): VariableType? {
+    private suspend fun getTypeOfAny(value: Any?): VariableType {
         when (value) {
             is Boolean -> return VariableType.BOOLEAN
+
             is String -> {
                 when {
                     value.toIntOrNull() is Int -> {
@@ -933,40 +942,43 @@ constructor(
                     value.toDoubleOrNull() is Double -> return VariableType.DOUBLE
                     value.toBooleanStrictOrNull() is Boolean -> return VariableType.BOOLEAN
                     else -> {
-                        if (!(value[0] == '"' && value[value.lastIndex] == '"')) {
+                        return if (isVariable(value)) {
                             val foundedStoredVariable =
                                 heapUseCases.getVariableUseCase.getVariable(value)
 
-                            if (foundedStoredVariable == null) {
+                            if (foundedStoredVariable?.type == null) {
                                 throw InterpreterException(
                                     currentId,
                                     ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                                 )
                             } else {
-                                return foundedStoredVariable.type
-
+                                foundedStoredVariable.type!!
                             }
-                        } else return VariableType.STRING
+                        } else {
+                            VariableType.STRING
+                        }
                     }
+                }
+            }
 
-                }
-            }
             is IOBlockBase -> {
-                if (ioBlocksValues[value.id] != null) {
-                    return getTypeOfAny(ioBlocksValues[value.id]!!)
+                return if (ioBlocksValues[value.id] != null) {
+                    getTypeOfAny(ioBlocksValues[value.id]!!)
                 } else {
-                    return interpretIOBlocks(value)?.let { getTypeOfAny(it) }!!
+                    interpretIOBlocks(value)?.let { getTypeOfAny(it) }!!
                 }
             }
+
             is Double -> return VariableType.DOUBLE
+
             is Int -> return VariableType.INT
+
             is ExpressionBlockBase -> return getTypeOfAny(interpretExpressionBlocks(value))
-            is VariableBlock -> return value.variableParams?.type
-            is ConditionBlock -> {
-                return getTypeOfAny(interpretConditionBlocks(value))
-            }
+
+            is ConditionBlock -> return getTypeOfAny(interpretConditionBlocks(value))
+
+            else -> throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
         }
-        throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
     }
 
     @Throws(InterpreterException::class)
