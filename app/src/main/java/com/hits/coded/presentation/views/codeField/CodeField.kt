@@ -17,6 +17,7 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.databinding.ViewCodeFieldBinding
+import com.hits.coded.presentation.views.codeBlocks.ifElse.UIIfBlock
 import com.hits.coded.presentation.views.codeBlocks.start.UIActionStartBlock
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -53,6 +54,8 @@ class CodeField @JvmOverloads constructor(
         initDragAndDropListener()
 
         addBlock(startBlock)
+
+        addView(UIIfBlock(context))
     }
 
     private fun addBlock(viewToAdd: View) {

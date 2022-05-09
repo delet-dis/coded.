@@ -154,6 +154,8 @@ class UIIfBlock @JvmOverloads constructor(
                                 _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
                             }
 
+                            (this@UIIfBlock.parent as View).invalidate()
+
                             return@setOnDragListener true
                         }
 
