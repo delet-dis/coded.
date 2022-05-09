@@ -163,8 +163,7 @@ constructor(
         ifBlock.id?.let {
             currentId = it
         }
-        if (ifBlock.conditionBlock != null) {
-            if (interpretConditionBlocks(ifBlock.conditionBlock!!)) {
+            if (convertAnyToBoolean(ifBlock.ifBlockType)) {
                 ifBlock.nestedBlocks?.let {
                     it.forEach { blockBase ->
                         interpretBlock(blockBase)
@@ -177,9 +176,6 @@ constructor(
                     }
                 }
             }
-        } else {
-            throw InterpreterException(currentId, ExceptionType.LACK_OF_ARGUMENTS)
-        }
     }
 
     @Throws(InterpreterException::class)
