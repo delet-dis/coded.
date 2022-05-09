@@ -90,4 +90,6 @@
     <string name="mathematicalOperators">Mathematical operators</string>
     <string name="logicalOperators">Logical operators</string>
     <string name="notText">"!   "</string>
+
+    <string name="ifString">if</string>
 </resources>
