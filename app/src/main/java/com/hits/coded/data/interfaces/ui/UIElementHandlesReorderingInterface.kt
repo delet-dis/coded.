@@ -133,10 +133,11 @@ interface UIElementHandlesReorderingInterface : UIElementSavesNestedBlocksInterf
         listLinearLayout: LinearLayout,
         itemParent: ViewGroup?,
         draggableItem: View,
-        blockAddClosure: (BlockBase) -> Unit
+        blockAddClosure: (BlockBase) -> Unit,
+        animationClosure: () -> Unit,
     ) {
         if (draggableItem != block) {
-            scaleMinusAnimation(listLinearLayout.parent as View)
+            animationClosure()
 
             if (dropPosition != null) {
                 listLinearLayout.getChildAt(dropPosition!!)?.setPadding(0, 0, 0, 0)

@@ -86,6 +86,8 @@
         android:id="@+id/nestedBlocksLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="130dp"
+        android:minHeight="45dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/secondHorizontalGuideline"
         app:layout_constraintStart_toStartOf="@+id/firstVerticalGuideline"

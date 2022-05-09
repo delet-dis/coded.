@@ -108,7 +108,7 @@ class UIIfBlock @JvmOverloads constructor(
             false
         }
 
-        binding.parentConstraint.setOnDragListener { handlerView, dragEvent ->
+        binding.nestedBlocksLayout.setOnDragListener { handlerView, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             val itemParent = draggableItem.parent as? ViewGroup
@@ -131,13 +131,13 @@ class UIIfBlock @JvmOverloads constructor(
                         }
 
                         DragEvent.ACTION_DRAG_ENTERED -> {
-                            scalePlusAnimation(parentConstraint)
+                            alphaMinusAnimation(binding.backgroundImage)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DRAG_EXITED -> {
-                            scaleMinusAnimation(parentConstraint)
+                            alphaPlusAnimation(binding.backgroundImage)
 
                             return@setOnDragListener true
                         }
@@ -147,14 +147,16 @@ class UIIfBlock @JvmOverloads constructor(
                                 this@UIIfBlock,
                                 binding.nestedBlocksLayout,
                                 itemParent,
-                                draggableItem
-                            ) {
-                                nestedBlocksAsBlockBase.add(it)
+                                draggableItem,
+                                {
+                                    nestedBlocksAsBlockBase.add(it)
 
-                                _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
-                            }
-
-                            (this@UIIfBlock.parent as View).invalidate()
+                                    _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                                },
+                                {
+                                    alphaPlusAnimation(binding.backgroundImage)
+                                }
+                            )
 
                             return@setOnDragListener true
                         }
