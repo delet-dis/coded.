@@ -29,6 +29,7 @@ import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPick
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.VariableTypeChangerBottomSheetController
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.viewModel.VariableTypeChangerViewModel
 import com.hits.coded.presentation.activities.editorActivity.viewModel.EditorActivityViewModel
+import com.hits.coded.presentation.views.codeBlocks.start.UIActionStartBlock
 import com.hits.coded.presentation.views.codeField.CodeField
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
@@ -335,9 +336,15 @@ class EditorActivity : AppCompatActivity(), UIEditorActivityShowBottomSheetCallb
                 }
 
                 DragEvent.ACTION_DROP -> {
-                    itemParent?.let {
-                        processViewWithCustomRemoveProcessRemoval(it, draggableItem)
-                        it.removeView(draggableItem)
+                    val draggableItemAsStartBlock = draggableItem as? UIActionStartBlock
+
+                    if (draggableItemAsStartBlock is UIActionStartBlock) {
+                        codeField.removeStartBlock()
+                    } else {
+                        itemParent?.let {
+                            processViewWithCustomRemoveProcessRemoval(it, draggableItem)
+                            it.removeView(draggableItem)
+                        }
                     }
 
                     return@setOnDragListener true
