@@ -30,7 +30,7 @@ class CodeField @JvmOverloads constructor(
     UIElementSavesNestedBlocksInterface {
     private val binding: ViewCodeFieldBinding
 
-    private val startBlock = UIActionStartBlock(context)
+    private var startBlock = UIActionStartBlock(context)
 
     private var previousErrorBlock: UICodeBlockSupportsErrorDisplaying? = null
 
@@ -49,6 +49,7 @@ class CodeField @JvmOverloads constructor(
         ).also { view ->
             binding = ViewCodeFieldBinding.bind(view)
         }
+
         initDragAndDropListener()
 
         addBlock(startBlock)
@@ -91,16 +92,16 @@ class CodeField @JvmOverloads constructor(
                 }
 
                 DragEvent.ACTION_DRAG_ENDED -> {
-                    draggableItem.post {
-                        draggableItem.animate().alpha(1f).duration =
-                            UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
-                    }
-
                     parentView?.stopDeleting()
 
                     if (nestedUIBlocks.contains(draggableItem)) {
                         draggableItem.x = savedXDropCoordinate
                         draggableItem.y = savedYDropCoordinate
+                    }
+
+                    draggableItem.post {
+                        draggableItem.animate().alpha(1f).duration =
+                            UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
                     }
 
                     true
@@ -179,14 +180,22 @@ class CodeField @JvmOverloads constructor(
         previousErrorBlock = foundedView
     }
 
+    fun hideError() =
+        previousErrorBlock?.hideError()
+
+    fun removeStartBlock() {
+        this.removeView(startBlock)
+
+        startBlock = UIActionStartBlock(context)
+
+        this.addBlock(startBlock)
+    }
+
     override fun removeView(view: View?) {
         super.removeView(view)
 
         nestedUIBlocks.remove(view)
     }
-
-    fun hideError() =
-        previousErrorBlock?.hideError()
 
     private companion object {
         const val VIEW_HIERARCHY_ID = "VIEW_HIERARCHY_ID_"
