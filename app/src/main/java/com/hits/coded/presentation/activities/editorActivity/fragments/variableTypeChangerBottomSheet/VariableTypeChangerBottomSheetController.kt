@@ -14,6 +14,7 @@ import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.data.models.typeChangerBottomSheet.enums.BottomSheetTypeChangersScreens
 import com.hits.coded.databinding.IncludeVariableTypeChangerBottomSheetBinding
 import com.hits.coded.domain.extensions.dpToPx
+import com.hits.coded.domain.extensions.pxToDp
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.fragmentStateAdapters.VariableTypeChangerViewPagerAdapter
 import com.hits.coded.presentation.activities.editorActivity.fragments.variableTypeChangerBottomSheet.viewModel.VariableTypeChangerViewModel
 
@@ -62,7 +63,7 @@ class VariableTypeChangerBottomSheetController(
 
     override fun show(navigationBarHeight: Int) {
         behaviour.isFitToContents = false
-        behaviour.expandedOffset = 50.dpToPx(binding.root.context)
+        behaviour.expandedOffset = (navigationBarHeight.pxToDp(binding.root.context) + 50.dpToPx(binding.root.context)).toInt()
 
         behaviour.state = BottomSheetBehavior.STATE_EXPANDED
 

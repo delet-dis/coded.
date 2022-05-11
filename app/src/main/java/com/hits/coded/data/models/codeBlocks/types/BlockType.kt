@@ -7,5 +7,6 @@ enum class BlockType {
     CONDITION,
     IO,
     START,
-    ARRAY
+    ARRAY,
+    IF
 }

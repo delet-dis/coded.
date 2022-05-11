@@ -17,6 +17,7 @@ import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomS
 import com.hits.coded.data.models.itemsPickingBottomSheet.enums.BottomSheetItemsScreens
 import com.hits.coded.databinding.IncludeItemsPickingBottomSheetBinding
 import com.hits.coded.domain.extensions.dpToPx
+import com.hits.coded.domain.extensions.pxToDp
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.fragmentStateAdapters.ItemsPickingViewPagerAdapter
 import com.hits.coded.presentation.activities.editorActivity.fragments.itemsPickingBottomSheet.viewModel.ItemsPickingBottomSheetViewModel
 
@@ -54,7 +55,8 @@ class ItemsPickingBottomSheetController(
 
     override fun show(navigationBarHeight: Int) {
         behaviour.isFitToContents = false
-        behaviour.expandedOffset = 50.dpToPx(binding.root.context)
+        behaviour.expandedOffset =
+            (navigationBarHeight.pxToDp(binding.root.context) + 50.dpToPx(binding.root.context)).toInt()
 
         behaviour.state = BottomSheetBehavior.STATE_EXPANDED
 
@@ -72,13 +74,16 @@ class ItemsPickingBottomSheetController(
         redrawCurrentViewPagerScreen()
     }
 
-    override fun initViewPager() {
-        binding.itemsPickingViewPager.adapter =
-            ItemsPickingViewPagerAdapter(
-                parentActivity as FragmentActivity,
-                viewModel.getItemsScreens()
-            )
-    }
+    override fun initViewPager() =
+        with(binding.itemsPickingViewPager) {
+            adapter =
+                ItemsPickingViewPagerAdapter(
+                    parentActivity as FragmentActivity,
+                    viewModel.getItemsScreens()
+                )
+
+            offscreenPageLimit = viewModel.getItemsScreens().size
+        }
 
     override fun initDismissButtonOnClickListener() =
         binding.itemsPickingxMarkButton.setOnClickListener {

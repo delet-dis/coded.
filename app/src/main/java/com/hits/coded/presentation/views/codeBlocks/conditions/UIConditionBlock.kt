@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.views.codeBlocks.expressions
+package com.hits.coded.presentation.views.codeBlocks.conditions
 
 import android.content.Context
 import android.util.AttributeSet
@@ -10,8 +10,8 @@ import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.UIElementSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
@@ -19,11 +19,14 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInfo
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.ExpressionBlock
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
-import com.hits.coded.databinding.ViewExpressionBlockBinding
+import com.hits.coded.data.models.codeBlocks.dataClasses.condition.ConditionBlock
+import com.hits.coded.data.models.codeBlocks.dataClasses.condition.subBlocks.LogicalBlock
+import com.hits.coded.data.models.codeBlocks.dataClasses.condition.subBlocks.MathematicalBlock
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalBlockType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalBlockType
+import com.hits.coded.databinding.ViewConditionBlockBinding
 
-class UIExpressionBlock @JvmOverloads constructor(
+class UIConditionBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -33,7 +36,7 @@ class UIExpressionBlock @JvmOverloads constructor(
     UICodeBlockWithCustomRemoveViewProcessInterface,
     UIElementHandlesCustomRemoveViewProcessInterface, UIElementSavesNestedBlocksInterface,
     UINestedableCodeBlock, UICodeBlockSupportsErrorDisplaying {
-    private val binding: ViewExpressionBlockBinding
+    private val binding: ViewConditionBlockBinding
 
     override val nestedUIBlocks: ArrayList<View?> = arrayListOf(null, null)
 
@@ -51,29 +54,38 @@ class UIExpressionBlock @JvmOverloads constructor(
             _block.rightSide = value
         }
 
-    private var _block = ExpressionBlock()
+    private var _block = ConditionBlock()
     override val block: BlockBase
         get() = _block
 
     override var touchX: Int = 0
     override var touchY: Int = 0
 
-    var blockType: ExpressionBlockType? = null
+    var mathematicalBlockType: MathematicalBlockType? = null
         set(value) {
             field = value
 
             value?.let {
-                changeBlockType(it)
+                changeMathematicalBlockType(MathematicalBlock(value))
+            }
+        }
+
+    var logicalBlockType: LogicalBlockType? = null
+        set(value) {
+            field = value
+
+            value?.let {
+                changeLogicalBlockType(LogicalBlock(value))
             }
         }
 
     init {
         inflate(
             context,
-            R.layout.view_expression_block,
+            R.layout.view_condition_block,
             this
         ).also { view ->
-            binding = ViewExpressionBlockBinding.bind(view)
+            binding = ViewConditionBlockBinding.bind(view)
         }
 
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
@@ -83,10 +95,29 @@ class UIExpressionBlock @JvmOverloads constructor(
         initCardsTextsListeners()
     }
 
-    private fun changeBlockType(blockType: ExpressionBlockType) {
-        _block.expressionBlockType = blockType
+    private fun changeMathematicalBlockType(mathematicalBlock: MathematicalBlock) {
+        _block.logicalBlock = null
 
-        binding.centerText.setText(blockType.resourceId)
+        _block.mathematicalBlock = mathematicalBlock
+
+        binding.centerText.setText(mathematicalBlock.mathematicalBlockType.resourceId)
+    }
+
+    private fun changeLogicalBlockType(logicalBlock: LogicalBlock) {
+        _block.mathematicalBlock = null
+
+        _block.logicalBlock = logicalBlock
+
+        binding.centerText.setText(logicalBlock.logicalBlockType.resourceId)
+
+        if (logicalBlock.logicalBlockType == LogicalBlockType.NOT) {
+            binding.rightCard.layoutParams.width = 0
+
+            binding.rightCard.visibility = INVISIBLE
+            binding.centerText.visibility = GONE
+
+            binding.leftText.visibility = VISIBLE
+        }
     }
 
     private fun initCardsTextsListeners() {
@@ -190,7 +221,7 @@ class UIExpressionBlock @JvmOverloads constructor(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        if (draggableItem != this@UIExpressionBlock) {
+        if (draggableItem != this@UIConditionBlock) {
             scaleMinusAnimation(parentCard)
 
             itemParent.removeView(draggableItem)
@@ -276,12 +307,12 @@ class UIExpressionBlock @JvmOverloads constructor(
     }
 
     override fun hideError() =
-        binding.backgroundImage.setImageResource(R.drawable.expression_block)
+        binding.backgroundImage.setImageResource(R.drawable.condition_block)
 
     override fun displayError() =
         binding.backgroundImage.setImageResource(R.drawable.error_small_block)
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "EXPRESSION_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "CONDITION_BLOCK_"
     }
 }

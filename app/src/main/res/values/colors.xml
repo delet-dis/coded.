@@ -22,4 +22,9 @@
     <color name="lightBluePurple">#9697FB</color>
 
     <color name="darkGreen">#389438</color>
+
+    <color name="purple">#9966FF</color>
+    <color name="darkPurple">#774DCB</color>
+
+    <color name="pumpkin">#CF8B17</color>
 </resources>

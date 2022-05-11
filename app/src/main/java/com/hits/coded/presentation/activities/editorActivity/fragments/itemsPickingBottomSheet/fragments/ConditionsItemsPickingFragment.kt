@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
-import com.hits.coded.databinding.FragmentActionsItemsPickingBinding
-import com.hits.coded.presentation.views.codeBlocks.actions.console.UIConsoleReadBlock
-import com.hits.coded.presentation.views.codeBlocks.actions.console.UIConsoleWriteBlock
+import com.hits.coded.databinding.FragmentConditionsItemsPickingBinding
+import com.hits.coded.presentation.views.codeBlocks.ifElse.UIIfBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ActionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterface {
-    private lateinit var binding: FragmentActionsItemsPickingBinding
+class ConditionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterface {
+    private lateinit var binding: FragmentConditionsItemsPickingBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,7 +20,7 @@ class ActionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterf
         savedInstanceState: Bundle?
     ): View? {
         return if (savedInstanceState == null) {
-            binding = FragmentActionsItemsPickingBinding.inflate(layoutInflater)
+            binding = FragmentConditionsItemsPickingBinding.inflate(layoutInflater)
 
             binding.root
         } else {
@@ -38,10 +37,10 @@ class ActionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterf
     }
 
     override fun redrawElements() {
-        binding.actionsLinearLayout.apply {
+        with(binding.conditionsOperatorsLinearLayout) {
             removeAllViews()
-            addView(UIConsoleWriteBlock(requireContext()))
-            addView(UIConsoleReadBlock(requireContext()))
+
+            addView(UIIfBlock(requireContext()))
         }
     }
 }

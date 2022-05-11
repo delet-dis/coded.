@@ -7,17 +7,19 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.children
 import androidx.core.view.contains
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
+import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.domain.extensions.getTouchPositionFromDragEvent
 
-interface UIElementHandlesReorderingInterface : UICodeBlockSavesNestedBlocksInterface,
-    UIElementHandlesCustomRemoveViewProcessInterface {
-    var layoutListView: LinearLayout?
-
+interface UIElementHandlesReorderingInterface : UIElementSavesNestedBlocksInterface,
+    UIElementHandlesCustomRemoveViewProcessInterface,
+    UICodeBlockElementHandlesDragAndDropInterface {
     var dropPosition: Int?
 
     fun handleDragLocationEvent(
+        listLinearLayout: LinearLayout,
         itemParent: ViewGroup?,
         handlerView: View,
         dragEvent: DragEvent,
@@ -34,16 +36,16 @@ interface UIElementHandlesReorderingInterface : UICodeBlockSavesNestedBlocksInte
         }
 
         dropPosition?.let {
-            layoutListView?.getChildAt(it)
+            listLinearLayout.getChildAt(it)
                 ?.setPadding(0, 0, 0, 0)
         }
 
         dropPosition = checkForDraggableElementIntersectionWithLinearLayoutElements(
-            handlerView, dragEvent
+            listLinearLayout, handlerView, dragEvent
         )
 
         dropPosition?.let {
-            val intersectionView = layoutListView?.getChildAt(it)
+            val intersectionView = listLinearLayout.getChildAt(it)
 
             if (draggableItem != intersectionView) {
                 intersectionView?.setPadding(0, draggableItem.height, 0, 0)
@@ -52,6 +54,7 @@ interface UIElementHandlesReorderingInterface : UICodeBlockSavesNestedBlocksInte
     }
 
     fun checkForDraggableElementIntersectionWithLinearLayoutElements(
+        listLinearLayout: LinearLayout,
         viewToCheck: View,
         eventToCheck: DragEvent
     ): Int? {
@@ -64,7 +67,7 @@ interface UIElementHandlesReorderingInterface : UICodeBlockSavesNestedBlocksInte
             (touchPosition.y + 1)
         )
 
-        layoutListView?.children?.forEachIndexed { position, item ->
+        listLinearLayout.children.forEachIndexed { position, item ->
             if (viewToCheck != item) {
                 val elementRect = Rect()
                 item.getGlobalVisibleRect(elementRect)
@@ -78,6 +81,7 @@ interface UIElementHandlesReorderingInterface : UICodeBlockSavesNestedBlocksInte
     }
 
     fun handleDragEndedEvent(
+        listLinearLayout: LinearLayout,
         itemParent: ViewGroup?,
         draggableItem: View
     ) {
@@ -86,16 +90,16 @@ interface UIElementHandlesReorderingInterface : UICodeBlockSavesNestedBlocksInte
                 UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
         }
 
-        with(layoutListView) {
+        with(listLinearLayout) {
             if (itemParent == this) {
                 draggableItem.x = 0f
 
                 if (dropPosition != null) {
                     val childRect = Rect()
-                    this?.getChildAt(dropPosition!!)
+                    this.getChildAt(dropPosition!!)
                         ?.getDrawingRect(childRect)
 
-                    this?.offsetDescendantRectToMyCoords(
+                    this.offsetDescendantRectToMyCoords(
                         getChildAt(
                             dropPosition!!
                         ), childRect
@@ -104,14 +108,14 @@ interface UIElementHandlesReorderingInterface : UICodeBlockSavesNestedBlocksInte
                     draggableItem.y = childRect.top.toFloat()
                 } else {
 
-                    if (this?.childCount?.minus(1) == 0) {
+                    if (this.childCount.minus(1) == 0) {
                         draggableItem.y = 0f
                     } else {
                         val childRect = Rect()
-                        this?.getChildAt(childCount - 1)
+                        this.getChildAt(childCount - 1)
                             ?.getDrawingRect(childRect)
 
-                        this?.offsetDescendantRectToMyCoords(
+                        this.offsetDescendantRectToMyCoords(
                             getChildAt(
                                 childCount - 1
                             ), childRect
@@ -121,6 +125,55 @@ interface UIElementHandlesReorderingInterface : UICodeBlockSavesNestedBlocksInte
                     }
                 }
             }
+        }
+    }
+
+    fun handleDropEvent(
+        block: View,
+        listLinearLayout: LinearLayout,
+        itemParent: ViewGroup?,
+        draggableItem: View,
+        blockAddClosure: (BlockBase) -> Unit,
+        animationClosure: () -> Unit,
+    ) {
+        if (draggableItem != block) {
+            animationClosure()
+
+            if (dropPosition != null) {
+                listLinearLayout.getChildAt(dropPosition!!)?.setPadding(0, 0, 0, 0)
+
+                if (draggableItem != listLinearLayout.getChildAt(dropPosition!!)) {
+                    itemParent?.let {
+                        processViewWithCustomRemoveProcessRemoval(it, draggableItem)
+                    }
+                    itemParent?.removeView(draggableItem)
+
+                    nestedUIBlocks.add(dropPosition!!, draggableItem)
+                    listLinearLayout.addView(draggableItem, dropPosition!!)
+
+                    (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                        blockAddClosure(it)
+                    }
+                }
+            } else {
+                itemParent?.let { processViewWithCustomRemoveProcessRemoval(it, draggableItem) }
+                itemParent?.removeView(draggableItem)
+
+                nestedUIBlocks.add(draggableItem)
+                listLinearLayout.addView(draggableItem)
+
+                (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                    blockAddClosure(it)
+                }
+            }
+        }
+    }
+
+    fun clearAllNestedViewPaddings(
+        listLinearLayout: LinearLayout
+    ) {
+        for (i in 0..listLinearLayout.childCount) {
+            listLinearLayout.getChildAt(i)?.setPadding(0, 0, 0, 0)
         }
     }
 }

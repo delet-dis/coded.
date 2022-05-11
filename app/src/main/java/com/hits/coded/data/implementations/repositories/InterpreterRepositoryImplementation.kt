@@ -1,28 +1,30 @@
-package com.hits.coded.data.repositoriesImplementations
+package com.hits.coded.data.implementations.repositories
 
-import android.util.Log
 import com.hits.coded.data.models.arrays.bases.ArrayBase
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.ArrayBlockBase
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.ExpressionBlockBase
+import com.hits.coded.data.models.codeBlocks.bases.subBlocks.IfBlockBase
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.LoopBlockBase
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.VariableBlockBase
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.condition.ConditionBlockBase
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.io.IOBlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.ArrayBlock
-import com.hits.coded.data.models.codeBlocks.dataClasses.ConditionBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.ExpressionBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
+import com.hits.coded.data.models.codeBlocks.dataClasses.IfBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.LoopBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
+import com.hits.coded.data.models.codeBlocks.dataClasses.condition.ConditionBlock
 import com.hits.coded.data.models.codeBlocks.types.BlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.ArrayBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.IfBlockType
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalOperatorType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalOperatorType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalBlockType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalBlockType
 import com.hits.coded.data.models.console.useCases.ConsoleUseCases
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
@@ -39,184 +41,111 @@ constructor(
     private val consoleUseCases: ConsoleUseCases,
     private val heapUseCases: HeapUseCases
 ) : InterpreterRepository() {
+
     override var currentId = 0
         private set
+    private var ioBlocksValues: HashMap<Int, Any> = HashMap()
 
     @Throws(InterpreterException::class)
-    override suspend fun interpretStartBlock(start: StartBlock) {
-        start.nestedBlocks?.forEach { nestedBlock ->
-            when (nestedBlock.type) {
-                BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlockBase)
-                BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlockBase)
-                BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlockBase)
-                BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlockBase)
-                BlockType.START -> throw InterpreterException(ExceptionType.WRONG_START_POSITION)
-                BlockType.IO -> interpretIOBlocks(nestedBlock as IOBlock)
-                BlockType.ARRAY -> interpretArrayBlock(nestedBlock as ArrayBlockBase)
-            }
+    override suspend fun interpretStartBlock(startBlock: StartBlock) {
+        ioBlocksValues.clear()
+
+        startBlock.nestedBlocks?.forEach { nestedBlock ->
+            interpretBlock(nestedBlock)
         }
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun interpretConditionBlocks(condition: ConditionBlockBase): Boolean {
-        condition.id?.let {
+    private suspend fun interpretConditionBlocks(conditionBlock: ConditionBlockBase): Boolean {
+        conditionBlock.id?.let {
             currentId = it
         }
-        var conditionIsTrue = false
-        val leftSideType = getTypeOfAny(condition.leftSide)
-        val rightSideType = getTypeOfAny(condition.rightSide)
-        if (condition.logicalOperator != null) {
-            when (condition.logicalOperator!!.logicalOperatorType) {
 
-                LogicalOperatorType.AND -> {
+        var conditionIsTrue = false
+
+        val leftSideType = getTypeOfAny(conditionBlock.leftSide)
+
+        var rightSideType: VariableType? = null
+
+        if (conditionBlock.logicalBlock?.logicalBlockType != LogicalBlockType.NOT) {
+            rightSideType = getTypeOfAny(conditionBlock.rightSide)
+        }
+
+        conditionBlock.logicalBlock?.let {
+            when (it.logicalBlockType) {
+                LogicalBlockType.AND,
+                LogicalBlockType.OR -> {
                     when {
-                        condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN -> {
-                            conditionIsTrue =
-                                (convertAnyToBoolean(condition.leftSide) && convertAnyToBoolean(
-                                    condition.rightSide!!
-                                ))
+                        leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN -> {
+                            val leftSide = convertAnyToBoolean(conditionBlock.leftSide!!)
+
+                            val rightSide = convertAnyToBoolean(conditionBlock.rightSide!!)
+
+                            if (it.logicalBlockType == LogicalBlockType.AND) {
+                                conditionIsTrue = leftSide && rightSide
+                            }
+
+                            if (it.logicalBlockType == LogicalBlockType.OR) {
+                                conditionIsTrue = leftSide || rightSide
+                            }
                         }
-                        condition.rightSide != null -> throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+
+                        conditionBlock.rightSide != null && conditionBlock.leftSide != null ->
+                            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+
                         else -> throw InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
                     }
-
                 }
-                LogicalOperatorType.NOT -> {
-                    if (leftSideType == VariableType.BOOLEAN) conditionIsTrue =
-                        !(convertAnyToBoolean(condition.leftSide))
-                    else {
-                        throw  InterpreterException(
-                            ExceptionType.TYPE_MISMATCH
-                        )
 
+                LogicalBlockType.NOT -> {
+                    if (leftSideType == VariableType.BOOLEAN) {
+                        conditionIsTrue = !(convertAnyToBoolean(conditionBlock.leftSide!!))
+                    } else {
+                        throw InterpreterException(ExceptionType.TYPE_MISMATCH)
                     }
                 }
-                LogicalOperatorType.OR -> {
-                    when {
-                        condition.rightSide != null && leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN -> {
-                            conditionIsTrue =
-                                (convertAnyToBoolean(condition.leftSide) || convertAnyToBoolean(
-                                    condition.rightSide!!
-                                ))
-                        }
-                        condition.rightSide != null -> throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-
-                        else -> throw  InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
-
-                    }
-
-                }
-            }
-        } else {
-            if (condition.rightSide != null) {
-                condition.mathematicalOperator?.let {
-                    when (it.mathematicalOperatorType) {
-                        MathematicalOperatorType.EQUAL -> {
-                            if (rightSideType == leftSideType) {
-                                conditionIsTrue =
-                                    (convertAnyToDouble(condition.leftSide) == convertAnyToDouble(
-                                        condition.rightSide!!
-                                    ))
-                            } else {
-                                throw  InterpreterException(ExceptionType.TYPE_MISMATCH)
-
-                            }
-                        }
-                        MathematicalOperatorType.GREATER_OR_EQUAL_THAN -> {
-                            when {
-                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
-                                    conditionIsTrue =
-                                        (convertAnyToDouble(condition.leftSide) >= convertAnyToDouble(
-                                            condition.rightSide!!
-                                        ))
-                                }
-                                rightSideType == leftSideType -> throw  InterpreterException(
-                                    ExceptionType.WRONG_OPERAND_USE_CASE
-                                )
-
-                                else -> throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-
-                            }
-                        }
-                        MathematicalOperatorType.GREATER_THAN -> {
-                            when {
-                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
-                                    conditionIsTrue =
-                                        (convertAnyToDouble(condition.leftSide) > convertAnyToDouble(
-                                            condition.rightSide!!
-                                        ))
-                                }
-                                rightSideType == leftSideType -> throw  InterpreterException(
-                                    ExceptionType.WRONG_OPERAND_USE_CASE
-                                )
-
-                                else -> throw  InterpreterException(ExceptionType.TYPE_MISMATCH)
-
-                            }
-                        }
-                        MathematicalOperatorType.LOWER_OR_EQUAL_THAN -> {
-                            when {
-                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
-                                    conditionIsTrue =
-                                        (convertAnyToDouble(condition.leftSide) <= convertAnyToDouble(
-                                            condition.rightSide!!
-                                        ))
-                                }
-                                rightSideType == leftSideType -> throw  InterpreterException(
-                                    ExceptionType.WRONG_OPERAND_USE_CASE
-                                )
-
-                                else -> throw  InterpreterException(
-                                    ExceptionType.TYPE_MISMATCH
-                                )
-
-                            }
-                        }
-                        MathematicalOperatorType.LOWER_THAN -> {
-                            when {
-                                rightSideType == leftSideType && (rightSideType == VariableType.DOUBLE || rightSideType == VariableType.INT) -> {
-                                    conditionIsTrue =
-                                        (convertAnyToDouble(condition.rightSide!!) > convertAnyToDouble(
-                                            condition.leftSide
-                                        ))
-                                }
-                                rightSideType == leftSideType -> throw  InterpreterException(
-                                    ExceptionType.WRONG_OPERAND_USE_CASE
-                                )
-
-                                else -> throw  InterpreterException(
-                                    ExceptionType.TYPE_MISMATCH
-                                )
-
-                            }
-                        }
-                        MathematicalOperatorType.NON_EQUAL -> {
-                            if (rightSideType == leftSideType) {
-                                conditionIsTrue =
-                                    (convertAnyToDouble(condition.leftSide) != convertAnyToDouble(
-                                        condition.rightSide!!
-                                    ))
-                            } else {
-                                throw  InterpreterException(
-                                    ExceptionType.TYPE_MISMATCH
-                                )
-
-                            }
-                        }
-                    }
-                }
-            } else {
-                throw InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
             }
         }
+
+        conditionBlock.mathematicalBlock?.let {
+            if (leftSideType == rightSideType || areNumericTypes(leftSideType, rightSideType)) {
+                val resultOfComparison = when (leftSideType) {
+                    VariableType.STRING -> convertAnyToString(conditionBlock.leftSide!!).compareTo(
+                        convertAnyToString(conditionBlock.rightSide!!)
+                    )
+
+                    VariableType.DOUBLE, VariableType.INT -> convertAnyToDouble(conditionBlock.leftSide!!).compareTo(
+                        convertAnyToDouble(conditionBlock.rightSide!!)
+                    )
+
+                    VariableType.BOOLEAN -> convertAnyToBoolean(conditionBlock.leftSide!!).compareTo(
+                        convertAnyToBoolean(conditionBlock.rightSide!!)
+                    )
+
+                    VariableType.ARRAY -> throw InterpreterException(ExceptionType.WTF) //TODO:
+                }
+
+                conditionIsTrue = when (it.mathematicalBlockType) {
+                    MathematicalBlockType.EQUAL -> resultOfComparison == 0
+                    MathematicalBlockType.GREATER_OR_EQUAL_THAN -> resultOfComparison >= 0
+                    MathematicalBlockType.GREATER_THAN -> resultOfComparison > 0
+                    MathematicalBlockType.LOWER_OR_EQUAL_THAN -> resultOfComparison <= 0
+                    MathematicalBlockType.LOWER_THAN -> resultOfComparison < 0
+                    MathematicalBlockType.NON_EQUAL -> resultOfComparison != 0
+                }
+            } else {
+                throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+            }
+        }
+
         if (conditionIsTrue) {
-            if (condition.nestedBlocks != null) {
-                for (nestedBlock in condition.nestedBlocks!!) {
-                    when (nestedBlock.type) {
-                        BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlock)
-                        BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
-                        BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlock)
-                        BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlock)
+            conditionBlock.nestedBlocks?.let {
+                it.forEach { blockBase ->
+                    when (blockBase.type) {
+                        BlockType.VARIABLE -> interpretVariableBlocks(blockBase as VariableBlock)
+                        BlockType.CONDITION -> interpretConditionBlocks(blockBase as ConditionBlock)
+                        BlockType.LOOP -> interpretLoopBlocks(blockBase as LoopBlock)
+                        BlockType.EXPRESSION -> interpretExpressionBlocks(blockBase as ExpressionBlock)
                         else -> {}
                     }
                 }
@@ -226,18 +155,40 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun interpretLoopBlocks(loop: LoopBlockBase) {
-        loop.id?.let {
+    private suspend fun interpretIfBlock(ifBlock: IfBlockBase) {
+
+        ifBlock.id?.let {
             currentId = it
         }
-        if (loop.nestedBlocks != null) {
-            while (interpretConditionBlocks(loop.conditionBlock as ConditionBlock)) {
-                for (nestedBlock in loop.nestedBlocks!!) {
-                    when (nestedBlock.type) {
-                        BlockType.VARIABLE -> interpretVariableBlocks(nestedBlock as VariableBlock)
-                        BlockType.CONDITION -> interpretConditionBlocks(nestedBlock as ConditionBlock)
-                        BlockType.LOOP -> interpretLoopBlocks(nestedBlock as LoopBlock)
-                        BlockType.EXPRESSION -> interpretExpressionBlocks(nestedBlock as ExpressionBlock)
+            if (convertAnyToBoolean(ifBlock.conditionBlock)) {
+                ifBlock.nestedBlocks?.let {
+                    it.forEach { blockBase ->
+                        interpretBlock(blockBase)
+                    }
+                }
+            } else if (ifBlock.ifBlockType == IfBlockType.IF_WITH_ELSE) {
+                ifBlock.elseBlocks?.let {
+                    it.forEach { blockBase ->
+                        interpretBlock(blockBase)
+                    }
+                }
+            }
+    }
+
+    @Throws(InterpreterException::class)
+    private suspend fun interpretLoopBlocks(loopBlock: LoopBlockBase) {
+        loopBlock.id?.let {
+            currentId = it
+        }
+
+        loopBlock.nestedBlocks?.let {
+            while (interpretConditionBlocks(loopBlock.conditionBlock)) {
+                it.forEach { blockBase ->
+                    when (blockBase.type) {
+                        BlockType.VARIABLE -> interpretVariableBlocks(blockBase as VariableBlockBase)
+                        BlockType.CONDITION -> interpretConditionBlocks(blockBase as ConditionBlockBase)
+                        BlockType.LOOP -> interpretLoopBlocks(blockBase as LoopBlockBase)
+                        BlockType.EXPRESSION -> interpretExpressionBlocks(blockBase as ExpressionBlockBase)
                         else -> {
                             throw InterpreterException(ExceptionType.TYPE_MISMATCH)
                         }
@@ -257,7 +208,6 @@ constructor(
             ?: throw InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
 
         when (variable.variableBlockType) {
-
             VariableBlockType.VARIABLE_SET -> {
                 val valueToSet: Any = variable.valueToSet
                     ?: throw InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
@@ -340,93 +290,59 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun interpretExpressionBlocks(expression: ExpressionBlockBase): Any {
-        expression.id?.let {
+    private suspend fun interpretExpressionBlocks(expressionBlock: ExpressionBlockBase): Any {
+        expressionBlock.id?.let {
             currentId = it
         }
-        val leftSideAsString = expression.leftSide
-        val rightSideAsString = expression.rightSide
-        val leftSideType: VariableType? = getTypeOfAny(leftSideAsString)
-        val rightSideType: VariableType? = getTypeOfAny(rightSideAsString)
-        Log.d(leftSideType.toString(), rightSideType.toString())
-        if (leftSideType == VariableType.DOUBLE && VariableType.DOUBLE == rightSideType) {
-            when (expression.expressionBlockType) {
-                ExpressionBlockType.PLUS -> {
-                    return (convertAnyToDouble(
-                        leftSideAsString!!
-                    ) + convertAnyToDouble(
-                        rightSideAsString!!
-                    ))
-                }
-                ExpressionBlockType.MULTIPLY -> return (convertAnyToDouble(leftSideAsString!!) * convertAnyToDouble(
-                    rightSideAsString!!
-                ))
+
+        val leftSide = expressionBlock.leftSide
+        val rightSide = expressionBlock.rightSide
+
+        val leftSideType = getTypeOfAny(leftSide)
+        val rightSideType = getTypeOfAny(rightSide)
+
+
+        if (areNumericTypes(leftSideType, rightSideType)) {
+
+            val leftSideUnwrapped = convertAnyToDouble(leftSide!!)
+            val rightSideUnwrapped = convertAnyToDouble(rightSide!!)
+
+            return when (expressionBlock.expressionBlockType) {
+                ExpressionBlockType.PLUS -> leftSideUnwrapped + rightSideUnwrapped
+
+                ExpressionBlockType.MULTIPLY -> leftSideUnwrapped * rightSideUnwrapped
+
                 ExpressionBlockType.DIVIDE -> {
-                    if (convertAnyToDouble(
-                            rightSideAsString!!
-                        ) != 0.0
-                    ) {
-                        return (convertAnyToDouble(leftSideAsString!!) / convertAnyToDouble(
-                            rightSideAsString
-                        ))
-                    } else {
+                    if (rightSideUnwrapped == 0.0) {
                         throw InterpreterException(ExceptionType.DIVISION_BY_ZERO)
                     }
+
+                    leftSideUnwrapped / rightSideUnwrapped
                 }
-                ExpressionBlockType.MINUS -> return (convertAnyToDouble(leftSideAsString!!) - convertAnyToDouble(
-                    rightSideAsString!!
-                ))
-                ExpressionBlockType.DIVIDE_WITH_REMAINDER ->
-                    throw InterpreterException(ExceptionType.WRONG_OPERAND_USE_CASE)
-            }
-        }
-        if (leftSideType == VariableType.INT && VariableType.INT == rightSideType) {
-            when (expression.expressionBlockType) {
-                ExpressionBlockType.PLUS -> return (convertAnyToInt(leftSideAsString!!) + convertAnyToInt(
-                    rightSideAsString!!
-                ))
-                ExpressionBlockType.MULTIPLY -> return (convertAnyToInt(leftSideAsString!!) * convertAnyToInt(
-                    rightSideAsString!!
-                ))
-                ExpressionBlockType.DIVIDE -> {
-                    if (convertAnyToInt(
-                            rightSideAsString!!
-                        ) != 0
-                    ) {
-                        return (convertAnyToInt(leftSideAsString!!) / convertAnyToInt(
-                            rightSideAsString
-                        ))
-                    } else {
-                        throw InterpreterException(ExceptionType.DIVISION_BY_ZERO)
-                    }
-                }
+
+                ExpressionBlockType.MINUS -> leftSideUnwrapped - rightSideUnwrapped
+
                 ExpressionBlockType.DIVIDE_WITH_REMAINDER -> {
-                    if (convertAnyToInt(
-                            rightSideAsString!!
-                        ) != 0
-                    ) {
-                        return (convertAnyToInt(leftSideAsString!!) % convertAnyToInt(
-                            rightSideAsString
-                        ))
-                    } else {
+                    if (rightSideUnwrapped == 0.0) {
                         throw InterpreterException(ExceptionType.DIVISION_BY_ZERO)
                     }
+
+                    leftSideUnwrapped % rightSideUnwrapped
                 }
-                ExpressionBlockType.MINUS -> return (convertAnyToInt(leftSideAsString!!) - convertAnyToInt(
-                    rightSideAsString!!
-                ))
+
+                null -> throw InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
             }
         }
-        if (leftSideType == VariableType.STRING && VariableType.STRING == rightSideType && expression.expressionBlockType == ExpressionBlockType.PLUS) {
-            return '"' + convertAnyToString(leftSideAsString!!) + convertAnyToString(
-                rightSideAsString!!
-            ) + '"'
+
+        if (leftSideType == VariableType.STRING &&
+            rightSideType == VariableType.STRING &&
+            expressionBlock.expressionBlockType == ExpressionBlockType.PLUS
+        ) {
+
+            return '"' + convertAnyToString(leftSide!!) + convertAnyToString(rightSide!!) + '"'
         }
-        if (leftSideType == null || rightSideType == null) {
-            throw InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
-        } else {
-            throw  InterpreterException(ExceptionType.TYPE_MISMATCH)
-        }
+
+        throw InterpreterException(ExceptionType.TYPE_MISMATCH)
     }
 
     @Throws(InterpreterException::class)
@@ -448,7 +364,7 @@ constructor(
 
             IOBlockType.READ -> {
                 val input = consoleUseCases.readFromConsoleUseCase.readFromConsole()
-                (IO as IOBlock).argument = input
+                ioBlocksValues[IO.id as Int] = input
                 return input
             }
         }
@@ -498,9 +414,11 @@ constructor(
             BlockType.LOOP -> interpretLoopBlocks(block as LoopBlock)
             BlockType.VARIABLE -> interpretVariableBlocks(block as VariableBlock)
             BlockType.START -> interpretStartBlock(block as StartBlock)
-            BlockType.ARRAY -> interpretArrayBlock(block as ArrayBlockBase)
+            BlockType.ARRAY -> interpretArrayBlock(block as ArrayBlock)
+            BlockType.IF -> interpretIfBlock(block as IfBlock)
         }
     }
+
 
     @Throws(InterpreterException::class)
     private suspend fun convertAnyToDouble(value: Any?): Double {
@@ -514,9 +432,13 @@ constructor(
                 }
             }
             is ExpressionBlock -> {
-                return interpretExpressionBlocks(value) as? Double
-                    ?: throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+                val result = interpretExpressionBlocks(value)
+                if (result is Number)
+                    return result.toDouble()
+                else
+                    throw InterpreterException(ExceptionType.TYPE_MISMATCH)
             }
+
             is String -> {
                 value.toDoubleOrNull()?.let {
                     return it
@@ -550,9 +472,6 @@ constructor(
     @Throws(InterpreterException::class)
     private suspend fun convertAnyToInt(value: Any?): Int {
         when (value) {
-            is Double -> throw InterpreterException(
-                ExceptionType.TYPE_MISMATCH
-            )
             is Int -> return value
             is StoredVariable -> {
                 if (value.value is Int) {
@@ -566,8 +485,11 @@ constructor(
                     ?: throw InterpreterException(ExceptionType.TYPE_MISMATCH)
             }
             is IOBlockBase -> {
-                return interpretIOBlocks(value)?.toIntOrNull()
-                    ?: throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+                return if (ioBlocksValues[value.id] != null) {
+                    convertAnyToInt(ioBlocksValues[value.id]!!)
+                } else {
+                    convertAnyToInt(interpretIOBlocks(value))
+                }
             }
 
             is String -> {
@@ -592,9 +514,14 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun convertAnyToBoolean(value: Any): Boolean {
+    private suspend fun convertAnyToBoolean(value: Any?): Boolean {
         when (value) {
             is Boolean -> return value
+
+            is ConditionBlock -> {
+                return interpretConditionBlocks(value)
+            }
+
             is StoredVariable -> {
                 if (value.value is Boolean) {
                     return value.value as Boolean
@@ -602,10 +529,12 @@ constructor(
                     throw InterpreterException(ExceptionType.TYPE_MISMATCH)
                 }
             }
+
             is ExpressionBlock -> {
                 return interpretExpressionBlocks(value) as? Boolean
                     ?: throw InterpreterException(ExceptionType.TYPE_MISMATCH)
             }
+
             is String -> {
                 value.toBooleanStrictOrNull()?.let {
                     return it
@@ -622,7 +551,16 @@ constructor(
                     throw InterpreterException(ExceptionType.TYPE_MISMATCH)
                 }
             }
+
             is ArrayBlock -> return convertAnyToBoolean(interpretArrayBlock(value))
+
+            is IOBlockBase -> {
+                return if (ioBlocksValues[value.id] != null) {
+                    convertAnyToBoolean(ioBlocksValues[value.id]!!)
+                } else {
+                    convertAnyToBoolean(interpretIOBlocks(value))
+                }
+            }
         }
         throw InterpreterException(ExceptionType.TYPE_MISMATCH)
     }
@@ -658,10 +596,11 @@ constructor(
             is ArrayBlock -> return convertAnyToString(interpretArrayBlock(value))
 
             is IOBlockBase -> {
-                return interpretIOBlocks(value)
-                    ?: throw InterpreterException(
-                        ExceptionType.TYPE_MISMATCH
-                    )
+                return if (ioBlocksValues[value.id] != null) {
+                    convertAnyToString(ioBlocksValues[value.id]!!)
+                } else {
+                    interpretIOBlocks(value)?.let { convertAnyToString(it) }!!
+                }
             }
         }
         throw InterpreterException(ExceptionType.TYPE_MISMATCH)
@@ -748,47 +687,55 @@ constructor(
 
             else -> throw InterpreterException(ExceptionType.TYPE_MISMATCH)
         }
-
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun getTypeOfAny(value: Any?): VariableType? {
+    private suspend fun getTypeOfAny(value: Any?): VariableType {
         when (value) {
+            is Boolean -> return VariableType.BOOLEAN
+
             is String -> {
                 when {
                     value.toIntOrNull() is Int -> return VariableType.INT
                     value.toDoubleOrNull() is Double -> return VariableType.DOUBLE
                     value.toBooleanStrictOrNull() is Boolean -> return VariableType.BOOLEAN
                     else -> {
-                        if (isVariable(value)) {
+                        return if (isVariable(value)) {
                             val foundedStoredVariable =
                                 heapUseCases.getVariableUseCase.getVariable(value)
-                            if (foundedStoredVariable == null) {
+
+                            if (foundedStoredVariable?.type == null) {
                                 throw InterpreterException(
                                     ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                                 )
                             } else {
-                                return foundedStoredVariable.type
-
+                                foundedStoredVariable.type!!
                             }
-                        } else return VariableType.STRING
+                        } else {
+                            VariableType.STRING
+                        }
                     }
+                }
+            }
 
-                }
-            }
             is IOBlockBase -> {
-                if (value.argument != null) {
-                    return getTypeOfAny(value.argument!!)
+                return if (ioBlocksValues[value.id] != null) {
+                    getTypeOfAny(ioBlocksValues[value.id]!!)
                 } else {
-                    return interpretIOBlocks(value)?.let { getTypeOfAny(it) }!!
+                    getTypeOfAny(interpretIOBlocks(value))
                 }
             }
+
             is Double -> return VariableType.DOUBLE
+
             is Int -> return VariableType.INT
-            is Boolean -> return VariableType.BOOLEAN
+
             is ExpressionBlockBase -> return getTypeOfAny(interpretExpressionBlocks(value))
+
+            is ConditionBlock -> return getTypeOfAny(interpretConditionBlocks(value))
+
+            else -> throw InterpreterException(ExceptionType.TYPE_MISMATCH)
         }
-        throw InterpreterException(ExceptionType.TYPE_MISMATCH)
     }
 
 
@@ -804,6 +751,10 @@ constructor(
         }
         return true
     }
+
+    private fun areNumericTypes(firstType: VariableType?, secondType: VariableType?): Boolean =
+        (firstType == VariableType.DOUBLE || firstType == VariableType.INT) &&
+                (secondType == VariableType.DOUBLE || secondType == VariableType.INT)
 
 
     @Throws(InterpreterException::class)
