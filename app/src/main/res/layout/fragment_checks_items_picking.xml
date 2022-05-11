@@ -20,17 +20,34 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/conditionsOperators"
+                android:id="@+id/mathematicalOperators"
                 style="@style/bottomSheetBoldText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/conditionsOperators"
-                android:textColor="@color/pumpkin"
+                android:text="@string/mathematicalOperators"
+                android:textColor="@color/darkPurple"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/conditionsOperatorsLinearLayout"
+                android:id="@+id/mathematicalOperatorsLinearLayout"
+                style="@style/bottomSheetItemsList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/logicalOperators"
+                style="@style/bottomSheetBoldText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/logicalOperators"
+                android:textColor="@color/darkPurple"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/logicalOperatorsLinearLayout"
                 style="@style/bottomSheetItemsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

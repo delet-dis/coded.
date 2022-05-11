@@ -131,13 +131,15 @@ class UIIfBlock @JvmOverloads constructor(
                         }
 
                         DragEvent.ACTION_DRAG_ENTERED -> {
-                            alphaMinusAnimation(binding.backgroundImage)
+                            alphaMinusAnimation(backgroundImage)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DRAG_EXITED -> {
-                            alphaPlusAnimation(binding.backgroundImage)
+                            alphaPlusAnimation(backgroundImage)
+
+                            clearAllNestedViewPaddings(nestedBlocksLayout)
 
                             return@setOnDragListener true
                         }
@@ -145,7 +147,7 @@ class UIIfBlock @JvmOverloads constructor(
                         DragEvent.ACTION_DROP -> {
                             handleDropEvent(
                                 this@UIIfBlock,
-                                binding.nestedBlocksLayout,
+                                nestedBlocksLayout,
                                 itemParent,
                                 draggableItem,
                                 {
@@ -154,7 +156,7 @@ class UIIfBlock @JvmOverloads constructor(
                                     _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
                                 },
                                 {
-                                    alphaPlusAnimation(binding.backgroundImage)
+                                    alphaPlusAnimation(backgroundImage)
                                 }
                             )
 
@@ -233,6 +235,15 @@ class UIIfBlock @JvmOverloads constructor(
             nestedBlocksAsBlockBase.remove(it)
 
             _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+        }
+
+        (view as? UINestedableCodeBlock)?.let {
+            binding.condition.apply {
+                setText("")
+                visibility = VISIBLE
+            }
+
+            _block.conditionBlock = null
         }
     }
 

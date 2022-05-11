@@ -168,4 +168,12 @@ interface UIElementHandlesReorderingInterface : UIElementSavesNestedBlocksInterf
             }
         }
     }
+
+    fun clearAllNestedViewPaddings(
+        listLinearLayout: LinearLayout
+    ) {
+        for (i in 0..listLinearLayout.childCount) {
+            listLinearLayout.getChildAt(i)?.setPadding(0, 0, 0, 0)
+        }
+    }
 }

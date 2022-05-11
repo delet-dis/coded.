@@ -87,13 +87,15 @@ class UIActionStartBlock @JvmOverloads constructor(
                         }
 
                         DragEvent.ACTION_DRAG_ENTERED -> {
-                            alphaMinusAnimation(binding.backgroundImage)
+                            alphaMinusAnimation(backgroundImage)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DRAG_EXITED -> {
-                            alphaPlusAnimation(binding.backgroundImage)
+                            alphaPlusAnimation(backgroundImage)
+
+                            clearAllNestedViewPaddings(nestedBlocksLayout)
 
                             return@setOnDragListener true
                         }
@@ -110,7 +112,7 @@ class UIActionStartBlock @JvmOverloads constructor(
                                     _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
                                 },
                                 {
-                                     alphaPlusAnimation(binding.backgroundImage)
+                                    alphaPlusAnimation(binding.backgroundImage)
                                 }
                             )
 
