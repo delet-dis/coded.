@@ -6,15 +6,11 @@ import com.hits.coded.data.implementations.bases.arrayBase.IntArray
 import com.hits.coded.data.implementations.bases.arrayBase.MultiDimensionalArray
 import com.hits.coded.data.implementations.bases.arrayBase.StringArray
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
-import javax.inject.Inject
 
 abstract class ArrayBase() {
-    @Inject
-    lateinit var interpreterUseCases: InterpreterUseCases
     protected val array = ArrayList<StoredVariable>()
 
     abstract fun parseArray(inputString: String): ArrayBase
@@ -26,10 +22,7 @@ abstract class ArrayBase() {
 
     fun pop(): StoredVariable {
         if (array.size == 0)
-            throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.ARRAY_OUT_OF_BOUNDS
-            )
+            throw InterpreterException(ExceptionType.ARRAY_OUT_OF_BOUNDS)
 
         return array.removeLast()
     }
@@ -37,16 +30,10 @@ abstract class ArrayBase() {
 
     fun concat(other: ArrayBase?) {
         if (other == null)
-            throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.LACK_OF_ARGUMENTS
-            )
+            throw InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
 
         if(array::class != other::class)
-            throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.TYPE_MISMATCH
-            )
+            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
         for(i in other.array) {
             this.array.add(i)
@@ -56,13 +43,11 @@ abstract class ArrayBase() {
 
     operator fun get(index: Int): StoredVariable {
         if (index < 0 || index >= array.size)
-            throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.ARRAY_OUT_OF_BOUNDS
-            )
+            throw InterpreterException(ExceptionType.ARRAY_OUT_OF_BOUNDS)
 
         return array[index]
     }
+
 
     companion object {
         fun constructByType(variableType: VariableType): ArrayBase {
@@ -73,7 +58,6 @@ abstract class ArrayBase() {
                 VariableType.BOOLEAN -> BooleanArray()
                 VariableType.ARRAY -> MultiDimensionalArray()
             }
-
         }
     }
 

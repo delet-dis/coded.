@@ -6,7 +6,6 @@ import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterEx
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
 
-
 class StringArray() : ArrayBase() {
 
     constructor(preparedArray: ArrayList<String>) : this() {
@@ -17,7 +16,7 @@ class StringArray() : ArrayBase() {
 
     override fun parseArray(inputString: String): ArrayBase {
         val parsedArray = ArrayList<String>()
-        val pattern = Regex("(?:\"[\\S\\s]+?\")*")
+        val pattern = Regex("\"[\\S\\s]+?\"")
         for (match in pattern.findAll(inputString)) {
             parsedArray.add(match.value.drop(1).dropLast(1))
         }
@@ -28,19 +27,14 @@ class StringArray() : ArrayBase() {
     override fun parseSingleValue(inputString: String): Any {
         val pattern = Regex("\"[\\S\\s]+?\"")
         val match = pattern.find(inputString)
-            ?: throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.INVALID_STRING
-            )
+            ?: throw InterpreterException(ExceptionType.INVALID_STRING)
+
         return match.value.drop(1).dropLast(1)
     }
 
     override fun push(value: Any?) {
         if (value !is String)
-            throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.TYPE_MISMATCH
-            )
+            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
         if (value.first() == '"')
             value.drop(1)

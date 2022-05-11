@@ -7,6 +7,7 @@ import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
 
 class IntArray() : ArrayBase() {
+
     constructor(preparedArray: ArrayList<Int>) : this() {
         for (value in preparedArray) {
             array.add(StoredVariable(null, VariableType.INT, false, value))
@@ -15,7 +16,7 @@ class IntArray() : ArrayBase() {
 
     override fun parseArray(inputString: String): ArrayBase {
         val parsedArray = ArrayList<Int>()
-        val pattern = Regex("(?:-?\\d+)*")
+        val pattern = Regex("-?\\d+")
         for (match in pattern.findAll(inputString)) {
             parsedArray.add(match.value.toInt())
         }
@@ -25,10 +26,8 @@ class IntArray() : ArrayBase() {
     override fun parseSingleValue(inputString: String): Any {
         val pattern = Regex("-?\\d+")
         val match = pattern.find(inputString)
-            ?: throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.INVALID_STRING
-            )
+            ?: throw InterpreterException(ExceptionType.INVALID_STRING)
+
         return match.value.toInt()
     }
 
@@ -38,10 +37,7 @@ class IntArray() : ArrayBase() {
             newElement = parseSingleValue(newElement)
 
         if (newElement !is Int)
-            throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.TYPE_MISMATCH
-            )
+            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
         array.add(StoredVariable(null, VariableType.INT, false, newElement))
     }

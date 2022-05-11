@@ -73,10 +73,7 @@ class MultiDimensionalArray(): ArrayBase() {
             newElement = parseSingleValue(newElement)
 
         if (newElement !is ArrayBase)
-            throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.TYPE_MISMATCH
-            )
+            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
 
         array.add(StoredVariable(null, VariableType.ARRAY, true, newElement))

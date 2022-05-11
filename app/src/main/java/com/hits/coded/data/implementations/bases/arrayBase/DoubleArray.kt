@@ -7,6 +7,7 @@ import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
 
 class DoubleArray() : ArrayBase() {
+
     constructor(preparedArray: ArrayList<Double>) : this() {
         for (value in preparedArray) {
             array.add(StoredVariable(null, VariableType.DOUBLE, false, value))
@@ -15,7 +16,7 @@ class DoubleArray() : ArrayBase() {
 
     override fun parseArray(inputString: String): ArrayBase {
         val parsedArray = ArrayList<Double>()
-        val pattern = Regex("(?:-?\\d+(?:\\.\\d*)?)*")
+        val pattern = Regex("-?\\d+(?:\\.\\d*)?")
         for (match in pattern.findAll(inputString)) {
             parsedArray.add(match.value.toDouble())
         }
@@ -25,10 +26,8 @@ class DoubleArray() : ArrayBase() {
     override fun parseSingleValue(inputString: String): Any {
         val pattern = Regex("-?\\d+(?:\\.\\d*)?")
         val match = pattern.find(inputString)
-            ?: throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.INVALID_STRING
-            )
+            ?: throw InterpreterException(ExceptionType.INVALID_STRING)
+
         return match.value.toDouble()
     }
 
@@ -38,10 +37,7 @@ class DoubleArray() : ArrayBase() {
             newElement = parseSingleValue(newElement)
 
         if (newElement !is Double)
-            throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.TYPE_MISMATCH
-            )
+            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
         array.add(StoredVariable(null, VariableType.DOUBLE, false, newElement))
     }

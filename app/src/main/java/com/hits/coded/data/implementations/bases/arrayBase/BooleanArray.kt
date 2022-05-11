@@ -7,6 +7,7 @@ import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
 
 class BooleanArray() : ArrayBase() {
+
     constructor(preparedArray: ArrayList<Boolean>) : this() {
         for (value in preparedArray) {
             array.add(StoredVariable(null, VariableType.BOOLEAN, false, value))
@@ -15,7 +16,7 @@ class BooleanArray() : ArrayBase() {
 
     override fun parseArray(inputString: String): ArrayBase {
         val parsedArray = ArrayList<Boolean>()
-        val pattern = Regex("(?:[10]|(?:true|false))*")
+        val pattern = Regex("[10]|(?:true|false)")
         for (match in pattern.findAll(inputString)) {
             if (match.value[0] == '1' || match.value[0] == 't')
                 parsedArray.add(true)
@@ -28,10 +29,8 @@ class BooleanArray() : ArrayBase() {
     override fun parseSingleValue(inputString: String): Any {
         val pattern = Regex("[10]|(?:true|false)")
         val match = pattern.find(inputString)
-            ?: throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.INVALID_STRING
-            )
+            ?: throw InterpreterException(ExceptionType.INVALID_STRING)
+
         if (match.value[0] == '1' || match.value[0] == 't')
             return true
         return false
@@ -43,10 +42,7 @@ class BooleanArray() : ArrayBase() {
             newElement = parseSingleValue(newElement)
 
         if (newElement !is Boolean)
-            throw InterpreterException(
-                interpreterUseCases.getCurrentBlockIdUseCase.getId(),
-                ExceptionType.TYPE_MISMATCH
-            )
+            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
         array.add(StoredVariable(null, VariableType.BOOLEAN, false, newElement))
     }
