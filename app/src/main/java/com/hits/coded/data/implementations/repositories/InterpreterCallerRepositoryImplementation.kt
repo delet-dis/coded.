@@ -35,7 +35,8 @@ class InterpreterCallerRepositoryImplementation
             R.string.variableNotExistError,
             R.string.wrongOperandError,
             R.string.invalidStringError,
-            R.string.invalidBlockError
+            R.string.invalidBlockError,
+            R.string.internalInterpreterError
         )
 
     private val _executionResult: MutableSharedFlow<InterpreterException?> =
@@ -53,6 +54,7 @@ class InterpreterCallerRepositoryImplementation
         try {
             interpreterUseCases.interpretStartBlock.interpretStartBlock(start)
         } catch (error: InterpreterException) {
+            error.blockID = interpreterUseCases.getCurrentBlockIdUseCase.getId()
             error.msg = context.getString(errorStrings[error.errorCode.ordinal])
             consoleUseCases.writeToConsoleUseCase.writeErrorToConsole(error.msg)
             _executionResult.emit(error)
