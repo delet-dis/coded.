@@ -6,10 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalBlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalBlockType
 import com.hits.coded.databinding.FragmentConditionsItemsPickingBinding
-import com.hits.coded.presentation.views.codeBlocks.conditions.UIConditionBlock
+import com.hits.coded.presentation.views.codeBlocks.ifElse.UIIfBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,24 +37,10 @@ class ConditionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInt
     }
 
     override fun redrawElements() {
-        binding.mathematicalOperatorsLinearLayout.apply {
+        with(binding.conditionsOperatorsLinearLayout) {
             removeAllViews()
 
-            MathematicalBlockType.values().forEach {
-                addView(UIConditionBlock(requireContext()).apply {
-                    mathematicalBlockType = it
-                })
-            }
-        }
-
-        binding.logicalOperatorsLinearLayout.apply {
-            removeAllViews()
-
-            LogicalBlockType.values().forEach {
-                addView(UIConditionBlock(requireContext()).apply {
-                    logicalBlockType = it
-                })
-            }
+            addView(UIIfBlock(requireContext()))
         }
     }
 }

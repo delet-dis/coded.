@@ -30,6 +30,7 @@
     <string name="componentType">Component type</string>
     <string name="variables">Variables</string>
     <string name="expressions">Expressions</string>
+    <string name="checks">Checks</string>
     <string name="conditions">Conditions</string>
     <string name="logic">Logic</string>
     <string name="loops">Loops</string>
@@ -90,4 +91,7 @@
     <string name="mathematicalOperators">Mathematical operators</string>
     <string name="logicalOperators">Logical operators</string>
     <string name="notText">"!   "</string>
+
+    <string name="ifString">if</string>
+    <string name="conditionsOperators">Conditions operators</string>
 </resources>
