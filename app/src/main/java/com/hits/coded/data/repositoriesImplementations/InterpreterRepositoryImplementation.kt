@@ -163,7 +163,8 @@ constructor(
         ifBlock.id?.let {
             currentId = it
         }
-            if (convertAnyToBoolean(ifBlock.ifBlockType)) {
+        if(ifBlock.conditionBlock!=null) {
+            if (convertAnyToBoolean(ifBlock.conditionBlock!!)) {
                 ifBlock.nestedBlocks?.let {
                     it.forEach { blockBase ->
                         interpretBlock(blockBase)
@@ -176,6 +177,10 @@ constructor(
                     }
                 }
             }
+        }
+        else{
+            throw InterpreterException(currentId,ExceptionType.LACK_OF_ARGUMENTS)
+        }
     }
 
     @Throws(InterpreterException::class)
@@ -185,18 +190,23 @@ constructor(
         }
 
         loopBlock.nestedBlocks?.let {
-            while (interpretConditionBlocks(loopBlock.conditionBlock)) {
-                it.forEach { blockBase ->
-                    when (blockBase.type) {
-                        BlockType.VARIABLE -> interpretVariableBlocks(blockBase as VariableBlockBase)
-                        BlockType.CONDITION -> interpretConditionBlocks(blockBase as ConditionBlockBase)
-                        BlockType.LOOP -> interpretLoopBlocks(blockBase as LoopBlockBase)
-                        BlockType.EXPRESSION -> interpretExpressionBlocks(blockBase as ExpressionBlockBase)
-                        else -> {
-                            throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+            if(loopBlock.conditionBlock!=null) {
+                while (convertAnyToBoolean(loopBlock.conditionBlock!!)) {
+                    it.forEach { blockBase ->
+                        when (blockBase.type) {
+                            BlockType.VARIABLE -> interpretVariableBlocks(blockBase as VariableBlockBase)
+                            BlockType.CONDITION -> interpretConditionBlocks(blockBase as ConditionBlockBase)
+                            BlockType.LOOP -> interpretLoopBlocks(blockBase as LoopBlockBase)
+                            BlockType.EXPRESSION -> interpretExpressionBlocks(blockBase as ExpressionBlockBase)
+                            else -> {
+                                throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
+                            }
                         }
                     }
                 }
+            }
+            else{
+                throw InterpreterException(currentId,ExceptionType.LACK_OF_ARGUMENTS)
             }
         }
     }

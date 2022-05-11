@@ -6,5 +6,5 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.LoopBlockType
 
 abstract class LoopBlockBase : BlockBase() {
     abstract val loopBlockType: LoopBlockType
-    abstract val conditionBlock: ConditionBlockBase
+    abstract val conditionBlock: ConditionBlockBase?
 }
