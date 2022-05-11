@@ -13,6 +13,7 @@ import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesReorderingInterface
 import com.hits.coded.data.interfaces.ui.UIElementSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
@@ -33,7 +34,8 @@ class UIIfBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
     UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface,
     UIElementSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
-    UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface {
+    UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface,
+    UICodeBlockSupportsErrorDisplaying {
     private val binding: ViewIfBlockBinding
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
@@ -254,4 +256,10 @@ class UIIfBlock @JvmOverloads constructor(
     private companion object {
         const val DRAG_AND_DROP_TAG = "IF_BLOCK_"
     }
+
+    override fun displayError() =
+        binding.backgroundImage.setImageResource(R.drawable.error_if_block)
+
+    override fun hideError() =
+        binding.backgroundImage.setImageResource(R.drawable.if_block)
 }
