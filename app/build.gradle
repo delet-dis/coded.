@@ -40,6 +40,10 @@ android {
         viewBinding = true
     }
 
+    lint {
+        abortOnError = false
+    }
+    
     namespace 'com.hits.coded'
 }
 
