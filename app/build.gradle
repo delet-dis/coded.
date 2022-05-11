@@ -43,7 +43,7 @@ android {
     lint {
         abortOnError = false
     }
-    
+
     namespace 'com.hits.coded'
 }
 
