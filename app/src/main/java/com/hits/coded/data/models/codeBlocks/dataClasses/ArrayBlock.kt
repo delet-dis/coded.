@@ -7,9 +7,9 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.ArrayBlockType
 
 data class ArrayBlock(
     override val type: BlockType = BlockType.ARRAY,
-    override val arrayBlockType: ArrayBlockType,
-    override val array: Any? = null,
-    override val value: Any? = null,
+    override var arrayBlockType: ArrayBlockType,
+    override var array: Any? = null,
+    override var value: Any? = null,
     override var id: Int? = null,
     override var nestedBlocks: Array<BlockBase>? = null
 ) : ArrayBlockBase()
