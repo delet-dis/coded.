@@ -108,7 +108,7 @@ class UIIfBlock @JvmOverloads constructor(
             false
         }
 
-        binding.parentConstraint.setOnDragListener { handlerView, dragEvent ->
+        binding.nestedBlocksLayout.setOnDragListener { handlerView, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             val itemParent = draggableItem.parent as? ViewGroup
@@ -131,13 +131,15 @@ class UIIfBlock @JvmOverloads constructor(
                         }
 
                         DragEvent.ACTION_DRAG_ENTERED -> {
-                            scalePlusAnimation(parentConstraint)
+                            alphaMinusAnimation(backgroundImage)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DRAG_EXITED -> {
-                            scaleMinusAnimation(parentConstraint)
+                            alphaPlusAnimation(backgroundImage)
+
+                            clearAllNestedViewPaddings(nestedBlocksLayout)
 
                             return@setOnDragListener true
                         }
@@ -145,14 +147,18 @@ class UIIfBlock @JvmOverloads constructor(
                         DragEvent.ACTION_DROP -> {
                             handleDropEvent(
                                 this@UIIfBlock,
-                                binding.nestedBlocksLayout,
+                                nestedBlocksLayout,
                                 itemParent,
-                                draggableItem
-                            ) {
-                                nestedBlocksAsBlockBase.add(it)
+                                draggableItem,
+                                {
+                                    nestedBlocksAsBlockBase.add(it)
 
-                                _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
-                            }
+                                    _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                                },
+                                {
+                                    alphaPlusAnimation(backgroundImage)
+                                }
+                            )
 
                             return@setOnDragListener true
                         }
@@ -229,6 +235,15 @@ class UIIfBlock @JvmOverloads constructor(
             nestedBlocksAsBlockBase.remove(it)
 
             _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+        }
+
+        (view as? UINestedableCodeBlock)?.let {
+            binding.condition.apply {
+                setText("")
+                visibility = VISIBLE
+            }
+
+            _block.conditionBlock = null
         }
     }
 
