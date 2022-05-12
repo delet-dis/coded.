@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.hits.coded">
 
     <application
         android:name=".CodedApplication"
@@ -12,8 +13,8 @@
         <activity
             android:name=".presentation.activities.editorActivity.EditorActivity"
             android:configChanges="screenSize|orientation"
-            android:windowSoftInputMode="stateHidden|adjustPan"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".presentation.activities.onboardingActivity.OnboardingActivity"
             android:configChanges="screenSize|orientation"

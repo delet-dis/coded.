@@ -152,8 +152,12 @@ class UIIfBlock @JvmOverloads constructor(
                                 nestedBlocksLayout,
                                 itemParent,
                                 draggableItem,
-                                {
-                                    nestedBlocksAsBlockBase.add(it)
+                                { blockBase, position ->
+                                    if (position != null) {
+                                        nestedBlocksAsBlockBase.add(position, blockBase)
+                                    } else {
+                                        nestedBlocksAsBlockBase.add(blockBase)
+                                    }
 
                                     _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
                                 },
@@ -258,7 +262,7 @@ class UIIfBlock @JvmOverloads constructor(
     }
 
     override fun displayError() =
-        binding.backgroundImage.setImageResource(R.drawable.error_if_block)
+        binding.backgroundImage.setImageResource(R.drawable.error_nested_block)
 
     override fun hideError() =
         binding.backgroundImage.setImageResource(R.drawable.if_block)

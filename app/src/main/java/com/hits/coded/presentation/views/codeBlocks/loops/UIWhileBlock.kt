@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.views.codeBlocks.start
+package com.hits.coded.presentation.views.codeBlocks.loops
 
 import android.content.Context
 import android.util.AttributeSet
@@ -6,41 +6,44 @@ import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesReorderingInterface
 import com.hits.coded.data.interfaces.ui.UIElementSavesNestedBlocksInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithNestedBlocksAndConditionInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
-import com.hits.coded.databinding.ViewActionStartBinding
+import com.hits.coded.data.models.codeBlocks.dataClasses.LoopBlock
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.LoopBlockType
+import com.hits.coded.databinding.ViewWhileBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
-class UIActionStartBlock @JvmOverloads constructor(
+class UIWhileBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), UIMoveableCodeBlockInterface,
     UIElementHandlesDragAndDropInterface, UICodeBlockWithDataInterface,
-    UICodeBlockWithLastTouchInformation,
-    UICodeBlockElementHandlesDragAndDropInterface,
+    UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface,
     UIElementSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
-    UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface {
-    private val binding: ViewActionStartBinding
+    UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface,
+    UICodeBlockSupportsErrorDisplaying, UICodeBlockWithNestedBlocksAndConditionInterface {
+    private val binding: ViewWhileBlockBinding
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
 
     override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
-    private var _block = StartBlock()
+    private var _block = LoopBlock(LoopBlockType.WHILE)
     override val block: BlockBase
         get() = _block
 
@@ -52,19 +55,63 @@ class UIActionStartBlock @JvmOverloads constructor(
     init {
         inflate(
             context,
-            R.layout.view_action_start,
+            R.layout.view_while_block,
             this
         ).also { view ->
-            binding = ViewActionStartBinding.bind(view)
+            binding = ViewWhileBlockBinding.bind(view)
         }
 
         initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initDragAndDropListener()
+
+        initConditionChangeListener()
     }
 
-    override fun initDragAndDropListener() =
-        binding.parentConstraint.setOnDragListener { handlerView, dragEvent ->
+    override fun initDragAndDropListener() {
+        binding.condition.setOnDragListener { _, dragEvent ->
+            val draggableItem = dragEvent?.localState as View
+
+            (draggableItem as? UINestedableCodeBlock)?.let {
+                val itemParent = draggableItem.parent as? ViewGroup
+
+                itemParent?.let {
+                    when (dragEvent.action) {
+                        DragEvent.ACTION_DRAG_STARTED,
+                        DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
+
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            scalePlusAnimation(binding.firstCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            scaleMinusAnimation(binding.firstCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DROP -> {
+                            handleConditionDropEvent(itemParent, draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            handleConditionDragEndedEvent(draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        else -> return@setOnDragListener false
+                    }
+                }
+            }
+            false
+        }
+
+        binding.nestedBlocksLayout.setOnDragListener { handlerView, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             val itemParent = draggableItem.parent as? ViewGroup
@@ -102,8 +149,8 @@ class UIActionStartBlock @JvmOverloads constructor(
 
                         DragEvent.ACTION_DROP -> {
                             handleDropEvent(
-                                this@UIActionStartBlock,
-                                binding.nestedBlocksLayout,
+                                this@UIWhileBlock,
+                                nestedBlocksLayout,
                                 itemParent,
                                 draggableItem,
                                 { blockBase, position ->
@@ -116,7 +163,7 @@ class UIActionStartBlock @JvmOverloads constructor(
                                     _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
                                 },
                                 {
-                                    alphaPlusAnimation(binding.backgroundImage)
+                                    alphaPlusAnimation(backgroundImage)
                                 }
                             )
 
@@ -125,8 +172,6 @@ class UIActionStartBlock @JvmOverloads constructor(
 
                         DragEvent.ACTION_DRAG_ENDED -> {
                             handleDragEndedEvent(nestedBlocksLayout, itemParent, draggableItem)
-
-                            return@setOnDragListener true
                         }
 
                         else -> return@setOnDragListener false
@@ -135,6 +180,57 @@ class UIActionStartBlock @JvmOverloads constructor(
                 false
             }
         }
+    }
+
+    override fun handleConditionDropEvent(
+        itemParent: ViewGroup,
+        draggableItem: View
+    ) = with(binding)
+    {
+        if (draggableItem != this@UIWhileBlock) {
+            scaleMinusAnimation(firstCard)
+
+            itemParent.removeView(draggableItem)
+
+            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
+
+            condition.apply {
+                setText("")
+                visibility = INVISIBLE
+            }
+
+            clearNestedBlocksFromParent(firstCard)
+
+            nestedUIBlocks.add(draggableItem)
+            firstCard.addView(draggableItem)
+
+            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                _block.conditionBlock = it
+            }
+        }
+    }
+
+    override fun handleConditionDragEndedEvent(
+        draggableItem: View
+    ) {
+        draggableItem.post {
+            draggableItem.animate().alpha(1f).duration =
+                UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
+        }
+
+        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.conditionBlock) {
+            draggableItem.x = 0f
+            draggableItem.y = 0f
+        }
+
+        this.invalidate()
+    }
+
+    override fun initConditionChangeListener() {
+        binding.condition.addTextChangedListener {
+            _block.conditionBlock = it.toString()
+        }
+    }
 
     override fun removeView(view: View?) {
         super.removeView(view)
@@ -148,6 +244,15 @@ class UIActionStartBlock @JvmOverloads constructor(
 
             _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
         }
+
+        (view as? UINestedableCodeBlock)?.let {
+            binding.condition.apply {
+                setText("")
+                visibility = VISIBLE
+            }
+
+            _block.conditionBlock = null
+        }
     }
 
     override fun customRemoveView(view: View) {
@@ -155,6 +260,16 @@ class UIActionStartBlock @JvmOverloads constructor(
     }
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "ACTION_START_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "WHILE_BLOCK_"
+    }
+
+    override fun displayError() = with(binding) {
+        backgroundImage.setImageResource(R.drawable.error_nested_block)
+        firstVerticalGuideline.setGuidelineBegin(125)
+    }
+
+    override fun hideError() =with(binding){
+        backgroundImage.setImageResource(R.drawable.while_block)
+        firstVerticalGuideline.setGuidelineBegin(105)
     }
 }
