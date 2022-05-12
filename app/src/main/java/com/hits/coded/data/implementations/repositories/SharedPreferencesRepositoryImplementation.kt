@@ -1,4 +1,4 @@
-package com.hits.coded.data.repositoriesImplementations
+package com.hits.coded.data.implementations.repositories
 
 import android.content.Context
 import android.content.SharedPreferences
