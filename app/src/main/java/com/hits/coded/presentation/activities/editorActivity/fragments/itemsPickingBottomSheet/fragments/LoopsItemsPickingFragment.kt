@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.databinding.FragmentLoopsItemsPickingBinding
+import com.hits.coded.presentation.views.codeBlocks.loops.UIWhileBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,11 +32,15 @@ class LoopsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterfac
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
-
+            redrawElements()
         }
     }
 
     override fun redrawElements() {
+        with(binding.loopsOperatorsLinearLayout) {
+            removeAllViews()
 
+            addView(UIWhileBlock(requireContext()))
+        }
     }
 }

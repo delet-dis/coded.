@@ -94,4 +94,6 @@
 
     <string name="ifString">if</string>
     <string name="conditionsOperators">Conditions operators</string>
+    <string name="whileString">while</string>
+    <string name="loopsOperators">Loops operators</string>
 </resources>

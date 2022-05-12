@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.views.codeBlocks.ifElse
+package com.hits.coded.presentation.views.codeBlocks.loops
 
 import android.content.Context
 import android.util.AttributeSet
@@ -17,16 +17,17 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisp
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInformation
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithNestedBlocksAndConditionInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.IfBlock
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.IfBlockType
-import com.hits.coded.databinding.ViewIfBlockBinding
+import com.hits.coded.data.models.codeBlocks.dataClasses.LoopBlock
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.LoopBlockType
+import com.hits.coded.databinding.ViewWhileBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UIIfBlock @JvmOverloads constructor(
+class UIWhileBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -35,14 +36,14 @@ class UIIfBlock @JvmOverloads constructor(
     UICodeBlockWithLastTouchInformation, UICodeBlockElementHandlesDragAndDropInterface,
     UIElementSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
     UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface,
-    UICodeBlockSupportsErrorDisplaying {
-    private val binding: ViewIfBlockBinding
+    UICodeBlockSupportsErrorDisplaying, UICodeBlockWithNestedBlocksAndConditionInterface {
+    private val binding: ViewWhileBlockBinding
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
 
     override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
-    private var _block = IfBlock(IfBlockType.ONLY_IF)
+    private var _block = LoopBlock(LoopBlockType.WHILE)
     override val block: BlockBase
         get() = _block
 
@@ -54,10 +55,10 @@ class UIIfBlock @JvmOverloads constructor(
     init {
         inflate(
             context,
-            R.layout.view_if_block,
+            R.layout.view_while_block,
             this
         ).also { view ->
-            binding = ViewIfBlockBinding.bind(view)
+            binding = ViewWhileBlockBinding.bind(view)
         }
 
         initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
@@ -148,7 +149,7 @@ class UIIfBlock @JvmOverloads constructor(
 
                         DragEvent.ACTION_DROP -> {
                             handleDropEvent(
-                                this@UIIfBlock,
+                                this@UIWhileBlock,
                                 nestedBlocksLayout,
                                 itemParent,
                                 draggableItem,
@@ -177,12 +178,12 @@ class UIIfBlock @JvmOverloads constructor(
         }
     }
 
-    private fun handleConditionDropEvent(
+    override fun handleConditionDropEvent(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding)
     {
-        if (draggableItem != this@UIIfBlock) {
+        if (draggableItem != this@UIWhileBlock) {
             scaleMinusAnimation(firstCard)
 
             itemParent.removeView(draggableItem)
@@ -205,7 +206,7 @@ class UIIfBlock @JvmOverloads constructor(
         }
     }
 
-    private fun handleConditionDragEndedEvent(
+    override fun handleConditionDragEndedEvent(
         draggableItem: View
     ) {
         draggableItem.post {
@@ -221,10 +222,11 @@ class UIIfBlock @JvmOverloads constructor(
         this.invalidate()
     }
 
-    private fun initConditionChangeListener() =
+    override fun initConditionChangeListener() {
         binding.condition.addTextChangedListener {
             _block.conditionBlock = it.toString()
         }
+    }
 
     override fun removeView(view: View?) {
         super.removeView(view)
@@ -254,12 +256,16 @@ class UIIfBlock @JvmOverloads constructor(
     }
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "IF_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "WHILE_BLOCK_"
     }
 
-    override fun displayError() =
-        binding.backgroundImage.setImageResource(R.drawable.error_nested_block)
+    override fun displayError() = with(binding) {
+        backgroundImage.setImageResource(R.drawable.error_nested_block)
+        firstVerticalGuideline.setGuidelineBegin(125)
+    }
 
-    override fun hideError() =
-        binding.backgroundImage.setImageResource(R.drawable.if_block)
+    override fun hideError() =with(binding){
+        backgroundImage.setImageResource(R.drawable.while_block)
+        firstVerticalGuideline.setGuidelineBegin(105)
+    }
 }
