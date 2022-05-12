@@ -18,13 +18,13 @@
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/firstCard"
-        app:layout_constraintStart_toStartOf="@+id/ifText"
+        app:layout_constraintStart_toStartOf="@+id/whileText"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/if_block"
+        app:srcCompat="@drawable/while_block"
         tools:ignore="ImageContrastCheck" />
 
     <TextView
-        android:id="@+id/ifText"
+        android:id="@+id/whileText"
         style="@style/buttonBoldText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         android:maxLength="20"
         android:maxLines="0"
         android:singleLine="true"
-        android:text="@string/ifString"
+        android:text="@string/whileString"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/firstHorizontalGuideline"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +51,7 @@
         app:layout_constraintBottom_toTopOf="@+id/firstHorizontalGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/ifText"
+        app:layout_constraintStart_toEndOf="@+id/whileText"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.45">
 
@@ -101,7 +101,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="125px"
+        app:layout_constraintGuide_begin="105px"
         tools:ignore="PxUsage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
