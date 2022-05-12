@@ -1,5 +1,6 @@
 package com.hits.coded.data.repositoriesImplementations
 
+import android.util.Log
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.ExpressionBlockBase
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.LoopBlockBase
@@ -193,15 +194,7 @@ constructor(
             if(loopBlock.conditionBlock!=null) {
                 while (convertAnyToBoolean(loopBlock.conditionBlock!!)) {
                     it.forEach { blockBase ->
-                        when (blockBase.type) {
-                            BlockType.VARIABLE -> interpretVariableBlocks(blockBase as VariableBlockBase)
-                            BlockType.CONDITION -> interpretConditionBlocks(blockBase as ConditionBlockBase)
-                            BlockType.LOOP -> interpretLoopBlocks(blockBase as LoopBlockBase)
-                            BlockType.EXPRESSION -> interpretExpressionBlocks(blockBase as ExpressionBlockBase)
-                            else -> {
-                                throw InterpreterException(currentId, ExceptionType.TYPE_MISMATCH)
-                            }
-                        }
+                        interpretBlock(blockBase)
                     }
                 }
             }
