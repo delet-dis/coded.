@@ -106,8 +106,12 @@ class UIActionStartBlock @JvmOverloads constructor(
                                 binding.nestedBlocksLayout,
                                 itemParent,
                                 draggableItem,
-                                {
-                                    nestedBlocksAsBlockBase.add(it)
+                                { blockBase, position ->
+                                    if (position != null) {
+                                        nestedBlocksAsBlockBase.add(position, blockBase)
+                                    } else {
+                                        nestedBlocksAsBlockBase.add(blockBase)
+                                    }
 
                                     _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
                                 },
