@@ -10,5 +10,5 @@ enum class ExceptionType {
     WRONG_OPERAND_USE_CASE,
     INVALID_STRING,
     INVALID_BLOCK,
-    WTF
+    VARIABLE_VALUE_IS_NULL
 }

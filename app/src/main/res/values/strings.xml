@@ -22,7 +22,6 @@
     <string name="wrongOperandError">You shouldn\'t use such operand in this case</string>
     <string name="invalidStringError">Hmm, I can\'t quite understand what do you mean here</string>
     <string name="invalidBlockError"> *CRAAACK* It seems that this block doesn\'t fit here!</string>
-    <string name="internalInterpreterError">It is not your fault! Executor did something that it shouldn\'t do</string>
 
     <string name="project">Project</string>
 
@@ -68,7 +67,6 @@
     <string name="doubleType">Double</string>
     <string name="integerType">Int</string>
     <string name="booleanType">Boolean</string>
-    <string name="multidimensionalArrayType">Nested arrays</string>
     <string name="array">array</string>
     <string name="consoleInput">Console input</string>
     <string name="readFromConsole">read from console</string>

@@ -1,4 +1,4 @@
-package com.hits.coded.data.implementations.repositories
+package com.hits.coded.data.repositoriesImplementations
 
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.domain.repositories.HeapRepository

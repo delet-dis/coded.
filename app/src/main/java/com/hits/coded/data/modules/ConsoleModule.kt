@@ -1,7 +1,7 @@
 package com.hits.coded.data.modules
 
 import com.hits.coded.data.models.console.useCases.ConsoleUseCases
-import com.hits.coded.data.implementations.repositories.ConsoleRepositoryImplementation
+import com.hits.coded.data.repositoriesImplementations.ConsoleRepositoryImplementation
 import com.hits.coded.domain.repositories.ConsoleRepository
 import com.hits.coded.domain.useCases.console.CheckIsInputAvailableUseCase
 import com.hits.coded.domain.useCases.console.ClearConsoleUseCase

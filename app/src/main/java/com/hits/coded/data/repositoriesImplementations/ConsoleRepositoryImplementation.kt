@@ -1,4 +1,4 @@
-package com.hits.coded.data.implementations.repositories
+package com.hits.coded.data.repositoriesImplementations
 
 import android.content.Context
 import android.text.SpannableString
