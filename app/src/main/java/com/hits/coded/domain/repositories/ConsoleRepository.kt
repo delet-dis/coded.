@@ -8,7 +8,7 @@ abstract class ConsoleRepository {
 //    abstract val buffer: Flow<ArrayDeque<SpannableString>>
     abstract val isInputAvailable: Flow<Boolean>
     abstract fun clear()
-    abstract fun flush()
+    abstract suspend fun flush()
     abstract fun writeToConsole(input: String, consoleMessageType: ConsoleMessageType)
     abstract suspend fun readFromConsole(): String
 }

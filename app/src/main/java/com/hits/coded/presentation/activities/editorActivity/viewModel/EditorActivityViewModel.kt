@@ -53,7 +53,9 @@ class EditorActivityViewModel @Inject constructor(
 
     fun stopCodeExecution() {
         processingJob.cancel()
-        consoleUseCases.flushUseCase.flush()
+        viewModelScope.launch(Dispatchers.IO) {
+            consoleUseCases.flushUseCase.flush()
+        }
         _isCodeExecuting.postValue(false)
     }
 }

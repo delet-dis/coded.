@@ -40,14 +40,7 @@ class Console @JvmOverloads constructor(
         initConsoleSubmitting()
     }
 
-//    private fun initConsoleObserving() =
-//        viewModel.consoleBuffer.observe(context as LifecycleOwner) {
-//            Console.clear()
-//
-//            it.forEach { spannableString ->
-//                Console.writeLine(spannableString)
-//            }
-//        }
+
 
     private fun initIsInputAvailableObserving() =
         viewModel.isAvailableToInput.observe(context as LifecycleOwner) {
