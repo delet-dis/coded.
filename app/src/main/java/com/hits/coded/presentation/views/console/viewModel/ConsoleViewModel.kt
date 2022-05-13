@@ -1,6 +1,5 @@
 package com.hits.coded.presentation.views.console.viewModel
 
-import android.text.SpannableString
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.hits.coded.data.models.console.useCases.ConsoleUseCases
@@ -14,9 +13,9 @@ import javax.inject.Inject
 class ConsoleViewModel @Inject constructor(
     private val consoleUseCases: ConsoleUseCases
 ) {
-    private val _consoleBuffer = consoleUseCases.getBufferUseCase.getBuffer().asLiveData()
-    val consoleBuffer: LiveData<ArrayDeque<SpannableString>>
-        get() = _consoleBuffer
+//    private val _consoleBuffer = consoleUseCases.getBufferUseCase.getBuffer().asLiveData()
+//    val consoleBuffer: LiveData<ArrayDeque<SpannableString>>
+//        get() = _consoleBuffer
 
     private val _isAvailableToInput =
         consoleUseCases.checkIsInputAvailableUseCase.checkIsInputAvailable().asLiveData()

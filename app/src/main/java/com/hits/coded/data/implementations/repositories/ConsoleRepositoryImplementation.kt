@@ -6,12 +6,12 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import com.hits.coded.data.models.console.enums.ConsoleMessageType
 import com.hits.coded.domain.repositories.ConsoleRepository
+import com.jraska.console.Console
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,13 +21,11 @@ class ConsoleRepositoryImplementation @Inject constructor(
     @ApplicationContext private val context: Context
 ) :
     ConsoleRepository() {
+    private var textBuffer = ""
+    private var markupBuffer = ArrayList<Pair<Int, ConsoleMessageType>>(BUFFER_SIZE)
 
-    private val _bufferValue: ArrayDeque<SpannableString> = ArrayDeque(BUFFER_SIZE)
-
-    private var _buffer: MutableSharedFlow<ArrayDeque<SpannableString>> =
-        MutableSharedFlow(1, 0, BufferOverflow.DROP_OLDEST)
-    override val buffer: Flow<ArrayDeque<SpannableString>>
-        get() = _buffer
+    private var readBuffer: MutableSharedFlow<String> =
+        MutableSharedFlow(0, 1, BufferOverflow.DROP_OLDEST)
 
     private var _isInputAvailable: MutableStateFlow<Boolean> = MutableStateFlow(false)
     override val isInputAvailable: Flow<Boolean>
@@ -35,39 +33,58 @@ class ConsoleRepositoryImplementation @Inject constructor(
 
 
     init {
-        _buffer.tryEmit(_bufferValue)
     }
 
     override fun clear() {
-        _bufferValue.clear()
-        _buffer.tryEmit(_bufferValue)
+        Console.clear()
     }
 
     override suspend fun readFromConsole(): String {
         _isInputAvailable.emit(true)
-        val input = buffer.drop(1).first().last()
+        val input = readBuffer.first()
         _isInputAvailable.emit(false)
-        return input.toString()
+        return input
+    }
+
+    override fun flush() {
+        val resultString = SpannableString(textBuffer)
+        var strBeginning = 0
+
+        for (markupPair in markupBuffer) {
+            resultString.apply {
+                setSpan(
+                    ForegroundColorSpan(context.getColor(markupPair.second.colorResourceId)),
+                    strBeginning,
+                    strBeginning + markupPair.first,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+
+            strBeginning += markupPair.first
+        }
+
+        textBuffer = ""
+        markupBuffer.clear()
+
+        Console.write(resultString)
     }
 
     override fun writeToConsole(input: String, consoleMessageType: ConsoleMessageType) {
-        if (_bufferValue.size == BUFFER_SIZE) {
-            _bufferValue.removeFirst()
-        }
 
-        _bufferValue.addLast(SpannableString(input).apply {
-            setSpan(
-                ForegroundColorSpan(context.getColor(consoleMessageType.colorResourceId)),
-                0,
-                input.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        })
-        _buffer.tryEmit(_bufferValue)
+        readBuffer.tryEmit(input)
+
+        textBuffer += input + '\n'
+
+        val markupPair = Pair(input.length + 1, consoleMessageType)
+        markupBuffer.add(markupPair)
+
+        if (markupBuffer.size >= BUFFER_SIZE) {
+            flush()
+        }
     }
 
 
     private companion object {
-        const val BUFFER_SIZE = 100
+        const val BUFFER_SIZE = 1000
     }
 }

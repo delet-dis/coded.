@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditorActivityViewModel @Inject constructor(
     private val interpreterCallerUseCases: InterpreterCallerUseCases,
-    consoleUseCases: ConsoleUseCases,
+    private val consoleUseCases: ConsoleUseCases,
 ) :
     ViewModel() {
     private val _isBarsCollapsed = MutableLiveData(false)
@@ -53,7 +53,7 @@ class EditorActivityViewModel @Inject constructor(
 
     fun stopCodeExecution() {
         processingJob.cancel()
-
+        consoleUseCases.flushUseCase.flush()
         _isCodeExecuting.postValue(false)
     }
 }

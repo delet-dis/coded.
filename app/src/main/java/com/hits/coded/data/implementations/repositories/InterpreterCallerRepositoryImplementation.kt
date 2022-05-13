@@ -60,6 +60,7 @@ class InterpreterCallerRepositoryImplementation
             _executionResult.emit(error)
         }
 
+        consoleUseCases.flushUseCase.flush()
     }
 
 }
