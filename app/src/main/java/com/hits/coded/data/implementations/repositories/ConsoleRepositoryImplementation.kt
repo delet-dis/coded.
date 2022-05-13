@@ -6,7 +6,7 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import com.hits.coded.data.models.console.enums.ConsoleMessageType
 import com.hits.coded.domain.repositories.ConsoleRepository
-import com.jraska.console.Console
+import console.Console
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
