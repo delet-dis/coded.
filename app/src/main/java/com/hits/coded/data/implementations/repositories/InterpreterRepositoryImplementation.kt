@@ -141,19 +141,19 @@ constructor(
         ifBlock.id?.let {
             currentId = it
         }
-            if (convertAnyToBoolean(ifBlock.conditionBlock)) {
-                ifBlock.nestedBlocks?.let {
-                    it.forEach { blockBase ->
-                        interpretBlock(blockBase)
-                    }
-                }
-            } else if (ifBlock.ifBlockType == IfBlockType.IF_WITH_ELSE) {
-                ifBlock.elseBlocks?.let {
-                    it.forEach { blockBase ->
-                        interpretBlock(blockBase)
-                    }
+        if (convertAnyToBoolean(ifBlock.conditionBlock)) {
+            ifBlock.nestedBlocks?.let {
+                it.forEach { blockBase ->
+                    interpretBlock(blockBase)
                 }
             }
+        } else if (ifBlock.ifBlockType == IfBlockType.IF_WITH_ELSE) {
+            ifBlock.elseBlocks?.let {
+                it.forEach { blockBase ->
+                    interpretBlock(blockBase)
+                }
+            }
+        }
     }
 
     @Throws(InterpreterException::class)
@@ -161,19 +161,10 @@ constructor(
         loopBlock.id?.let {
             currentId = it
         }
-
         loopBlock.nestedBlocks?.let {
-            while (interpretConditionBlocks(loopBlock.conditionBlock)) {
+            while (convertAnyToBoolean(loopBlock.conditionBlock)) {
                 it.forEach { blockBase ->
-                    when (blockBase.type) {
-                        BlockType.VARIABLE -> interpretVariableBlocks(blockBase as VariableBlockBase)
-                        BlockType.CONDITION -> interpretConditionBlocks(blockBase as ConditionBlockBase)
-                        BlockType.LOOP -> interpretLoopBlocks(blockBase as LoopBlockBase)
-                        BlockType.EXPRESSION -> interpretExpressionBlocks(blockBase as ExpressionBlockBase)
-                        else -> {
-                            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-                        }
-                    }
+                    interpretBlock(blockBase)
                 }
             }
         }
@@ -194,12 +185,12 @@ constructor(
                     ?: throw InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
 
                 val currentStoredVariable = getVariable(variableParams)
-                currentStoredVariable.value = when (currentStoredVariable.value) {
-                    is String -> convertAnyToString(valueToSet)
-                    is Int -> convertAnyToInt(valueToSet)
-                    is Double -> convertAnyToDouble(valueToSet)
-                    is Boolean -> convertAnyToBoolean(valueToSet)
-                    is ArrayBase -> convertAnyToArrayBase(
+                currentStoredVariable.value = when (currentStoredVariable.type) {
+                    VariableType.STRING -> convertAnyToString(valueToSet)
+                    VariableType.INT -> convertAnyToInt(valueToSet)
+                    VariableType.DOUBLE -> convertAnyToDouble(valueToSet)
+                    VariableType.BOOLEAN -> convertAnyToBoolean(valueToSet)
+                    VariableType.ARRAY -> convertAnyToArrayBase(
                         valueToSet,
                         currentStoredVariable.value as ArrayBase
                     )
@@ -542,11 +533,6 @@ constructor(
         }
         return true
     }
-
-    private fun areNumericTypes(firstType: VariableType?, secondType: VariableType?): Boolean =
-        (firstType == VariableType.DOUBLE || firstType == VariableType.INT) &&
-                (secondType == VariableType.DOUBLE || secondType == VariableType.INT)
-
 
     @Throws(InterpreterException::class)
     private suspend fun getVariable(variableIdentifier: Any): StoredVariable {

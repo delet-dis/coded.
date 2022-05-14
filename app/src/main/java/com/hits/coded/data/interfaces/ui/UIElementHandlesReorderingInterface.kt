@@ -133,7 +133,7 @@ interface UIElementHandlesReorderingInterface : UIElementSavesNestedBlocksInterf
         listLinearLayout: LinearLayout,
         itemParent: ViewGroup?,
         draggableItem: View,
-        blockAddClosure: (BlockBase) -> Unit,
+        blockAddClosure: (BlockBase, Int?) -> Unit,
         animationClosure: () -> Unit,
     ) {
         if (draggableItem != block) {
@@ -152,7 +152,7 @@ interface UIElementHandlesReorderingInterface : UIElementSavesNestedBlocksInterf
                     listLinearLayout.addView(draggableItem, dropPosition!!)
 
                     (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                        blockAddClosure(it)
+                        blockAddClosure(it, dropPosition)
                     }
                 }
             } else {
@@ -163,7 +163,7 @@ interface UIElementHandlesReorderingInterface : UIElementSavesNestedBlocksInterf
                 listLinearLayout.addView(draggableItem)
 
                 (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                    blockAddClosure(it)
+                    blockAddClosure(it, null)
                 }
             }
         }

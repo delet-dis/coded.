@@ -9,6 +9,7 @@ import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.console.useCases.ConsoleUseCases
 import com.hits.coded.data.models.interpreterCaller.useCases.InterpreterCallerUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,7 +31,8 @@ class EditorActivityViewModel @Inject constructor(
     val isConsoleInputAvailable =
         consoleUseCases.checkIsInputAvailableUseCase.checkIsInputAvailable().asLiveData()
 
-    val codeExecutionResult = interpreterCallerUseCases.getExecutionResultsUseCase.getExecutionResult().asLiveData()
+    val codeExecutionResult =
+        interpreterCallerUseCases.getExecutionResultsUseCase.getExecutionResult().asLiveData()
 
     private lateinit var processingJob: Job
 
@@ -42,7 +44,7 @@ class EditorActivityViewModel @Inject constructor(
 
     fun executeCode(startBlock: StartBlock) {
         _isCodeExecuting.postValue(true)
-        processingJob = viewModelScope.launch {
+        processingJob = viewModelScope.launch(Dispatchers.IO) {
             interpreterCallerUseCases.callInterpreterUseCase.callInterpreter(startBlock)
 
             _isCodeExecuting.postValue(false)
