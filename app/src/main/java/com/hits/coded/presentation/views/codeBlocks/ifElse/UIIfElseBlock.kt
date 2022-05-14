@@ -44,7 +44,7 @@ class UIIfElseBlock @JvmOverloads constructor(
 
     override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
-    private var _block = IfBlock(IfBlockType.ONLY_IF)
+    private var _block = IfBlock(IfBlockType.IF_WITH_ELSE)
     override val block: BlockBase
         get() = _block
 
@@ -161,7 +161,7 @@ class UIIfElseBlock @JvmOverloads constructor(
                                         nestedBlocksAsBlockBase.add(blockBase)
                                     }
 
-                                    _block.elseBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                                    _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
                                 },
                                 {
                                     alphaPlusAnimation(backgroundTopImage)
