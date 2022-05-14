@@ -137,10 +137,10 @@ constructor(
 
     @Throws(InterpreterException::class)
     private suspend fun interpretIfBlock(ifBlock: IfBlockBase) {
-
         ifBlock.id?.let {
             currentId = it
         }
+
         if (convertAnyToBoolean(ifBlock.conditionBlock)) {
             ifBlock.nestedBlocks?.let {
                 it.forEach { blockBase ->
@@ -161,6 +161,7 @@ constructor(
         loopBlock.id?.let {
             currentId = it
         }
+
         loopBlock.nestedBlocks?.let {
             while (convertAnyToBoolean(loopBlock.conditionBlock)) {
                 it.forEach { blockBase ->
@@ -215,7 +216,6 @@ constructor(
                             ExceptionType.INVALID_STRING
                         )
 
-
                     val result = when (operand) {
                         '+' -> origValue.toDouble() + delta
                         '-' -> origValue.toDouble() - delta
@@ -254,7 +254,6 @@ constructor(
                             throw InterpreterException(ExceptionType.WTF)
                     }
                 }
-
                 heapUseCases.addVariableUseCase.addVariable(currentVariable)
             }
             null -> throw InterpreterException(ExceptionType.WTF)
@@ -269,7 +268,6 @@ constructor(
 
         val leftSide = getBaseType(expressionBlock.leftSide)
         val rightSide = getBaseType(expressionBlock.rightSide)
-
 
         if (leftSide is Number && rightSide is Number) {
 
@@ -319,7 +317,7 @@ constructor(
             currentId = it
         }
 
-        when (IO.ioBlockType) {
+        return when (IO.ioBlockType) {
             IOBlockType.WRITE -> {
                 IO.argument?.let {
                     consoleUseCases.writeToConsoleUseCase.writeOutputToConsole(
@@ -327,11 +325,11 @@ constructor(
                     )
                 }
 
-                return null
+                null
             }
 
             IOBlockType.READ -> {
-                return consoleUseCases.readFromConsoleUseCase.readFromConsole()
+                consoleUseCases.readFromConsoleUseCase.readFromConsole()
             }
         }
     }
@@ -342,8 +340,7 @@ constructor(
             currentId = it
         }
 
-        val arrayIdentifier = block.array
-        val storedArray = when (arrayIdentifier) {
+        val storedArray = when (val arrayIdentifier = block.array) {
             is String -> heapUseCases.getVariableUseCase.getVariable(arrayIdentifier)
             is ArrayBlockBase -> (interpretArrayBlock(arrayIdentifier) as? StoredVariable)
             else -> null
@@ -367,12 +364,11 @@ constructor(
             ArrayBlockType.POP -> array.pop()
             ArrayBlockType.CONCAT -> array.concat(block.value as? ArrayBase)
         }
-
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun interpretBlock(block: BlockBase): Any? {
-        return when (block.type) {
+    private suspend fun interpretBlock(block: BlockBase) =
+        when (block.type) {
             BlockType.CONDITION -> interpretConditionBlocks(block as ConditionBlock)
             BlockType.EXPRESSION -> interpretExpressionBlocks(block as ExpressionBlock)
             BlockType.IO -> interpretIOBlocks(block as IOBlock)
@@ -382,7 +378,6 @@ constructor(
             BlockType.ARRAY -> interpretArrayBlock(block as ArrayBlock)
             BlockType.IF -> interpretIfBlock(block as IfBlock)
         }
-    }
 
 
     @Throws(InterpreterException::class)
@@ -423,26 +418,22 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun convertAnyToStringIndulgently(value: Any): String {
-        val processedValue = getBaseType(value)
-
-        when (processedValue) {
+    private suspend fun convertAnyToStringIndulgently(value: Any): String =
+        when (val processedValue = getBaseType(value)) {
             is ArrayBase -> {
                 var resultString = "[ "
                 for (i in 0 until processedValue.size)
                     resultString += convertAnyToStringIndulgently(processedValue[i]) + ' '
                 resultString += " ]"
 
-                return resultString
+                resultString
             }
 
-            is String -> return processedValue
-            else -> return processedValue.toString()
+            is String -> processedValue
+            else -> processedValue.toString()
         }
-    }
 
     private suspend fun convertAnyToArrayBase(value: Any, array: ArrayBase): ArrayBase {
-
         var canBeStringField = true
         val processedValue: Any
         when (value) {
@@ -463,7 +454,7 @@ constructor(
             }
 
             is String -> {
-                if (canBeStringField &&
+                return if (canBeStringField &&
                     isVariable(processedValue) &&
                     heapUseCases.isVariableDeclaredUseCase.isVariableDeclared(processedValue)
                 ) {
@@ -472,9 +463,9 @@ constructor(
                             ?: throw InterpreterException(
                                 ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                             )
-                    return convertAnyToArrayBase(foundedStoredVariable, array)
+                    convertAnyToArrayBase(foundedStoredVariable, array)
                 } else {
-                    return array.parseArray(processedValue)
+                    array.parseArray(processedValue)
                 }
             }
 
@@ -489,8 +480,9 @@ constructor(
 
         when (value) {
             is String -> {
-                if (!canBeStringField)
+                if (!canBeStringField) {
                     return value
+                }
 
                 value.toDoubleOrNull()?.let {
                     return it
@@ -500,15 +492,16 @@ constructor(
                     return it
                 }
 
-                if (isVariable(value)) {
+                return if (isVariable(value)) {
                     val foundedStoredVariable =
                         heapUseCases.getVariableUseCase.getVariable(value)
                             ?: throw InterpreterException(
                                 ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
                             )
-                    return foundedStoredVariable.value!!
+
+                    foundedStoredVariable.value!!
                 } else {
-                    return value.drop(1).dropLast(1)
+                    value.drop(1).dropLast(1)
                 }
             }
 
@@ -531,6 +524,7 @@ constructor(
             }
             throw InterpreterException(ExceptionType.INVALID_STRING)
         }
+
         return true
     }
 
