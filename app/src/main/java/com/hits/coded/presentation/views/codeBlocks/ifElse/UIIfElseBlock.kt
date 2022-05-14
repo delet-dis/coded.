@@ -330,12 +330,16 @@ class UIIfElseBlock @JvmOverloads constructor(
     }
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "IF_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "IF_ELSE_BLOCK_"
     }
 
-    override fun displayError() =
-        binding.backgroundTopImage.setImageResource(R.drawable.error_nested_block)
+    override fun displayError() = with(binding) {
+        backgroundTopImage.setImageResource(R.drawable.error_if_else_block_top_part)
+        backgroundBottomImage.setImageResource(R.drawable.error_if_else_block_bottom_part)
+    }
 
-    override fun hideError() =
-        binding.backgroundTopImage.setImageResource(R.drawable.if_block)
+    override fun hideError() = with(binding) {
+        backgroundTopImage.setImageResource(R.drawable.if_else_block_top_part)
+        backgroundBottomImage.setImageResource(R.drawable.if_else_block_bottom_part)
+    }
 }
