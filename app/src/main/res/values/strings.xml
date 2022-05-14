@@ -98,4 +98,5 @@
     <string name="conditionsOperators">Conditions operators</string>
     <string name="whileString">while</string>
     <string name="loopsOperators">Loops operators</string>
+    <string name="elseString">else</string>
 </resources>
