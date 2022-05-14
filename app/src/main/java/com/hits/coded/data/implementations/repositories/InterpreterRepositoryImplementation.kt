@@ -44,12 +44,9 @@ constructor(
 
     override var currentId = 0
         private set
-    private var ioBlocksValues: HashMap<Int, Any> = HashMap()
 
     @Throws(InterpreterException::class)
     override suspend fun interpretStartBlock(startBlock: StartBlock) {
-        ioBlocksValues.clear()
-
         startBlock.nestedBlocks?.forEach { nestedBlock ->
             interpretBlock(nestedBlock)
         }
@@ -63,79 +60,63 @@ constructor(
 
         var conditionIsTrue = false
 
-        val leftSideType = getTypeOfAny(conditionBlock.leftSide)
+        val leftSide = getBaseType(conditionBlock.leftSide)
 
-        var rightSideType: VariableType? = null
+        var rightSide: Any? = null
 
         if (conditionBlock.logicalBlock?.logicalBlockType != LogicalBlockType.NOT) {
-            rightSideType = getTypeOfAny(conditionBlock.rightSide)
+            rightSide = getBaseType(conditionBlock.rightSide)
         }
 
         conditionBlock.logicalBlock?.let {
+            if (leftSide !is Boolean)
+                throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+
             when (it.logicalBlockType) {
-                LogicalBlockType.AND,
-                LogicalBlockType.OR -> {
-                    when {
-                        leftSideType == VariableType.BOOLEAN && rightSideType == VariableType.BOOLEAN -> {
-                            val leftSide = convertAnyToBoolean(conditionBlock.leftSide!!)
-
-                            val rightSide = convertAnyToBoolean(conditionBlock.rightSide!!)
-
-                            if (it.logicalBlockType == LogicalBlockType.AND) {
-                                conditionIsTrue = leftSide && rightSide
-                            }
-
-                            if (it.logicalBlockType == LogicalBlockType.OR) {
-                                conditionIsTrue = leftSide || rightSide
-                            }
-                        }
-
-                        conditionBlock.rightSide != null && conditionBlock.leftSide != null ->
-                            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-
-                        else -> throw InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
-                    }
-                }
-
-                LogicalBlockType.NOT -> {
-                    if (leftSideType == VariableType.BOOLEAN) {
-                        conditionIsTrue = !(convertAnyToBoolean(conditionBlock.leftSide!!))
-                    } else {
+                LogicalBlockType.AND -> {
+                    if (rightSide !is Boolean)
                         throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-                    }
+
+                    conditionIsTrue = leftSide && rightSide
                 }
+
+                LogicalBlockType.OR -> {
+                    if (rightSide !is Boolean)
+                        throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+
+                    conditionIsTrue = leftSide || rightSide
+                }
+
+                LogicalBlockType.NOT -> conditionIsTrue = !leftSide
             }
         }
 
         conditionBlock.mathematicalBlock?.let {
-            if (leftSideType == rightSideType || areNumericTypes(leftSideType, rightSideType)) {
-                val resultOfComparison = when (leftSideType) {
-                    VariableType.STRING -> convertAnyToString(conditionBlock.leftSide!!).compareTo(
-                        convertAnyToString(conditionBlock.rightSide!!)
-                    )
+            val resultOfComparison = when (leftSide) {
+                is String -> leftSide.compareTo(
+                    convertAnyToString(conditionBlock.rightSide!!)
+                )
 
-                    VariableType.DOUBLE, VariableType.INT -> convertAnyToDouble(conditionBlock.leftSide!!).compareTo(
-                        convertAnyToDouble(conditionBlock.rightSide!!)
-                    )
+                is Number -> leftSide.toDouble().compareTo(
+                    convertAnyToDouble(conditionBlock.rightSide!!)
+                )
 
-                    VariableType.BOOLEAN -> convertAnyToBoolean(conditionBlock.leftSide!!).compareTo(
-                        convertAnyToBoolean(conditionBlock.rightSide!!)
-                    )
+                is Boolean -> leftSide.compareTo(
+                    convertAnyToBoolean(conditionBlock.rightSide!!)
+                )
 
-                    VariableType.ARRAY -> throw InterpreterException(ExceptionType.WTF) //TODO:
-                }
-
-                conditionIsTrue = when (it.mathematicalBlockType) {
-                    MathematicalBlockType.EQUAL -> resultOfComparison == 0
-                    MathematicalBlockType.GREATER_OR_EQUAL_THAN -> resultOfComparison >= 0
-                    MathematicalBlockType.GREATER_THAN -> resultOfComparison > 0
-                    MathematicalBlockType.LOWER_OR_EQUAL_THAN -> resultOfComparison <= 0
-                    MathematicalBlockType.LOWER_THAN -> resultOfComparison < 0
-                    MathematicalBlockType.NON_EQUAL -> resultOfComparison != 0
-                }
-            } else {
-                throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+                else -> throw InterpreterException(ExceptionType.TYPE_MISMATCH)
             }
+
+            conditionIsTrue = when (it.mathematicalBlockType) {
+                MathematicalBlockType.EQUAL -> resultOfComparison == 0
+                MathematicalBlockType.GREATER_OR_EQUAL_THAN -> resultOfComparison >= 0
+                MathematicalBlockType.GREATER_THAN -> resultOfComparison > 0
+                MathematicalBlockType.LOWER_OR_EQUAL_THAN -> resultOfComparison <= 0
+                MathematicalBlockType.LOWER_THAN -> resultOfComparison < 0
+                MathematicalBlockType.NON_EQUAL -> resultOfComparison != 0
+            }
+
         }
 
         if (conditionIsTrue) {
@@ -295,17 +276,14 @@ constructor(
             currentId = it
         }
 
-        val leftSide = expressionBlock.leftSide
-        val rightSide = expressionBlock.rightSide
-
-        val leftSideType = getTypeOfAny(leftSide)
-        val rightSideType = getTypeOfAny(rightSide)
+        val leftSide = getBaseType(expressionBlock.leftSide)
+        val rightSide = getBaseType(expressionBlock.rightSide)
 
 
-        if (areNumericTypes(leftSideType, rightSideType)) {
+        if (leftSide is Number && rightSide is Number) {
 
-            val leftSideUnwrapped = convertAnyToDouble(leftSide!!)
-            val rightSideUnwrapped = convertAnyToDouble(rightSide!!)
+            val leftSideUnwrapped = leftSide.toDouble()
+            val rightSideUnwrapped = rightSide.toDouble()
 
             return when (expressionBlock.expressionBlockType) {
                 ExpressionBlockType.PLUS -> leftSideUnwrapped + rightSideUnwrapped
@@ -334,12 +312,11 @@ constructor(
             }
         }
 
-        if (leftSideType == VariableType.STRING &&
-            rightSideType == VariableType.STRING &&
+        if (leftSide is String &&
+            rightSide is String &&
             expressionBlock.expressionBlockType == ExpressionBlockType.PLUS
         ) {
-
-            return '"' + convertAnyToString(leftSide!!) + convertAnyToString(rightSide!!) + '"'
+            return leftSide + rightSide
         }
 
         throw InterpreterException(ExceptionType.TYPE_MISMATCH)
@@ -363,9 +340,7 @@ constructor(
             }
 
             IOBlockType.READ -> {
-                val input = consoleUseCases.readFromConsoleUseCase.readFromConsole()
-                ioBlocksValues[IO.id as Int] = input
-                return input
+                return consoleUseCases.readFromConsoleUseCase.readFromConsole()
             }
         }
     }
@@ -391,7 +366,6 @@ constructor(
             throw InterpreterException(
                 ExceptionType.TYPE_MISMATCH
             )
-
 
         val array = storedArray.value!! as ArrayBase // array in heap -> it has been constructed
 
@@ -422,228 +396,56 @@ constructor(
 
     @Throws(InterpreterException::class)
     private suspend fun convertAnyToDouble(value: Any?): Double {
-        when (value) {
-            is Double -> return value
-            is StoredVariable -> {
-                if (value.value is Double) {
-                    return value.value as Double
-                } else {
-                    throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-                }
-            }
-            is ExpressionBlock -> {
-                val result = interpretExpressionBlocks(value)
-                if (result is Number)
-                    return result.toDouble()
-                else
-                    throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-            }
+        val processedValue = getBaseType(value)
+        if (processedValue !is Number)
+            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
-            is String -> {
-                value.toDoubleOrNull()?.let {
-                    return it
-                }
-
-                if (isVariable(value)) {
-                    val foundedStoredVariable =
-                        heapUseCases.getVariableUseCase.getVariable(value)
-                            ?: throw InterpreterException(
-                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                            )
-                    return convertAnyToDouble(foundedStoredVariable)
-                } else {
-                    throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-                }
-            }
-
-            is ArrayBlock -> return convertAnyToDouble(interpretArrayBlock(value))
-
-            is IOBlockBase -> {
-                return interpretIOBlocks(value)?.toDoubleOrNull()
-                    ?: throw InterpreterException(
-                        ExceptionType.TYPE_MISMATCH
-                    )
-            }
-        }
-
-        throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+        return processedValue.toDouble()
     }
 
     @Throws(InterpreterException::class)
     private suspend fun convertAnyToInt(value: Any?): Int {
-        when (value) {
-            is Int -> return value
-            is StoredVariable -> {
-                if (value.value is Int) {
-                    return value.value as Int
-                } else {
-                    throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-                }
-            }
-            is ExpressionBlock -> {
-                return interpretExpressionBlocks(value) as? Int
-                    ?: throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-            }
-            is IOBlockBase -> {
-                return if (ioBlocksValues[value.id] != null) {
-                    convertAnyToInt(ioBlocksValues[value.id]!!)
-                } else {
-                    convertAnyToInt(interpretIOBlocks(value))
-                }
-            }
+        val processedValue = getBaseType(value)
+        if (processedValue !is Number)
+            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
-            is String -> {
-                value.toIntOrNull()?.let {
-                    return it
-                }
-                if (isVariable(value)) {
-                    val foundedStoredVariable =
-                        heapUseCases.getVariableUseCase.getVariable(value)
-                            ?: throw InterpreterException(
-                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                            )
-                    return convertAnyToInt(foundedStoredVariable)
-                } else {
-                    throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-                }
-            }
-
-            is ArrayBlock -> return convertAnyToInt(interpretArrayBlock(value))
-        }
-        throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+        return processedValue.toInt()
     }
 
     @Throws(InterpreterException::class)
     private suspend fun convertAnyToBoolean(value: Any?): Boolean {
-        when (value) {
-            is Boolean -> return value
+        val processedValue = getBaseType(value)
+        if (processedValue !is Boolean)
+            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
-            is ConditionBlock -> {
-                return interpretConditionBlocks(value)
-            }
+        return processedValue
 
-            is StoredVariable -> {
-                if (value.value is Boolean) {
-                    return value.value as Boolean
-                } else {
-                    throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-                }
-            }
-
-            is ExpressionBlock -> {
-                return interpretExpressionBlocks(value) as? Boolean
-                    ?: throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-            }
-
-            is String -> {
-                value.toBooleanStrictOrNull()?.let {
-                    return it
-                }
-
-                if (isVariable(value)) {
-                    val foundedStoredVariable =
-                        heapUseCases.getVariableUseCase.getVariable(value)
-                            ?: throw InterpreterException(
-                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                            )
-                    return convertAnyToBoolean(foundedStoredVariable)
-                } else {
-                    throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-                }
-            }
-
-            is ArrayBlock -> return convertAnyToBoolean(interpretArrayBlock(value))
-
-            is IOBlockBase -> {
-                return if (ioBlocksValues[value.id] != null) {
-                    convertAnyToBoolean(ioBlocksValues[value.id]!!)
-                } else {
-                    convertAnyToBoolean(interpretIOBlocks(value))
-                }
-            }
-        }
-        throw InterpreterException(ExceptionType.TYPE_MISMATCH)
     }
 
     @Throws(InterpreterException::class)
     private suspend fun convertAnyToString(value: Any): String {
-        when (value) {
-            is StoredVariable -> {
-                if (value.value is String) {
-                    return value.value as String
-                } else {
-                    throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-                }
-            }
+        val processedValue = getBaseType(value)
+        if (processedValue !is String)
+            throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
-            is ExpressionBlock -> {
-                return interpretExpressionBlocks(value) as? String
-                    ?: throw InterpreterException(ExceptionType.TYPE_MISMATCH)
-            }
-            is String -> {
-                if (isVariable(value)) {
-                    val foundedStoredVariable =
-                        heapUseCases.getVariableUseCase.getVariable(value)
-                            ?: throw InterpreterException(
-                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                            )
-                    return convertAnyToString(foundedStoredVariable)
-                } else {
-                    return value.drop(1).dropLast(1)
-                }
-            }
-
-            is ArrayBlock -> return convertAnyToString(interpretArrayBlock(value))
-
-            is IOBlockBase -> {
-                return if (ioBlocksValues[value.id] != null) {
-                    convertAnyToString(ioBlocksValues[value.id]!!)
-                } else {
-                    interpretIOBlocks(value)?.let { convertAnyToString(it) }!!
-                }
-            }
-        }
-        throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+        return processedValue
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun convertAnyToStringIndulgently(value: Any, canBeStringField: Boolean = true): String {
-        var processedValue = value
-        if (processedValue is BlockBase) {
-            processedValue = interpretBlock(processedValue)
-                ?: throw InterpreterException(
-                    ExceptionType.INVALID_BLOCK
-                )
-        }
+    private suspend fun convertAnyToStringIndulgently(value: Any): String {
+        val processedValue = getBaseType(value)
 
         when (processedValue) {
-            is StoredVariable -> return convertAnyToStringIndulgently(processedValue.value!!, false)
-
             is ArrayBase -> {
                 var resultString = "[ "
                 for (i in 0 until processedValue.size)
-                    resultString += convertAnyToStringIndulgently(processedValue[i], false) + ' '
+                    resultString += convertAnyToStringIndulgently(processedValue[i]) + ' '
                 resultString += " ]"
 
                 return resultString
             }
 
-            is String -> {
-                if(!canBeStringField)
-                    return processedValue
-
-                if (isVariable(processedValue)) {
-                    val foundedStoredVariable =
-                        heapUseCases.getVariableUseCase.getVariable(processedValue)
-                            ?: throw InterpreterException(
-                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                            )
-                    return convertAnyToStringIndulgently(foundedStoredVariable, false)
-                } else {
-                    return processedValue.drop(1).dropLast(1)
-                }
-            }
-
+            is String -> return processedValue
             else -> return processedValue.toString()
         }
     }
@@ -690,52 +492,41 @@ constructor(
     }
 
     @Throws(InterpreterException::class)
-    private suspend fun getTypeOfAny(value: Any?): VariableType {
+    private suspend fun getBaseType(value: Any?, canBeStringField: Boolean = true): Any {
+        if (value == null || value == Unit)
+            throw InterpreterException(ExceptionType.INVALID_BLOCK)
+
         when (value) {
-            is Boolean -> return VariableType.BOOLEAN
-
             is String -> {
-                when {
-                    value.toIntOrNull() is Int -> return VariableType.INT
-                    value.toDoubleOrNull() is Double -> return VariableType.DOUBLE
-                    value.toBooleanStrictOrNull() is Boolean -> return VariableType.BOOLEAN
-                    else -> {
-                        return if (isVariable(value)) {
-                            val foundedStoredVariable =
-                                heapUseCases.getVariableUseCase.getVariable(value)
+                if (!canBeStringField)
+                    return value
 
-                            if (foundedStoredVariable?.type == null) {
-                                throw InterpreterException(
-                                    ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                                )
-                            } else {
-                                foundedStoredVariable.type!!
-                            }
-                        } else {
-                            VariableType.STRING
-                        }
-                    }
+                value.toDoubleOrNull()?.let {
+                    return it
                 }
-            }
 
-            is IOBlockBase -> {
-                return if (ioBlocksValues[value.id] != null) {
-                    getTypeOfAny(ioBlocksValues[value.id]!!)
+                value.toBooleanStrictOrNull()?.let {
+                    return it
+                }
+
+                if (isVariable(value)) {
+                    val foundedStoredVariable =
+                        heapUseCases.getVariableUseCase.getVariable(value)
+                            ?: throw InterpreterException(
+                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                            )
+                    return foundedStoredVariable.value!!
                 } else {
-                    getTypeOfAny(interpretIOBlocks(value))
+                    return value.drop(1).dropLast(1)
                 }
             }
 
-            is Double -> return VariableType.DOUBLE
-
-            is Int -> return VariableType.INT
-
-            is ExpressionBlockBase -> return getTypeOfAny(interpretExpressionBlocks(value))
-
-            is ConditionBlock -> return getTypeOfAny(interpretConditionBlocks(value))
-
-            else -> throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+            is StoredVariable -> return value.value!! //default init
+            is IOBlockBase -> return getBaseType(interpretIOBlocks(value), true)
+            is BlockBase -> return getBaseType(interpretBlock(value), false)
         }
+
+        return value
     }
 
 
