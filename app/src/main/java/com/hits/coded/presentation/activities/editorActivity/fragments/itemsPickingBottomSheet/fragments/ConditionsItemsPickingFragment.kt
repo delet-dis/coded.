@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
 import com.hits.coded.databinding.FragmentConditionsItemsPickingBinding
 import com.hits.coded.presentation.views.codeBlocks.ifElse.UIIfBlock
+import com.hits.coded.presentation.views.codeBlocks.ifElse.UIIfElseBlock
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,6 +42,7 @@ class ConditionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInt
             removeAllViews()
 
             addView(UIIfBlock(requireContext()))
+            addView(UIIfElseBlock(requireContext()))
         }
     }
 }

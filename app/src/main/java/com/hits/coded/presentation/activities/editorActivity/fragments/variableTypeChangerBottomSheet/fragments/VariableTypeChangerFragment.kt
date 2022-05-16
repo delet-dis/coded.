@@ -56,6 +56,6 @@ class VariableTypeChangerFragment : Fragment(), UIBottomSheetTypeChangerFragment
             layoutManager = LinearLayoutManager(context)
 
             adapter =
-                VariableTypeChangerAdapter(items, onClickAction, false)
+                VariableTypeChangerAdapter(items.dropLast(1).toTypedArray(), onClickAction, false)
         }
 }

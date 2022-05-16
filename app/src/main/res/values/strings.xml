@@ -68,7 +68,7 @@
     <string name="doubleType">Double</string>
     <string name="integerType">Int</string>
     <string name="booleanType">Boolean</string>
-    <string name="multidimensionalArrayType">Nested arrays</string>
+    <string name="multidimensionalArrayType">Nested</string>
     <string name="array">array</string>
     <string name="consoleInput">Console input</string>
     <string name="readFromConsole">read from console</string>
@@ -98,4 +98,5 @@
     <string name="conditionsOperators">Conditions operators</string>
     <string name="whileString">while</string>
     <string name="loopsOperators">Loops operators</string>
+    <string name="elseString">else</string>
 </resources>
