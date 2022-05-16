@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:maxZoom="4"
             app:maxZoomType="zoom"
-            app:minZoom="1"
+            app:minZoom="1.7"
             app:minZoomType="zoom"
             app:oneFingerScrollEnabled="true"
             app:overPinchable="true"
@@ -43,9 +43,7 @@
             app:transformationGravity="auto"
             app:twoFingersScrollEnabled="true"
             app:verticalPanEnabled="true"
-            app:zoomEnabled="true">
-
-        </com.otaliastudios.zoom.ZoomLayout>
+            app:zoomEnabled="true"/>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/topBarWrapper"
