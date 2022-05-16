@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <dimen name="onboardingHeaderTopMargin">50dp</dimen>
     <dimen name="onboardingHeaderLeftMargin">44dp</dimen>
     <dimen name="onboardingHeaderRightMargin">44dp</dimen>
@@ -37,4 +37,7 @@
 
     <dimen name="bottomSheetTopOffset">50dp</dimen>
     <dimen name="bottomSheetBottomMargin">60dp</dimen>
+
+    <dimen name="blockWithNestedBlocksVerticalGuideline" tools:ignore="PxUsage">130px</dimen>
+    <dimen name="blockWithNestedBlocksMinWidth">183dp</dimen>
 </resources>

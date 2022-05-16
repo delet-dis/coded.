@@ -22,11 +22,11 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.IfBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.IfBlockType
-import com.hits.coded.databinding.ViewIfBlockBinding
+import com.hits.coded.databinding.ViewIfElseBlockBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UIIfBlock @JvmOverloads constructor(
+class UIIfElseBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -36,13 +36,15 @@ class UIIfBlock @JvmOverloads constructor(
     UIElementSavesNestedBlocksInterface, UIElementHandlesCustomRemoveViewProcessInterface,
     UIElementHandlesReorderingInterface, UICodeBlockWithCustomRemoveViewProcessInterface,
     UICodeBlockSupportsErrorDisplaying {
-    private val binding: ViewIfBlockBinding
+    private val binding: ViewIfElseBlockBinding
 
     private val nestedBlocksAsBlockBase = ArrayList<BlockBase>()
 
+    private val nestedElseBlocksAsBlockBase = ArrayList<BlockBase>()
+
     override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
-    private var _block = IfBlock(IfBlockType.ONLY_IF)
+    private var _block = IfBlock(IfBlockType.IF_WITH_ELSE)
     override val block: BlockBase
         get() = _block
 
@@ -54,10 +56,10 @@ class UIIfBlock @JvmOverloads constructor(
     init {
         inflate(
             context,
-            R.layout.view_if_block,
+            R.layout.view_if_else_block,
             this
         ).also { view ->
-            binding = ViewIfBlockBinding.bind(view)
+            binding = ViewIfElseBlockBinding.bind(view)
         }
 
         initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
@@ -110,7 +112,7 @@ class UIIfBlock @JvmOverloads constructor(
             false
         }
 
-        binding.nestedBlocksLayout.setOnDragListener { handlerView, dragEvent ->
+        binding.nestedIfBlocksLayout.setOnDragListener { handlerView, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             val itemParent = draggableItem.parent as? ViewGroup
@@ -122,7 +124,7 @@ class UIIfBlock @JvmOverloads constructor(
 
                         DragEvent.ACTION_DRAG_LOCATION -> {
                             handleDragLocationEvent(
-                                nestedBlocksLayout,
+                                nestedIfBlocksLayout,
                                 itemParent,
                                 handlerView,
                                 dragEvent,
@@ -133,23 +135,23 @@ class UIIfBlock @JvmOverloads constructor(
                         }
 
                         DragEvent.ACTION_DRAG_ENTERED -> {
-                            alphaMinusAnimation(backgroundImage)
+                            alphaMinusAnimation(backgroundTopImage)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DRAG_EXITED -> {
-                            alphaPlusAnimation(backgroundImage)
+                            alphaPlusAnimation(backgroundTopImage)
 
-                            clearAllNestedViewPaddings(nestedBlocksLayout)
+                            clearAllNestedViewPaddings(nestedIfBlocksLayout)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DROP -> {
                             handleDropEvent(
-                                this@UIIfBlock,
-                                nestedBlocksLayout,
+                                this@UIIfElseBlock,
+                                nestedIfBlocksLayout,
                                 itemParent,
                                 draggableItem,
                                 { blockBase, position ->
@@ -162,7 +164,7 @@ class UIIfBlock @JvmOverloads constructor(
                                     _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
                                 },
                                 {
-                                    alphaPlusAnimation(backgroundImage)
+                                    alphaPlusAnimation(backgroundTopImage)
                                 }
                             )
 
@@ -170,7 +172,77 @@ class UIIfBlock @JvmOverloads constructor(
                         }
 
                         DragEvent.ACTION_DRAG_ENDED -> {
-                            handleDragEndedEvent(nestedBlocksLayout, itemParent, draggableItem)
+                            handleDragEndedEvent(nestedIfBlocksLayout, itemParent, draggableItem)
+                        }
+
+                        else -> return@setOnDragListener false
+                    }
+                }
+                false
+            }
+        }
+
+        binding.nestedElseBlocksLayout.setOnDragListener { handlerView, dragEvent ->
+            val draggableItem = dragEvent?.localState as View
+
+            val itemParent = draggableItem.parent as? ViewGroup
+
+            with(binding) {
+                if (draggableItem as? UINestedableCodeBlock == null) {
+                    when (dragEvent.action) {
+                        DragEvent.ACTION_DRAG_STARTED -> return@setOnDragListener true
+
+                        DragEvent.ACTION_DRAG_LOCATION -> {
+                            handleDragLocationEvent(
+                                nestedElseBlocksLayout,
+                                itemParent,
+                                handlerView,
+                                dragEvent,
+                                draggableItem
+                            )
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            alphaMinusAnimation(backgroundBottomImage)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            alphaPlusAnimation(backgroundBottomImage)
+
+                            clearAllNestedViewPaddings(nestedElseBlocksLayout)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DROP -> {
+                            handleDropEvent(
+                                this@UIIfElseBlock,
+                                nestedElseBlocksLayout,
+                                itemParent,
+                                draggableItem,
+                                { blockBase, position ->
+                                    if (position != null) {
+                                        nestedElseBlocksAsBlockBase.add(position, blockBase)
+                                    } else {
+                                        nestedElseBlocksAsBlockBase.add(blockBase)
+                                    }
+
+                                    _block.elseBlocks = nestedElseBlocksAsBlockBase.toTypedArray()
+                                },
+                                {
+                                    alphaPlusAnimation(backgroundBottomImage)
+                                }
+                            )
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            handleDragEndedEvent(nestedElseBlocksLayout, itemParent, draggableItem)
                         }
 
                         else -> return@setOnDragListener false
@@ -186,7 +258,7 @@ class UIIfBlock @JvmOverloads constructor(
         draggableItem: View
     ) = with(binding)
     {
-        if (draggableItem != this@UIIfBlock) {
+        if (draggableItem != this@UIIfElseBlock) {
             scaleMinusAnimation(firstCard)
 
             itemParent.removeView(draggableItem)
@@ -258,12 +330,16 @@ class UIIfBlock @JvmOverloads constructor(
     }
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "IF_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "IF_ELSE_BLOCK_"
     }
 
-    override fun displayError() =
-        binding.backgroundImage.setImageResource(R.drawable.error_nested_block)
+    override fun displayError() = with(binding) {
+        backgroundTopImage.setImageResource(R.drawable.error_if_else_block_top_part)
+        backgroundBottomImage.setImageResource(R.drawable.error_if_else_block_bottom_part)
+    }
 
-    override fun hideError() =
-        binding.backgroundImage.setImageResource(R.drawable.if_block)
+    override fun hideError() = with(binding) {
+        backgroundTopImage.setImageResource(R.drawable.if_else_block_top_part)
+        backgroundBottomImage.setImageResource(R.drawable.if_else_block_bottom_part)
+    }
 }

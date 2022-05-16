@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parentConstraint"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="@dimen/blockWithNestedBlocksMinWidth"
+    android:minHeight="170dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topConstraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="175dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/backgroundTopImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/buttonBackgroundImage"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/if_else_block_top_part"
+            tools:ignore="ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/ifTopText"
+            style="@style/buttonBoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:ellipsize="end"
+            android:maxWidth="@dimen/variableBlockMaxWidth"
+            android:maxLength="20"
+            android:maxLines="0"
+            android:singleLine="true"
+            android:text="@string/ifString"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/firstHorizontalGuideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TextContrastCheck" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/firstCard"
+            style="@style/variableNameCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/firstHorizontalGuideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/ifTopText"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.45">
+
+            <EditText
+                android:id="@+id/condition"
+                style="@style/variableNameEditText"
+                android:layout_width="wrap_content"
+                android:background="@null"
+                android:hint="@string/value"
+                android:imeOptions="actionDone"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/firstHorizontalGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="220px"
+            tools:ignore="PxUsage" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/secondHorizontalGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="65px"
+            tools:ignore="PxUsage" />
+
+        <LinearLayout
+            android:id="@+id/nestedIfBlocksLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="130dp"
+            android:minHeight="45dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/secondHorizontalGuideline"
+            app:layout_constraintStart_toStartOf="@+id/firstVerticalGuideline"
+            app:layout_constraintTop_toTopOf="@+id/firstHorizontalGuideline" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/firstVerticalGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="110px"
+            tools:ignore="PxUsage" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomConstraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="175dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topConstraintLayout">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/firstBottomHorizontalGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="80px"
+            tools:ignore="PxUsage" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/secondBottomHorizontalGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="115px"
+            tools:ignore="PxUsage" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/firstBottomVerticalGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="110px"
+            tools:ignore="PxUsage" />
+
+        <ImageView
+            android:id="@+id/backgroundBottomImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/buttonBackgroundImage"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/if_else_block_bottom_part"
+            tools:ignore="ImageContrastCheck" />
+
+        <LinearLayout
+            android:id="@+id/nestedElseBlocksLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="130dp"
+            android:minHeight="45dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/secondBottomHorizontalGuideline"
+            app:layout_constraintStart_toStartOf="@+id/firstBottomVerticalGuideline"
+            app:layout_constraintTop_toTopOf="@+id/firstBottomHorizontalGuideline" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/elseText"
+        style="@style/buttonBoldText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:ellipsize="end"
+        android:maxWidth="@dimen/variableBlockMaxWidth"
+        android:maxLength="20"
+        android:maxLines="0"
+        android:singleLine="true"
+        android:text="@string/elseString"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/topConstraintLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topConstraintLayout"
+        tools:ignore="TextContrastCheck" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
