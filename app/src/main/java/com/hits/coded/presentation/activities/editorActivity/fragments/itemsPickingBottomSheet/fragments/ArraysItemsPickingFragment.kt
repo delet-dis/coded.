@@ -9,6 +9,7 @@ import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomS
 import com.hits.coded.databinding.FragmentArraysItemsPickingBinding
 import com.hits.coded.presentation.views.codeBlocks.arrays.UIArrayAddBlock
 import com.hits.coded.presentation.views.codeBlocks.arrays.UIArrayGetBlock
+import com.hits.coded.presentation.views.codeBlocks.arrays.UIArrayGetLengthBlock
 
 class ArraysItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterface {
     private lateinit var binding: FragmentArraysItemsPickingBinding
@@ -36,12 +37,16 @@ class ArraysItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterfa
     }
 
     override fun redrawElements() {
-        binding.arraysOperatorsLinearLayout.apply {
+        with(binding.arraysOperatorsLinearLayout) {
             removeAllViews()
 
-            addView(UIArrayAddBlock(requireContext()))
+            with(requireContext()) {
+                addView(UIArrayAddBlock(this))
 
-            addView(UIArrayGetBlock(requireContext()))
+                addView(UIArrayGetBlock(this))
+
+                addView(UIArrayGetLengthBlock(this))
+            }
         }
     }
 }

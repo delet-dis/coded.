@@ -107,4 +107,5 @@
     <string name="get">get</string>
     <string name="index">index</string>
     <string name="thElementFrom">\'th element from</string>
+    <string name="getLengthOf">get length of</string>
 </resources>

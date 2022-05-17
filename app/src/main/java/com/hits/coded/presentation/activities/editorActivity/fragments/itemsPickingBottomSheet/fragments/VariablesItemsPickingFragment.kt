@@ -43,15 +43,17 @@ class VariablesItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInte
         with(binding.variablesOperatorsLinearLayout) {
             removeAllViews()
 
-            addView(UIVariableCreationBlock(requireContext()).apply {
-                initCallback(requireActivity() as UIEditorActivityShowBottomSheetCallback)
-            })
+            with(requireContext()) {
+                addView(UIVariableCreationBlock(this).apply {
+                    initCallback(requireActivity() as UIEditorActivityShowBottomSheetCallback)
+                })
 
-            addView(UIVariableChangeBlock(requireContext()).apply {
-                blockType = VariableBlockType.VARIABLE_SET
-            })
-            addView(UIVariableChangeBlock(requireContext()).apply {
-                blockType = VariableBlockType.VARIABLE_CHANGE
-            })
+                addView(UIVariableChangeBlock(this).apply {
+                    blockType = VariableBlockType.VARIABLE_SET
+                })
+                addView(UIVariableChangeBlock(this).apply {
+                    blockType = VariableBlockType.VARIABLE_CHANGE
+                })
+            }
         }
 }

@@ -159,7 +159,7 @@ class UIIfBlock @JvmOverloads constructor(
                                         nestedBlocksAsBlockBase.add(blockBase)
                                     }
 
-                                    _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                                    _block.nestedBlocks = nestedBlocksAsBlockBase.toList()
                                 },
                                 {
                                     alphaPlusAnimation(backgroundImage)
@@ -240,7 +240,7 @@ class UIIfBlock @JvmOverloads constructor(
         (view as? UICodeBlockWithDataInterface)?.block?.let {
             nestedBlocksAsBlockBase.remove(it)
 
-            _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+            _block.nestedBlocks = nestedBlocksAsBlockBase.toList()
         }
 
         (view as? UINestedableCodeBlock)?.let {

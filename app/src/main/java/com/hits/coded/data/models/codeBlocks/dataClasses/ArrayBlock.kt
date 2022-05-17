@@ -10,6 +10,6 @@ data class ArrayBlock(
     override var array: Any? = null,
     override var value: Any? = null,
     override var id: Int? = null,
-    override var nestedBlocks: Array<BlockBase>? = null,
+    override var nestedBlocks: List<BlockBase>? = null,
     override val type: BlockType = BlockType.ARRAY
 ) : ArrayBlockBase()

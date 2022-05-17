@@ -39,6 +39,8 @@ class CodeField @JvmOverloads constructor(
     private var savedXDropCoordinate = 0f
     private var savedYDropCoordinate = 0f
 
+    private var startExited = false
+
     override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
     init {
@@ -76,8 +78,15 @@ class CodeField @JvmOverloads constructor(
 
             when (dragEvent.action) {
                 DragEvent.ACTION_DRAG_ENTERED,
-                DragEvent.ACTION_DRAG_LOCATION,
-                DragEvent.ACTION_DRAG_EXITED -> true
+                DragEvent.ACTION_DRAG_LOCATION -> true
+
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    (draggableItem as? UIActionStartBlock)?.let {
+                        startExited = true
+                    }
+
+                    true
+                }
 
                 DragEvent.ACTION_DRAG_STARTED -> {
                     parentView?.startDeleting()
@@ -192,9 +201,13 @@ class CodeField @JvmOverloads constructor(
     }
 
     override fun removeView(view: View?) {
-        super.removeView(view)
+        if (!((view as? UIActionStartBlock) != null && startExited)) {
+            super.removeView(view)
 
-        nestedUIBlocks.remove(view)
+            nestedUIBlocks.remove(view)
+        } else {
+            startExited = true
+        }
     }
 
     private companion object {

@@ -10,6 +10,6 @@ data class ExpressionBlock(
     override var leftSide: Any? = null,
     override var rightSide: Any? = null,
     override var id: Int? = null,
-    override var nestedBlocks: Array<BlockBase>? = null,
+    override var nestedBlocks: List<BlockBase>? = null,
     override val type: BlockType = BlockType.EXPRESSION,
 ) : ExpressionBlockBase()

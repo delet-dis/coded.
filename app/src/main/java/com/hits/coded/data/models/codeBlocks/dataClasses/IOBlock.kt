@@ -9,6 +9,6 @@ data class IOBlock(
     override val ioBlockType: IOBlockType,
     override var argument: Any? = null,
     override var id: Int? = null,
-    override var nestedBlocks: Array<BlockBase>? = null,
+    override var nestedBlocks: List<BlockBase>? = null,
     override val type: BlockType = BlockType.IO,
 ) : IOBlockBase()

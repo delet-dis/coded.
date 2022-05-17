@@ -41,8 +41,10 @@ class ConditionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInt
         with(binding.conditionsOperatorsLinearLayout) {
             removeAllViews()
 
-            addView(UIIfBlock(requireContext()))
-            addView(UIIfElseBlock(requireContext()))
+            with(requireContext()) {
+                addView(UIIfBlock(this))
+                addView(UIIfElseBlock(this))
+            }
         }
     }
 }
