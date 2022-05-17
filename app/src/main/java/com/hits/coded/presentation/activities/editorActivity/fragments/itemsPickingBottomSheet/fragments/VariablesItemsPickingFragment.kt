@@ -40,7 +40,7 @@ class VariablesItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInte
     }
 
     override fun redrawElements() =
-        with(binding.variablesActionsLinearLayout) {
+        with(binding.variablesOperatorsLinearLayout) {
             removeAllViews()
 
             addView(UIVariableCreationBlock(requireContext()).apply {

@@ -20,17 +20,17 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/variablesOperators"
+                android:id="@+id/arraysOperators"
                 style="@style/bottomSheetBoldText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/variablesOperators"
-                android:textColor="@color/blueFourth"
+                android:text="@string/arraysOperators"
+                android:textColor="@color/pink"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/variablesOperatorsLinearLayout"
+                android:id="@+id/arraysOperatorsLinearLayout"
                 style="@style/bottomSheetItemsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
