@@ -1,7 +1,8 @@
 package com.hits.coded.domain.useCases.interpreter.convertors
 
-import com.hits.coded.domain.repositories.InterpreterRepositories.ConvertorsRepository
+import com.hits.coded.domain.repositories.interpreterRepositories.InterpreterConverterRepository
 
-class ConvertAnyToDoubleUseCase(private val convertorsRepository: ConvertorsRepository) {
-    suspend fun convertAnyToDouble(value: Any?)=convertorsRepository.convertAnyToDouble(value)
+class ConvertAnyToDoubleUseCase(private val interpreterConverterRepository: InterpreterConverterRepository) {
+    suspend fun convertAnyToDouble(value: Any?) =
+        interpreterConverterRepository.convertAnyToDouble(value)
 }

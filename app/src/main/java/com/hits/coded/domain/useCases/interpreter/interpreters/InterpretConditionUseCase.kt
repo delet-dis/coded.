@@ -1,8 +1,9 @@
 package com.hits.coded.domain.useCases.interpreter.interpreters
 
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.condition.ConditionBlockBase
-import com.hits.coded.domain.repositories.InterpreterRepositories.InterpretConditionRepository
+import com.hits.coded.domain.repositories.interpreterRepositories.InterpretConditionBlockRepository
 
-class InterpretConditionUseCase(private val interpretConditionRepository:InterpretConditionRepository) {
-    suspend fun interpretConditionBlocks(conditionBlock: ConditionBlockBase)=interpretConditionRepository.interpretConditionBlocks(conditionBlock)
+class InterpretConditionUseCase(private val interpretConditionBlockRepository: InterpretConditionBlockRepository) {
+    suspend fun interpretConditionBlocks(conditionBlock: ConditionBlockBase) =
+        interpretConditionBlockRepository.interpretConditionBlocks(conditionBlock)
 }

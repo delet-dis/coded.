@@ -1,48 +1,16 @@
 package com.hits.coded.data.implementations.repositories
 
-import com.hits.coded.data.models.arrays.bases.ArrayBase
-import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.bases.subBlocks.ArrayBlockBase
-import com.hits.coded.data.models.codeBlocks.bases.subBlocks.ExpressionBlockBase
-import com.hits.coded.data.models.codeBlocks.bases.subBlocks.IfBlockBase
-import com.hits.coded.data.models.codeBlocks.bases.subBlocks.LoopBlockBase
-import com.hits.coded.data.models.codeBlocks.bases.subBlocks.VariableBlockBase
-import com.hits.coded.data.models.codeBlocks.bases.subBlocks.condition.ConditionBlockBase
-import com.hits.coded.data.models.codeBlocks.bases.subBlocks.io.IOBlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.ArrayBlock
-import com.hits.coded.data.models.codeBlocks.dataClasses.ExpressionBlock
-import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
-import com.hits.coded.data.models.codeBlocks.dataClasses.IfBlock
-import com.hits.coded.data.models.codeBlocks.dataClasses.LoopBlock
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
-import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
-import com.hits.coded.data.models.codeBlocks.dataClasses.condition.ConditionBlock
-import com.hits.coded.data.models.codeBlocks.types.BlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.ArrayBlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.IfBlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.LogicalBlockType
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.condition.subBlocks.MathematicalBlockType
-import com.hits.coded.data.models.console.useCases.ConsoleUseCases
-import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.data.models.heap.useCases.HeapUseCases
-import com.hits.coded.data.models.interpreter.useCases.AuxiliaryFunctionsUseCases
-import com.hits.coded.data.models.interpreter.useCases.InterpretBlocksUseCases
-import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
+import com.hits.coded.data.models.interpreter.useCases.repositories.InterpreterAuxiliaryUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
-import com.hits.coded.data.models.sharedTypes.ExceptionType
-import com.hits.coded.data.models.sharedTypes.VariableType
 import com.hits.coded.domain.repositories.InterpreterRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class InterpreterRepositoryImplementation @Inject
-constructor(
-    private val interpretBlocksUseCases: InterpretBlocksUseCases,
-    private val auxiliaryFunctionsUseCases: AuxiliaryFunctionsUseCases
+class InterpreterRepositoryImplementation
+@Inject constructor(
+    private val interpreterAuxiliaryUseCases: InterpreterAuxiliaryUseCases
 ) : InterpreterRepository() {
 
     override var currentId = 0
@@ -51,44 +19,45 @@ constructor(
     @Throws(InterpreterException::class)
     override suspend fun interpretStartBlock(startBlock: StartBlock) {
         startBlock.nestedBlocks?.forEach { nestedBlock ->
-            auxiliaryFunctionsUseCases.interpretBlocksUseCase.interpretBlock(nestedBlock)
+            interpreterAuxiliaryUseCases.interpretAnyBlockUseCase.interpretBlock(nestedBlock)
         }
     }
+}
 
-    @Throws(InterpreterException::class)
-    private suspend fun interpretConditionBlocks(conditionBlock: ConditionBlockBase): Boolean {
-        return interpretBlocksUseCases.interpretConditionUseCase.interpretConditionBlocks(conditionBlock)
-    }
-
-    @Throws(InterpreterException::class)
-    private suspend fun interpretIfBlock(ifBlock: IfBlockBase) {
-        interpretBlocksUseCases.interpretIfBlockUseCase.interpretIfBlock(ifBlock)
-    }
-
-    @Throws(InterpreterException::class)
-    private suspend fun interpretLoopBlocks(loopBlock: LoopBlockBase) {
-        interpretBlocksUseCases.interpretLoopBlockUseCase.interpretLoopBlocks(loopBlock)
-    }
-
-    @Throws(InterpreterException::class)
-    private suspend fun interpretVariableBlocks(variable: VariableBlockBase) {
-        interpretBlocksUseCases.interpretVariableBlockUseCase.interpretVariableBlocks(variable)
-    }
-
-    @Throws(InterpreterException::class)
-    private suspend fun interpretExpressionBlocks(expressionBlock: ExpressionBlockBase): Any {
-        return interpretBlocksUseCases.interpretExpressionBlockUseCase.interpretExpressionBlocks(expressionBlock)
-    }
-
-    @Throws(InterpreterException::class)
-    private suspend fun interpretIOBlocks(IO: IOBlockBase): String? {
-        return interpretBlocksUseCases.interpretIOBlockUseCase.interpretIOBlocks(IO)
-    }
-
-    @Throws(InterpreterException::class)
-    private suspend fun interpretArrayBlock(block: ArrayBlockBase): Any {
-        return interpretBlocksUseCases.interpretArrayBlockUseCase.interpretArrayBlock(block)
-    }
+//
+//    @Throws(InterpreterException::class)
+//    private suspend fun interpretConditionBlocks(conditionBlock: ConditionBlockBase): Boolean {
+//        return interpretBlocksUseCases.interpretConditionUseCase.interpretConditionBlocks(conditionBlock)
+//    }
+//
+//    @Throws(InterpreterException::class)
+//    private suspend fun interpretIfBlock(ifBlock: IfBlockBase) {
+//        interpretBlocksUseCases.interpretIfBlockUseCase.interpretIfBlock(ifBlock)
+//    }
+//
+//    @Throws(InterpreterException::class)
+//    private suspend fun interpretLoopBlocks(loopBlock: LoopBlockBase) {
+//        interpretBlocksUseCases.interpretLoopBlockUseCase.interpretLoopBlocks(loopBlock)
+//    }
+//
+//    @Throws(InterpreterException::class)
+//    private suspend fun interpretVariableBlocks(variable: VariableBlockBase) {
+//        interpretBlocksUseCases.interpretVariableBlockUseCase.interpretVariableBlocks(variable)
+//    }
+//
+//    @Throws(InterpreterException::class)
+//    private suspend fun interpretExpressionBlocks(expressionBlock: ExpressionBlockBase): Any {
+//        return interpretBlocksUseCases.interpretExpressionBlockUseCase.interpretExpressionBlocks(expressionBlock)
+//    }
+//
+//    @Throws(InterpreterException::class)
+//    private suspend fun interpretIOBlocks(IO: IOBlockBase): String? {
+//        return interpretBlocksUseCases.interpretIOBlockUseCase.interpretIOBlocks(IO)
+//    }
+//
+//    @Throws(InterpreterException::class)
+//    private suspend fun interpretArrayBlock(block: ArrayBlockBase): Any {
+//        return interpretBlocksUseCases.interpretArrayBlockUseCase.interpretArrayBlock(block)
 //
 //    @Throws(InterpreterException::class)
 //    private suspend fun interpretBlock(block: BlockBase) =
@@ -287,4 +256,4 @@ constructor(
 //
 //        return currentVariable
 //    }
-}
+//}

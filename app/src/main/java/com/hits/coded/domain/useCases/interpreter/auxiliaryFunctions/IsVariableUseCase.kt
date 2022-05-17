@@ -1,7 +1,7 @@
 package com.hits.coded.domain.useCases.interpreter.auxiliaryFunctions
 
-import com.hits.coded.domain.repositories.InterpreterRepositories.AuxiliaryFunctionsRepository
+import com.hits.coded.domain.repositories.interpreterRepositories.InterpreterAuxiliaryRepository
 
-class IsVariableUseCase(private val auxiliaryFunctionsRepository: AuxiliaryFunctionsRepository) {
-    suspend fun isVariable(value: String)=auxiliaryFunctionsRepository.isVariable(value)
+class IsVariableUseCase(private val interpreterAuxiliaryRepository: InterpreterAuxiliaryRepository) {
+    fun isVariable(value: String) = interpreterAuxiliaryRepository.isVariable(value)
 }

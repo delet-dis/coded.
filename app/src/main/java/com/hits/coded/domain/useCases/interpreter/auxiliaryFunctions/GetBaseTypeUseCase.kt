@@ -1,7 +1,8 @@
 package com.hits.coded.domain.useCases.interpreter.auxiliaryFunctions
 
-import com.hits.coded.domain.repositories.InterpreterRepositories.AuxiliaryFunctionsRepository
+import com.hits.coded.domain.repositories.interpreterRepositories.InterpreterAuxiliaryRepository
 
-class GetBaseTypeUseCase(private val auxiliaryFunctionsRepository: AuxiliaryFunctionsRepository) {
-    suspend fun getBaseType(value: Any?, canBeStringField: Boolean)=auxiliaryFunctionsRepository.getBaseType(value,canBeStringField)
+class GetBaseTypeUseCase(private val interpreterAuxiliaryRepository: InterpreterAuxiliaryRepository) {
+    suspend fun getBaseType(value: Any?, canBeStringField: Boolean) =
+        interpreterAuxiliaryRepository.getBaseType(value, canBeStringField)
 }
