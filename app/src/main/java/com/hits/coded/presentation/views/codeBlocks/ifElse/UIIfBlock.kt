@@ -107,7 +107,7 @@ class UIIfBlock @JvmOverloads constructor(
                     }
                 }
             }
-            false
+            true
         }
 
         binding.nestedBlocksLayout.setOnDragListener { handlerView, dragEvent ->

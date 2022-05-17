@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.views.codeBlocks.actions.console
+package com.hits.coded.presentation.views.codeBlocks.arrays
 
 import android.content.Context
 import android.util.AttributeSet
@@ -19,13 +19,11 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInfo
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.IOBlock
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
-import com.hits.coded.databinding.ViewConsoleWriteBlockBinding
-import dagger.hilt.android.AndroidEntryPoint
+import com.hits.coded.data.models.codeBlocks.dataClasses.ArrayBlock
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.ArrayBlockType
+import com.hits.coded.databinding.ViewArrayGetBlockBinding
 
-@AndroidEntryPoint
-class UIConsoleWriteBlock @JvmOverloads constructor(
+class UIArrayGetBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -34,12 +32,12 @@ class UIConsoleWriteBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
     UIElementHandlesCustomRemoveViewProcessInterface, UIElementSavesNestedBlocksInterface,
-    UICodeBlockSupportsErrorDisplaying {
-    private val binding: ViewConsoleWriteBlockBinding
+    UICodeBlockSupportsErrorDisplaying, UINestedableCodeBlock {
+    private val binding: ViewArrayGetBlockBinding
 
     override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
-    private var _block = IOBlock(IOBlockType.WRITE)
+    private var _block = ArrayBlock(ArrayBlockType.GET_ELEMENT)
     override val block: BlockBase
         get() = _block
 
@@ -49,27 +47,37 @@ class UIConsoleWriteBlock @JvmOverloads constructor(
     init {
         inflate(
             context,
-            R.layout.view_console_write_block,
+            R.layout.view_array_get_block,
             this
         ).also { view ->
-            binding = ViewConsoleWriteBlockBinding.bind(view)
+            binding = ViewArrayGetBlockBinding.bind(view)
         }
 
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initDragAndDropListener()
 
-        initVariableNameChangeListener()
+        initValueToAddListener()
+
+        initArrayNameChangeListener()
     }
 
-    private fun initVariableNameChangeListener() =
-        binding.variableName.addTextChangedListener {
-            _block.argument = it.toString()
+    private fun initValueToAddListener() =
+        binding.index.addTextChangedListener {
+            _block.value = it.toString()
         }
 
+    private fun initArrayNameChangeListener() =
+        binding.arrayName.addTextChangedListener {
+            _block.array = it.toString()
+        }
 
     override fun initDragAndDropListener() {
-        binding.variableName.setOnDragListener { _, dragEvent ->
+        binding.arrayName.setOnDragListener { _, _ ->
+            true
+        }
+
+        binding.index.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             (draggableItem as? UINestedableCodeBlock)?.let {
@@ -116,14 +124,14 @@ class UIConsoleWriteBlock @JvmOverloads constructor(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        if (draggableItem != this@UIConsoleWriteBlock) {
+        if (draggableItem != this@UIArrayGetBlock) {
             scaleMinusAnimation(binding.firstCard)
 
             itemParent.removeView(draggableItem)
 
             processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
 
-            variableName.apply {
+            index.apply {
                 setText("")
                 visibility = INVISIBLE
             }
@@ -134,7 +142,7 @@ class UIConsoleWriteBlock @JvmOverloads constructor(
             firstCard.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                _block.argument = it
+                _block.value = it
             }
         }
     }
@@ -147,7 +155,7 @@ class UIConsoleWriteBlock @JvmOverloads constructor(
                 UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
         }
 
-        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.argument) {
+        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.value) {
             draggableItem.x = 0f
             draggableItem.y = 0f
         }
@@ -157,25 +165,25 @@ class UIConsoleWriteBlock @JvmOverloads constructor(
 
     override fun customRemoveView(view: View) {
         nestedUIBlocks.remove(view)
-        binding.firstCard.removeView(view)
+        binding.secondCard.removeView(view)
 
         view.tag = null
 
-        _block.argument = null
+        _block.value = null
 
-        with(binding.variableName) {
+        binding.index.apply {
             setText("")
             visibility = VISIBLE
         }
     }
 
     override fun displayError() =
-        binding.backgroundImage.setImageResource(R.drawable.error_block)
+        binding.backgroundImage.setImageResource(R.drawable.error_small_block)
 
     override fun hideError() =
-        binding.backgroundImage.setImageResource(R.drawable.console_write_block)
+        binding.backgroundImage.setImageResource(R.drawable.array_small_block)
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "ACTION_CONSOLE_WRITE_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "ARRAY_GET_BLOCK_"
     }
 }

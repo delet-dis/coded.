@@ -10,8 +10,8 @@ import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.UIElementSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
@@ -104,10 +104,6 @@ class UIVariableChangeBlock @JvmOverloads constructor(
         }
 
     override fun initDragAndDropListener() {
-        binding.variableChangeValue.setOnDragListener { _, _ ->
-            true
-        }
-
         binding.variableName.setOnDragListener { _, _ ->
             true
         }
@@ -151,7 +147,7 @@ class UIVariableChangeBlock @JvmOverloads constructor(
                     }
                 }
             }
-            false
+            true
         }
     }
 

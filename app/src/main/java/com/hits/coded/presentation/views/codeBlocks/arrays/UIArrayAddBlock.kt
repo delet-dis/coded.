@@ -116,7 +116,7 @@ class UIArrayAddBlock @JvmOverloads constructor(
                     }
                 }
             }
-            false
+            true
         }
     }
 
