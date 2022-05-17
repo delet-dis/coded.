@@ -2,6 +2,7 @@ package com.hits.coded.presentation.views.codeField
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
@@ -76,6 +77,8 @@ class CodeField @JvmOverloads constructor(
 
             val itemParent = draggableItem.parent as? ViewGroup
 
+            Log.d("test", dragEvent.action.toString())
+
             when (dragEvent.action) {
                 DragEvent.ACTION_DRAG_ENTERED,
                 DragEvent.ACTION_DRAG_LOCATION -> true
@@ -106,6 +109,12 @@ class CodeField @JvmOverloads constructor(
                     if (nestedUIBlocks.contains(draggableItem)) {
                         draggableItem.x = savedXDropCoordinate
                         draggableItem.y = savedYDropCoordinate
+                    }
+
+                    if ((draggableItem as? UIActionStartBlock) != null && startExited) {
+                        addBlock(draggableItem)
+
+                        startExited = false
                     }
 
                     draggableItem.post {
@@ -201,13 +210,9 @@ class CodeField @JvmOverloads constructor(
     }
 
     override fun removeView(view: View?) {
-        if (!((view as? UIActionStartBlock) != null && startExited)) {
-            super.removeView(view)
+        super.removeView(view)
 
-            nestedUIBlocks.remove(view)
-        } else {
-            startExited = true
-        }
+        nestedUIBlocks.remove(view)
     }
 
     private companion object {
