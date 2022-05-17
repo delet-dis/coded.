@@ -5,6 +5,7 @@ import com.hits.coded.data.implementations.repositories.InterpreterRepositoryImp
 import com.hits.coded.domain.repositories.InterpreterRepository
 import com.hits.coded.domain.useCases.interpreter.GetCurrentBlockIdUseCase
 import com.hits.coded.domain.useCases.interpreter.InterpretStartBlockUseCase
+import com.hits.coded.domain.useCases.interpreter.interpreters.InterpretArrayBlockUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -24,7 +25,7 @@ abstract class InterpreterModule {
         fun provideInterpreterUseCases(interpreterRepository: InterpreterRepository): InterpreterUseCases =
             InterpreterUseCases(
                 InterpretStartBlockUseCase(interpreterRepository),
-                GetCurrentBlockIdUseCase(interpreterRepository)
+                GetCurrentBlockIdUseCase(interpreterRepository),
             )
     }
 }
