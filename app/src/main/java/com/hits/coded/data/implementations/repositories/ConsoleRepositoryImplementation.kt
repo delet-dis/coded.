@@ -7,10 +7,8 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import com.hits.coded.data.models.console.enums.ConsoleMessageType
 import com.hits.coded.domain.repositories.ConsoleRepository
-import console.Console
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -25,35 +23,37 @@ class ConsoleRepositoryImplementation @Inject constructor(
 ) :
     ConsoleRepository() {
 
-    private var mutex = Mutex()
-    private var bufferValue = ArrayDeque<Pair<String, ConsoleMessageType>>(BUFFER_SIZE)
-    private var buffer: MutableSharedFlow<ArrayDeque<Pair<String, ConsoleMessageType>>> =
-        MutableSharedFlow(0, 1, BufferOverflow.DROP_OLDEST)
+    override val output =
+        MutableSharedFlow<SpannableStringBuilder>(1, 0, BufferOverflow.DROP_OLDEST)
+    private var outputBuffer = ArrayDeque<Pair<String, ConsoleMessageType>>(BUFFER_SIZE)
+    private val inputBuffer =
+        MutableSharedFlow<String>(0, 1, BufferOverflow.DROP_OLDEST)
+    override val isInputAvailable  = MutableStateFlow(false)
 
-    private var _isInputAvailable: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    override val isInputAvailable: Flow<Boolean>
-        get() = _isInputAvailable
+    private var mutex = Mutex()
 
 
     init {
+        output.tryEmit(SpannableStringBuilder(""))
     }
 
     override fun clear() {
-        Console.write(SpannableStringBuilder(""))
+        outputBuffer.clear()
+        output.tryEmit(SpannableStringBuilder(""))
     }
 
     override suspend fun readFromConsole(): String {
         flush()
-        _isInputAvailable.emit(true)
-        val input = buffer.first().first().first
-        _isInputAvailable.emit(false)
+        isInputAvailable.emit(true)
+        val input = inputBuffer.first()
+        isInputAvailable.emit(false)
         return input
     }
 
     override suspend fun flush() {
         mutex.withLock {
             val resultString = SpannableStringBuilder()
-            for (str in bufferValue) {
+            for (str in outputBuffer) {
                 resultString.append(
                     SpannableString(str.first).apply {
                         setSpan(
@@ -66,7 +66,7 @@ class ConsoleRepositoryImplementation @Inject constructor(
                 )
             }
 
-            Console.write(resultString)
+            output.emit(resultString)
         }
     }
 
@@ -74,12 +74,12 @@ class ConsoleRepositoryImplementation @Inject constructor(
         if(!mutex.tryLock())
             return // flushing now
 
-        if (bufferValue.size == BUFFER_SIZE) {
-            bufferValue.removeFirst()
+        if (outputBuffer.size == BUFFER_SIZE) {
+            outputBuffer.removeFirst()
         }
 
-        bufferValue.add(Pair(input + '\n', consoleMessageType))
-        buffer.tryEmit(bufferValue)
+        outputBuffer.add(Pair(input + '\n', consoleMessageType))
+        inputBuffer.tryEmit(input)
 
         mutex.unlock()
     }
