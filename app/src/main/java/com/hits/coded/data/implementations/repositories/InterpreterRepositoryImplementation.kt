@@ -361,7 +361,7 @@ constructor(
             ArrayBlockType.GET_SIZE -> array.size
             ArrayBlockType.GET_ELEMENT -> array[convertAnyToInt(block.value)]
             ArrayBlockType.PUSH -> array.push(block.value)
-            ArrayBlockType.POP -> array.pop()
+            ArrayBlockType.REMOVE_AT -> array.removeAt(convertAnyToInt(block.value))
             ArrayBlockType.CONCAT -> array.concat(block.value as? ArrayBase)
         }
     }

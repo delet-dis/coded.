@@ -4,6 +4,6 @@ enum class ArrayBlockType() {
     GET_ELEMENT,
     GET_SIZE,
     PUSH,
-    POP,
+    REMOVE_AT,
     CONCAT
 }

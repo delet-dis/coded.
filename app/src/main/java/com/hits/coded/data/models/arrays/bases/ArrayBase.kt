@@ -20,11 +20,11 @@ abstract class ArrayBase() {
     val size: Int
         get() = array.size
 
-    fun pop(): StoredVariable {
-        if (array.size == 0)
+    fun removeAt(index: Int) {
+        if (index < 0 || index >= array.size)
             throw InterpreterException(ExceptionType.ARRAY_OUT_OF_BOUNDS)
 
-        return array.removeLast()
+        removeAt(index)
     }
 
 
