@@ -72,19 +72,19 @@ class InterpretConditionBlockRepositoryImplementation
             val resultOfComparison = when (leftSide) {
                 is String -> leftSide.compareTo(
                     interpreterConverterUseCases.convertAnyToStringUseCase.convertAnyToString(
-                        conditionBlock.rightSide!!
+                        rightSide!!
                     )
                 )
 
                 is Number -> leftSide.toDouble().compareTo(
                     interpreterConverterUseCases.convertAnyToDoubleUseCase.convertAnyToDouble(
-                        conditionBlock.rightSide!!
+                        rightSide!!
                     )
                 )
 
                 is Boolean -> leftSide.compareTo(
                     interpreterConverterUseCases.convertAnyToBooleanUseCase.convertAnyToBoolean(
-                        conditionBlock.rightSide!!
+                        rightSide!!
                     )
                 )
 
