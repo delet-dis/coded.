@@ -10,6 +10,7 @@ import com.hits.coded.databinding.ViewConsoleBinding
 import com.hits.coded.domain.extensions.hideKeyboard
 import com.hits.coded.domain.extensions.showKeyboard
 import com.hits.coded.presentation.views.console.viewModel.ConsoleViewModel
+import console.Console
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -33,13 +34,18 @@ class Console @JvmOverloads constructor(
             binding = ViewConsoleBinding.bind(view)
         }
 
-        //initConsoleObserving()
+        initConsoleObserving()
 
         initIsInputAvailableObserving()
 
         initConsoleSubmitting()
     }
 
+
+    private fun initConsoleObserving() =
+    viewModel.consoleBuffer.observe(context as LifecycleOwner) {
+        Console.write(it)
+    }
 
 
     private fun initIsInputAvailableObserving() =
