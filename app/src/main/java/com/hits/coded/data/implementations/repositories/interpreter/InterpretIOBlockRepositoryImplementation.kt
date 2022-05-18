@@ -5,6 +5,7 @@ import com.hits.coded.data.models.codeBlocks.types.subBlocks.IOBlockType
 import com.hits.coded.data.models.console.useCases.ConsoleUseCases
 import com.hits.coded.data.models.interpreter.useCases.helpers.InterpreterHelperUseCases
 import com.hits.coded.data.models.interpreter.useCases.repositories.InterpreterConverterUseCases
+import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.domain.repositories.interpreterRepositories.InterpretIOBlockRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,6 +17,7 @@ class InterpretIOBlockRepositoryImplementation
     private val interpreterConverterUseCases: InterpreterConverterUseCases,
     private val interpreterHelperUseCases: InterpreterHelperUseCases
 ) : InterpretIOBlockRepository() {
+    @Throws(InterpreterException::class)
     override suspend fun interpretIOBlocks(IO: IOBlockBase): String? {
         IO.id?.let {
             interpreterHelperUseCases.setCurrentIdVariableUseCase.setCurrentIdVariable(it)

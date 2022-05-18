@@ -20,6 +20,7 @@ class InterpretConditionBlockRepositoryImplementation
     private val interpreterHelperUseCases: InterpreterHelperUseCases
 ) :
     InterpretConditionBlockRepository() {
+    @Throws(InterpreterException::class)
     override suspend fun interpretConditionBlocks(
         conditionBlock: ConditionBlockBase
     ): Boolean {

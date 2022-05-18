@@ -17,6 +17,7 @@ class InterpretExpressionBlockRepositoryImplementation
     private val interpreterHelperUseCases: InterpreterHelperUseCases
 ) :
     InterpretExpressionBlockRepository() {
+    @Throws(InterpreterException::class)
     override suspend fun interpretExpressionBlocks(expressionBlock: ExpressionBlockBase): Any {
         expressionBlock.id?.let {
             interpreterHelperUseCases.setCurrentIdVariableUseCase.setCurrentIdVariable(it)

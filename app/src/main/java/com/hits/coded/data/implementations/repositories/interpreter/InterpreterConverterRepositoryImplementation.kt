@@ -17,6 +17,7 @@ class InterpreterConverterRepositoryImplementation
     private val heapUseCases: HeapUseCases,
     private val interpreterAuxiliaryUseCases: InterpreterAuxiliaryUseCases
 ) : InterpreterConverterRepository() {
+    @Throws(InterpreterException::class)
     override suspend fun convertAnyToDouble(value: Any?): Double {
         val processedValue =
             interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value, true)
@@ -25,7 +26,7 @@ class InterpreterConverterRepositoryImplementation
 
         return processedValue.toDouble()
     }
-
+    @Throws(InterpreterException::class)
     override suspend fun convertAnyToInt(value: Any?): Int {
         val processedValue =
             interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value, true)
@@ -34,7 +35,7 @@ class InterpreterConverterRepositoryImplementation
 
         return processedValue.toInt()
     }
-
+    @Throws(InterpreterException::class)
     override suspend fun convertAnyToBoolean(value: Any?): Boolean {
         val processedValue =
             interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value, true)
@@ -43,7 +44,7 @@ class InterpreterConverterRepositoryImplementation
 
         return processedValue
     }
-
+    @Throws(InterpreterException::class)
     override suspend fun convertAnyToString(value: Any): String {
         val processedValue =
             interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value, true)
@@ -52,7 +53,7 @@ class InterpreterConverterRepositoryImplementation
 
         return processedValue
     }
-
+    @Throws(InterpreterException::class)
     override suspend fun convertAnyToStringIndulgently(value: Any): String =
         when (val processedValue =
             interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value, true)) {
@@ -68,7 +69,7 @@ class InterpreterConverterRepositoryImplementation
             is String -> processedValue
             else -> processedValue.toString()
         }
-
+    @Throws(InterpreterException::class)
     override suspend fun convertAnyToArrayBase(value: Any, array: ArrayBase): ArrayBase {
         var canBeStringField = true
         val processedValue: Any

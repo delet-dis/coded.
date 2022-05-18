@@ -20,6 +20,7 @@ class InterpretArrayBlockRepositoryImplementation
     private val interpreterConverterUseCases: InterpreterConverterUseCases,
     private val interpreterHelperUseCases: InterpreterHelperUseCases
 ) : InterpretArrayBlockRepository() {
+    @Throws(InterpreterException::class)
     override suspend fun interpretArrayBlock(block: ArrayBlockBase): Any {
         block.id?.let {
             interpreterHelperUseCases.setCurrentIdVariableUseCase.setCurrentIdVariable(it)

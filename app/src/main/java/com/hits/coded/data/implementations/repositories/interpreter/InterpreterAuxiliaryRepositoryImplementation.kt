@@ -27,6 +27,7 @@ class InterpreterAuxiliaryRepositoryImplementation
     private val heapUseCases: HeapUseCases,
     private val interpreterBlocksUseCases: Provider<InterpreterBlocksUseCases>
 ) : InterpreterAuxiliaryRepository() {
+    @Throws(InterpreterException::class)
     override suspend fun getVariable(variableIdentifier: Any): StoredVariable {
         val currentVariable: StoredVariable
         when (variableIdentifier) {
@@ -66,7 +67,7 @@ class InterpreterAuxiliaryRepositoryImplementation
 
         return currentVariable
     }
-
+    @Throws(InterpreterException::class)
     override fun isVariable(value: String): Boolean {
         if (value.startsWith('"')) {
             if (value.length > 1) {
@@ -79,7 +80,7 @@ class InterpreterAuxiliaryRepositoryImplementation
 
         return true
     }
-
+    @Throws(InterpreterException::class)
     override suspend fun getBaseType(value: Any?, canBeStringField: Boolean): Any {
         if (value == null || value == Unit)
             throw InterpreterException(ExceptionType.INVALID_BLOCK)
@@ -122,7 +123,7 @@ class InterpreterAuxiliaryRepositoryImplementation
 
         return value
     }
-
+    @Throws(InterpreterException::class)
     override suspend fun interpretBlock(block: BlockBase) =
         when (block.type) {
             BlockType.CONDITION -> interpreterBlocksUseCases.get().interpretConditionUseCase.interpretConditionBlocks(
