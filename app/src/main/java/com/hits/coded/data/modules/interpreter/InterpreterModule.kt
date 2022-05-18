@@ -1,7 +1,7 @@
-package com.hits.coded.data.modules
+package com.hits.coded.data.modules.interpreter
 
-import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.data.implementations.repositories.InterpreterRepositoryImplementation
+import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.domain.repositories.InterpreterRepository
 import com.hits.coded.domain.useCases.interpreter.GetCurrentBlockIdUseCase
 import com.hits.coded.domain.useCases.interpreter.InterpretStartBlockUseCase
@@ -24,7 +24,7 @@ abstract class InterpreterModule {
         fun provideInterpreterUseCases(interpreterRepository: InterpreterRepository): InterpreterUseCases =
             InterpreterUseCases(
                 InterpretStartBlockUseCase(interpreterRepository),
-                GetCurrentBlockIdUseCase(interpreterRepository)
+                GetCurrentBlockIdUseCase(interpreterRepository),
             )
     }
 }
