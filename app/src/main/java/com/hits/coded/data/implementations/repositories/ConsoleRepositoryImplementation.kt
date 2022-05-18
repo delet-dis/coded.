@@ -71,7 +71,7 @@ class ConsoleRepositoryImplementation @Inject constructor(
     }
 
     override fun writeToConsole(input: String, consoleMessageType: ConsoleMessageType) {
-        if(!mutex.tryLock())
+        if (!mutex.tryLock())
             return // flushing now
 
         if (outputBuffer.size == BUFFER_SIZE) {

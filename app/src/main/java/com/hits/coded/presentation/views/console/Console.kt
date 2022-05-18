@@ -50,16 +50,18 @@ class Console @JvmOverloads constructor(
 
     private fun initIsInputAvailableObserving() =
         viewModel.isAvailableToInput.observe(context as LifecycleOwner) {
-            binding.enteredText.isEnabled = it
+            with(binding) {
+                enteredText.isEnabled = it
 
-            if (!it) {
-                binding.enteredText.clearFocus()
+                if (!it) {
+                    enteredText.clearFocus()
 
-                binding.enteredText.hideKeyboard()
-            } else {
-                binding.enteredText.requestFocus()
+                    enteredText.hideKeyboard()
+                } else {
+                    enteredText.requestFocus()
 
-                binding.enteredText.showKeyboard()
+                    enteredText.showKeyboard()
+                }
             }
         }
 
@@ -74,6 +76,20 @@ class Console @JvmOverloads constructor(
                     setText("")
 
                     hideKeyboard()
+                }
+            }
+        }
+    }
+
+    private fun initConsoleObserving() {
+        viewModel.consoleBuffer.observe(context as LifecycleOwner) {
+            with(binding) {
+                consoleText.text = ""
+
+                it.forEach { line ->
+                    consoleText.append(line)
+
+                    consoleScrollView.scrollTo(0, consoleScrollView.height)
                 }
             }
         }

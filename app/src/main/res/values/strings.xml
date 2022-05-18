@@ -99,4 +99,6 @@
     <string name="whileString">while</string>
     <string name="loopsOperators">Loops operators</string>
     <string name="elseString">else</string>
+
+    <string name="consoleText">Console text</string>
 </resources>
