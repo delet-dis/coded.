@@ -6,6 +6,7 @@ import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.console.useCases.ConsoleUseCases
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
+import com.hits.coded.data.models.interpreter.useCases.helpers.InterpreterHelperUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.domain.repositories.InterpreterCallerRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -21,6 +22,7 @@ class InterpreterCallerRepositoryImplementation
 @Inject constructor(
     @ApplicationContext private val context: Context,
     private val interpreterUseCases: InterpreterUseCases,
+    private val interpreterHelperUseCases: InterpreterHelperUseCases,
     private val consoleUseCases: ConsoleUseCases,
     private val heapUseCases: HeapUseCases
 ) : InterpreterCallerRepository() {
@@ -54,7 +56,7 @@ class InterpreterCallerRepositoryImplementation
         try {
             interpreterUseCases.interpretStartBlock.interpretStartBlock(start)
         } catch (error: InterpreterException) {
-            error.blockID = interpreterUseCases.getCurrentBlockIdUseCase.getId()
+            error.blockID = interpreterHelperUseCases.getCurrentIdVariableUseCase.getCurrentIdVariable()
             error.msg = context.getString(errorStrings[error.errorCode.ordinal])
             consoleUseCases.writeToConsoleUseCase.writeErrorToConsole(error.msg)
             _executionResult.emit(error)

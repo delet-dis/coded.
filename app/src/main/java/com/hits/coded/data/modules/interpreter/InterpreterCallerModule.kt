@@ -1,4 +1,4 @@
-package com.hits.coded.data.modules
+package com.hits.coded.data.modules.interpreter
 
 import com.hits.coded.data.models.interpreterCaller.useCases.InterpreterCallerUseCases
 import com.hits.coded.data.implementations.repositories.InterpreterCallerRepositoryImplementation
