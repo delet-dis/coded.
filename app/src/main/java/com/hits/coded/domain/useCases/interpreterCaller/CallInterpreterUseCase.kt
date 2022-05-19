@@ -6,5 +6,6 @@ import com.hits.coded.domain.repositories.InterpreterCallerRepository
 class CallInterpreterUseCase(
     private val interpreterCallerRepository: InterpreterCallerRepository
 ) {
-    suspend fun callInterpreter(start: StartBlock) = interpreterCallerRepository.callInterpreter(start)
+    suspend fun callInterpreter(start: StartBlock) =
+        interpreterCallerRepository.callInterpreter(start)
 }

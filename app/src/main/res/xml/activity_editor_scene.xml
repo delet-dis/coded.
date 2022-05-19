@@ -1,33 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<MotionScene 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
 
     <Transition
         motion:constraintSetEnd="@+id/barsCollapsed"
         motion:constraintSetStart="@id/barsOpened"
-        motion:motionInterpolator="easeInOut"
-        motion:duration="300">
-       <KeyFrameSet>
-       </KeyFrameSet>
+        motion:duration="300"
+        motion:motionInterpolator="easeInOut">
+        <KeyFrameSet></KeyFrameSet>
     </Transition>
 
-    <ConstraintSet android:id="@+id/barsOpened">
-    </ConstraintSet>
+    <ConstraintSet android:id="@+id/barsOpened"></ConstraintSet>
 
     <ConstraintSet android:id="@+id/barsCollapsed">
         <Constraint
             android:id="@+id/topBarWrapper"
-            motion:layout_constraintEnd_toEndOf="parent"
             android:layout_height="@dimen/collapsedTopBarHeight"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintStart_toStartOf="parent" />
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="parent" />
         <Constraint
             android:id="@+id/bottomBarWrapper"
-            motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="0dp"
             android:layout_height="@dimen/collapsedBottomBarHeight"
             motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent" />
     </ConstraintSet>
 </MotionScene>

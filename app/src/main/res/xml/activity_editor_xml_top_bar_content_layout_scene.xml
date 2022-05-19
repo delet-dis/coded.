@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<MotionScene 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
 
     <Transition
         motion:constraintSetEnd="@+id/topBarProjectNameMinified"
         motion:constraintSetStart="@id/topBarProjectNameDisplaying"
-        motion:motionInterpolator="easeIn"
-        motion:duration="200">
-       <KeyFrameSet>
-       </KeyFrameSet>
+        motion:duration="200"
+        motion:motionInterpolator="easeIn">
+        <KeyFrameSet></KeyFrameSet>
     </Transition>
 
     <ConstraintSet android:id="@+id/topBarProjectNameDisplaying">
@@ -22,12 +20,12 @@
             style="@style/regularText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintStart_toStartOf="parent"
             android:layout_marginBottom="0dp"
             android:scaleX="0.65"
             android:scaleY="0.65"
-            motion:layout_constraintVertical_bias="0.9"/>
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintVertical_bias="0.9" />
     </ConstraintSet>
 </MotionScene>

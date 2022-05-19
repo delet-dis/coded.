@@ -16,15 +16,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class StopInterpreterModule {
     @Binds
-    abstract fun bindStopInterpreter(stopInterpreter: StopInterpreterImplementation):StopInterpreter
+    abstract fun bindStopInterpreter(stopInterpreter: StopInterpreterImplementation): StopInterpreter
 
-    companion object{
+    companion object {
         @Provides
         @Singleton
-        fun provideStopInterpreterUseCases(stopInterpreter: StopInterpreter):ManageInterpreterStateUseCases=
+        fun provideStopInterpreterUseCases(stopInterpreter: StopInterpreter): ManageInterpreterStateUseCases =
             ManageInterpreterStateUseCases(
-            StopInterpreterUseCase(stopInterpreter),
-            StartInterpreterUseCase(stopInterpreter)
-        )
+                StopInterpreterUseCase(stopInterpreter),
+                StartInterpreterUseCase(stopInterpreter)
+            )
     }
 }

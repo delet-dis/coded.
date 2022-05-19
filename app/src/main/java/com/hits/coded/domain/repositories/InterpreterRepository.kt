@@ -5,6 +5,7 @@ import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterEx
 
 abstract class InterpreterRepository {
     abstract val currentId: Int
+
     @Throws(InterpreterException::class)
     abstract suspend fun interpretStartBlock(startBlock: StartBlock)
 }
