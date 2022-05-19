@@ -2,6 +2,7 @@ package com.hits.coded.presentation.views.console
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.LifecycleOwner
@@ -10,7 +11,6 @@ import com.hits.coded.databinding.ViewConsoleBinding
 import com.hits.coded.domain.extensions.hideKeyboard
 import com.hits.coded.domain.extensions.showKeyboard
 import com.hits.coded.presentation.views.console.viewModel.ConsoleViewModel
-import com.jraska.console.Console
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -41,27 +41,21 @@ class Console @JvmOverloads constructor(
         initConsoleSubmitting()
     }
 
-    private fun initConsoleObserving() =
-        viewModel.consoleBuffer.observe(context as LifecycleOwner) {
-            Console.clear()
-
-            it.forEach { spannableString ->
-                Console.writeLine(spannableString)
-            }
-        }
 
     private fun initIsInputAvailableObserving() =
         viewModel.isAvailableToInput.observe(context as LifecycleOwner) {
-            binding.enteredText.isEnabled = it
+            with(binding) {
+                enteredText.isEnabled = it
 
-            if (!it) {
-                binding.enteredText.clearFocus()
+                if (!it) {
+                    enteredText.clearFocus()
 
-                binding.enteredText.hideKeyboard()
-            } else {
-                binding.enteredText.requestFocus()
+                    enteredText.hideKeyboard()
+                } else {
+                    enteredText.requestFocus()
 
-                binding.enteredText.showKeyboard()
+                    enteredText.showKeyboard()
+                }
             }
         }
 
@@ -77,6 +71,16 @@ class Console @JvmOverloads constructor(
 
                     hideKeyboard()
                 }
+            }
+        }
+    }
+
+    private fun initConsoleObserving() {
+        viewModel.consoleBuffer.observe(context as LifecycleOwner) {
+            with(binding) {
+                consoleText.text = it
+
+                consoleScrollView.fullScroll(View.FOCUS_DOWN)
             }
         }
     }
