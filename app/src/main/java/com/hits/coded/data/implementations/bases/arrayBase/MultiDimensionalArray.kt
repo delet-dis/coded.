@@ -6,7 +6,7 @@ import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterEx
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
 
-class MultiDimensionalArray() : ArrayBase() {
+class MultiDimensionalArray : ArrayBase() {
 
     override fun parseArray(inputString: String): ArrayBase {
         val parsedArray = MultiDimensionalArray()
