@@ -2,7 +2,6 @@ package com.hits.coded.presentation.views.codeField
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
@@ -77,8 +76,6 @@ class CodeField @JvmOverloads constructor(
 
             val itemParent = draggableItem.parent as? ViewGroup
 
-            Log.d("test", dragEvent.action.toString())
-
             when (dragEvent.action) {
                 DragEvent.ACTION_DRAG_ENTERED,
                 DragEvent.ACTION_DRAG_LOCATION -> true
@@ -112,7 +109,7 @@ class CodeField @JvmOverloads constructor(
                     }
 
                     if ((draggableItem as? UIActionStartBlock) != null && startExited) {
-                        addBlock(draggableItem)
+                        removeStartBlock()
 
                         startExited = false
                     }
