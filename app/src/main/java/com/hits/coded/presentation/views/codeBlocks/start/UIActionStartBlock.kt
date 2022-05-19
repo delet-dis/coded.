@@ -113,7 +113,7 @@ class UIActionStartBlock @JvmOverloads constructor(
                                         nestedBlocksAsBlockBase.add(blockBase)
                                     }
 
-                                    _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                                    _block.nestedBlocks = nestedBlocksAsBlockBase.toList()
                                 },
                                 {
                                     alphaPlusAnimation(binding.backgroundImage)
@@ -146,7 +146,7 @@ class UIActionStartBlock @JvmOverloads constructor(
         (view as? UICodeBlockWithDataInterface)?.block?.let {
             nestedBlocksAsBlockBase.remove(it)
 
-            _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+            _block.nestedBlocks = nestedBlocksAsBlockBase.toList()
         }
     }
 

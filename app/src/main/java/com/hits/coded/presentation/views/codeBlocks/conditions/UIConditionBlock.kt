@@ -170,7 +170,7 @@ class UIConditionBlock @JvmOverloads constructor(
                     }
                 }
             }
-            false
+            true
         }
 
         binding.rightCardText.setOnDragListener { _, dragEvent ->

@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.hits.coded.data.interfaces.ui.bottomSheets.itemsBottomSheet.UIBottomSheetItemsFragmentInterface
-import com.hits.coded.databinding.FragmentActionsItemsPickingBinding
-import com.hits.coded.presentation.views.codeBlocks.console.UIConsoleReadBlock
-import com.hits.coded.presentation.views.codeBlocks.console.UIConsoleWriteBlock
-import dagger.hilt.android.AndroidEntryPoint
+import com.hits.coded.databinding.FragmentArraysItemsPickingBinding
+import com.hits.coded.presentation.views.codeBlocks.arrays.UIArrayAddBlock
+import com.hits.coded.presentation.views.codeBlocks.arrays.UIArrayGetBlock
+import com.hits.coded.presentation.views.codeBlocks.arrays.UIArrayGetLengthBlock
 
-@AndroidEntryPoint
-class ActionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterface {
-    private lateinit var binding: FragmentActionsItemsPickingBinding
+class ArraysItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterface {
+    private lateinit var binding: FragmentArraysItemsPickingBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,7 +20,7 @@ class ActionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterf
         savedInstanceState: Bundle?
     ): View? {
         return if (savedInstanceState == null) {
-            binding = FragmentActionsItemsPickingBinding.inflate(layoutInflater)
+            binding = FragmentArraysItemsPickingBinding.inflate(layoutInflater)
 
             binding.root
         } else {
@@ -38,12 +37,15 @@ class ActionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterf
     }
 
     override fun redrawElements() {
-        with(binding.actionsLinearLayout) {
+        with(binding.arraysOperatorsLinearLayout) {
             removeAllViews()
 
             with(requireContext()) {
-                addView(UIConsoleWriteBlock(this))
-                addView(UIConsoleReadBlock(this))
+                addView(UIArrayAddBlock(this))
+
+                addView(UIArrayGetBlock(this))
+
+                addView(UIArrayGetLengthBlock(this))
             }
         }
     }

@@ -161,7 +161,7 @@ class UIIfElseBlock @JvmOverloads constructor(
                                         nestedBlocksAsBlockBase.add(blockBase)
                                     }
 
-                                    _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+                                    _block.nestedBlocks = nestedBlocksAsBlockBase.toList()
                                 },
                                 {
                                     alphaPlusAnimation(backgroundTopImage)
@@ -231,7 +231,7 @@ class UIIfElseBlock @JvmOverloads constructor(
                                         nestedElseBlocksAsBlockBase.add(blockBase)
                                     }
 
-                                    _block.elseBlocks = nestedElseBlocksAsBlockBase.toTypedArray()
+                                    _block.elseBlocks = nestedElseBlocksAsBlockBase.toList()
                                 },
                                 {
                                     alphaPlusAnimation(backgroundBottomImage)
@@ -312,7 +312,7 @@ class UIIfElseBlock @JvmOverloads constructor(
         (view as? UICodeBlockWithDataInterface)?.block?.let {
             nestedBlocksAsBlockBase.remove(it)
 
-            _block.nestedBlocks = nestedBlocksAsBlockBase.toTypedArray()
+            _block.nestedBlocks = nestedBlocksAsBlockBase.toList()
         }
 
         (view as? UINestedableCodeBlock)?.let {

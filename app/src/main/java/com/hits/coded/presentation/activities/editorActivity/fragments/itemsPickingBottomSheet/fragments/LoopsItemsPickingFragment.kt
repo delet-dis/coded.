@@ -40,7 +40,9 @@ class LoopsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterfac
         with(binding.loopsOperatorsLinearLayout) {
             removeAllViews()
 
-            addView(UIWhileBlock(requireContext()))
+            with(requireContext()){
+                addView(UIWhileBlock(this))
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.views.codeBlocks.actions.console
+package com.hits.coded.presentation.views.codeBlocks.console
 
 import android.content.Context
 import android.util.AttributeSet
@@ -10,8 +10,8 @@ import androidx.core.widget.addTextChangedListener
 import com.hits.coded.R
 import com.hits.coded.data.interfaces.ui.UIElementHandlesCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.UIElementHandlesDragAndDropInterface
-import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.UIElementSavesNestedBlocksInterface
+import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockElementHandlesDragAndDropInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockSupportsErrorDisplaying
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithCustomRemoveViewProcessInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithDataInterface
@@ -108,7 +108,7 @@ class UIConsoleWriteBlock @JvmOverloads constructor(
                     }
                 }
             }
-            false
+            true
         }
     }
 

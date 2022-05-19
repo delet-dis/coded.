@@ -10,6 +10,6 @@ data class VariableBlock(
     override var variableParams: Any? = null,
     override var id: Int? = null,
     override var valueToSet: Any? = null,
-    override var nestedBlocks: Array<BlockBase>? = null,
+    override var nestedBlocks: List<BlockBase>? = null,
     override val type: BlockType = BlockType.VARIABLE,
 ) : VariableBlockBase()
