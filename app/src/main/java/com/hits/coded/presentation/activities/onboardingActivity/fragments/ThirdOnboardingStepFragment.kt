@@ -9,7 +9,7 @@ import com.hits.coded.databinding.FragmentThirdOnboardingStepBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ThirdOnboardingStepFragment: Fragment() {
+class ThirdOnboardingStepFragment : Fragment() {
     private lateinit var binding: FragmentThirdOnboardingStepBinding
 
     override fun onCreateView(
@@ -23,14 +23,6 @@ class ThirdOnboardingStepFragment: Fragment() {
             binding.root
         } else {
             view
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        if (savedInstanceState == null) {
-
         }
     }
 }

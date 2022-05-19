@@ -41,7 +41,7 @@
     <string name="start">start</string>
     <string name="console">Console</string>
 
-    <string name="variablesActions">Variables actions</string>
+    <string name="variablesOperators">Variables operators</string>
     <string name="createVariable">create variable</string>
     <string name="variablesList">Variables list</string>
     <string name="variableName">name</string>
@@ -99,6 +99,16 @@
     <string name="whileString">while</string>
     <string name="loopsOperators">Loops operators</string>
     <string name="elseString">else</string>
-
+  
+    <string name="arraysOperators">Arrays operators</string>
+    <string name="arrays">arrays</string>
+    <string name="add">add</string>
+    <string name="arrayName">array name</string>
+    <string name="get">get</string>
+    <string name="index">index</string>
+    <string name="thElementFrom">\'th element from</string>
+    <string name="getLengthOf">get length of</string>
+    <string name="remove">remove</string>
+    <string name="from">from</string>
     <string name="consoleText">Console text</string>
 </resources>

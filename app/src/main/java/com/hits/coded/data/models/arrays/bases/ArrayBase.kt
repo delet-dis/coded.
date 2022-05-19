@@ -20,22 +20,25 @@ abstract class ArrayBase() {
     val size: Int
         get() = array.size
 
-    fun pop(): StoredVariable {
-        if (array.size == 0)
+    fun removeAt(index: Int) {
+        if (index < 0 || index >= array.size) {
             throw InterpreterException(ExceptionType.ARRAY_OUT_OF_BOUNDS)
+        }
 
-        return array.removeLast()
+        array.removeAt(index)
     }
 
 
     fun concat(other: ArrayBase?) {
-        if (other == null)
+        if (other == null) {
             throw InterpreterException(ExceptionType.LACK_OF_ARGUMENTS)
+        }
 
-        if(array::class != other::class)
+        if (array::class != other::class) {
             throw InterpreterException(ExceptionType.TYPE_MISMATCH)
+        }
 
-        for(i in other.array) {
+        for (i in other.array) {
             this.array.add(i)
         }
     }
@@ -51,7 +54,7 @@ abstract class ArrayBase() {
 
     companion object {
         fun constructByType(variableType: VariableType): ArrayBase {
-            return when(variableType) {
+            return when (variableType) {
                 VariableType.INT -> IntArray()
                 VariableType.STRING -> StringArray()
                 VariableType.DOUBLE -> DoubleArray()

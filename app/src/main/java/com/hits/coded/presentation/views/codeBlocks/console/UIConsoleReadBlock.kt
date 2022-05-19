@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.views.codeBlocks.actions.console
+package com.hits.coded.presentation.views.codeBlocks.console
 
 import android.content.Context
 import android.util.AttributeSet

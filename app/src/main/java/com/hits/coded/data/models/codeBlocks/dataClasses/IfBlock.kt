@@ -9,7 +9,7 @@ data class IfBlock(
     override var ifBlockType: IfBlockType,
     override var id: Int? = null,
     override val type: BlockType = BlockType.IF,
-    override var nestedBlocks: Array<BlockBase>? = null,
+    override var nestedBlocks: List<BlockBase>? = null,
     override var conditionBlock: Any? = null,
-    override var elseBlocks: Array<BlockBase>? = null
+    override var elseBlocks: List<BlockBase>? = null
 ) : IfBlockBase()

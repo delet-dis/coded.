@@ -49,7 +49,11 @@ class InterpretArrayBlockRepositoryImplementation
                 block.value
             )]
             ArrayBlockType.PUSH -> array.push(block.value)
-            ArrayBlockType.POP -> array.pop()
+            ArrayBlockType.REMOVE_AT -> array.removeAt(
+                interpreterConverterUseCases.convertAnyToIntUseCase.convertAnyToInt(
+                    block.value
+                )
+            )
             ArrayBlockType.CONCAT -> array.concat(block.value as? ArrayBase)
         }
     }

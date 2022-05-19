@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.views.codeBlocks.variables
+package com.hits.coded.presentation.views.codeBlocks.arrays
 
 import android.content.Context
 import android.util.AttributeSet
@@ -19,14 +19,11 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInfo
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
-import com.hits.coded.data.models.heap.dataClasses.StoredVariable
-import com.hits.coded.databinding.ViewVariableChangeBlockBinding
-import dagger.hilt.android.AndroidEntryPoint
+import com.hits.coded.data.models.codeBlocks.dataClasses.ArrayBlock
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.ArrayBlockType
+import com.hits.coded.databinding.ViewArrayGetBlockBinding
 
-@AndroidEntryPoint
-class UIVariableChangeBlock @JvmOverloads constructor(
+class UIArrayGetBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -35,80 +32,52 @@ class UIVariableChangeBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
     UIElementHandlesCustomRemoveViewProcessInterface, UIElementSavesNestedBlocksInterface,
-    UICodeBlockSupportsErrorDisplaying {
-    private val binding: ViewVariableChangeBlockBinding
+    UICodeBlockSupportsErrorDisplaying, UINestedableCodeBlock {
+    private val binding: ViewArrayGetBlockBinding
 
     override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
-    private var variableParams = StoredVariable()
-
-    private var _block = VariableBlock(null, variableParams)
+    private var _block = ArrayBlock(ArrayBlockType.GET_ELEMENT)
     override val block: BlockBase
         get() = _block
 
     override var touchX: Int = 0
     override var touchY: Int = 0
 
-    var blockType: VariableBlockType? = null
-        set(value) {
-            field = value
-
-            value?.let {
-                changeBlockType(it)
-            }
-        }
-
     init {
         inflate(
             context,
-            R.layout.view_variable_change_block,
+            R.layout.view_array_get_block,
             this
         ).also { view ->
-            binding = ViewVariableChangeBlockBinding.bind(view)
+            binding = ViewArrayGetBlockBinding.bind(view)
         }
 
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initDragAndDropListener()
 
-        initVariableNameChangeListener()
+        initValueToAddListener()
 
-        initVariableChangeValueListener()
+        initArrayNameChangeListener()
     }
 
-    private fun changeBlockType(blockType: VariableBlockType) {
-        _block.variableBlockType = blockType
-        when (blockType) {
-            VariableBlockType.VARIABLE_SET -> {
-                binding.firstText.setText(R.string.set)
-                binding.secondText.setText(R.string.to)
-            }
-
-            VariableBlockType.VARIABLE_CHANGE -> {
-                binding.firstText.setText(R.string.change)
-                binding.secondText.setText(R.string.by)
-            }
-
-            else -> {}
-        }
-    }
-
-    private fun initVariableNameChangeListener() =
-        binding.variableName.addTextChangedListener {
-            variableParams.name = it.toString()
+    private fun initValueToAddListener() =
+        binding.index.addTextChangedListener {
+            _block.value = it.toString()
         }
 
-    private fun initVariableChangeValueListener() =
-        binding.variableChangeValue.addTextChangedListener {
-            _block.valueToSet = it.toString()
+    private fun initArrayNameChangeListener() =
+        binding.arrayName.addTextChangedListener {
+            _block.array = it.toString()
         }
 
     override fun initDragAndDropListener() {
-        binding.variableName.setOnDragListener { _, _ ->
+        binding.arrayName.setOnDragListener { _, _ ->
             true
         }
 
-        binding.variableChangeValue.setOnDragListener { _, dragEvent ->
+        binding.index.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             (draggableItem as? UINestedableCodeBlock)?.let {
@@ -120,13 +89,13 @@ class UIVariableChangeBlock @JvmOverloads constructor(
                         DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
                         DragEvent.ACTION_DRAG_ENTERED -> {
-                            scalePlusAnimation(binding.secondCard)
+                            scalePlusAnimation(binding.firstCard)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DRAG_EXITED -> {
-                            scaleMinusAnimation(binding.secondCard)
+                            scaleMinusAnimation(binding.firstCard)
 
                             return@setOnDragListener true
                         }
@@ -155,25 +124,25 @@ class UIVariableChangeBlock @JvmOverloads constructor(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        if (draggableItem != this@UIVariableChangeBlock) {
-            scaleMinusAnimation(binding.secondCard)
+        if (draggableItem != this@UIArrayGetBlock) {
+            scaleMinusAnimation(binding.firstCard)
 
             itemParent.removeView(draggableItem)
 
             processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
 
-            variableChangeValue.apply {
+            index.apply {
                 setText("")
                 visibility = INVISIBLE
             }
 
-            clearNestedBlocksFromParent(secondCard)
+            clearNestedBlocksFromParent(firstCard)
 
             nestedUIBlocks.add(draggableItem)
-            secondCard.addView(draggableItem)
+            firstCard.addView(draggableItem)
 
             (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
-                _block.valueToSet = it
+                _block.value = it
             }
         }
     }
@@ -186,7 +155,7 @@ class UIVariableChangeBlock @JvmOverloads constructor(
                 UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
         }
 
-        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.valueToSet) {
+        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.value) {
             draggableItem.x = 0f
             draggableItem.y = 0f
         }
@@ -200,21 +169,21 @@ class UIVariableChangeBlock @JvmOverloads constructor(
 
         view.tag = null
 
-        _block.valueToSet = null
+        _block.value = null
 
-        binding.variableChangeValue.apply {
+        binding.index.apply {
             setText("")
             visibility = VISIBLE
         }
     }
 
-    override fun hideError() =
-        binding.backgroundImage.setImageResource(R.drawable.variable_block)
-
     override fun displayError() =
-        binding.backgroundImage.setImageResource(R.drawable.error_block)
+        binding.backgroundImage.setImageResource(R.drawable.error_small_block)
+
+    override fun hideError() =
+        binding.backgroundImage.setImageResource(R.drawable.array_small_block)
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "VARIABLE_CHANGE_BY_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "ARRAY_GET_BLOCK_"
     }
 }
