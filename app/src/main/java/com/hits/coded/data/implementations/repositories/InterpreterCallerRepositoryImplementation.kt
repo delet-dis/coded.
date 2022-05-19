@@ -7,6 +7,7 @@ import com.hits.coded.data.models.console.useCases.ConsoleUseCases
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.data.models.interpreter.useCases.helpers.InterpreterHelperUseCases
+import com.hits.coded.data.models.interpreter.useCases.helpers.StopInterpreterUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.domain.repositories.InterpreterCallerRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,7 +25,8 @@ class InterpreterCallerRepositoryImplementation
     private val interpreterUseCases: InterpreterUseCases,
     private val interpreterHelperUseCases: InterpreterHelperUseCases,
     private val consoleUseCases: ConsoleUseCases,
-    private val heapUseCases: HeapUseCases
+    private val heapUseCases: HeapUseCases,
+    private val stopInterpreterUseCases: StopInterpreterUseCases
 ) : InterpreterCallerRepository() {
 
     private val errorStrings =
@@ -52,16 +54,21 @@ class InterpreterCallerRepositoryImplementation
 
     override suspend fun callInterpreter(start: StartBlock) {
         heapUseCases.clearUseCase.clear()
+        stopInterpreterUseCases.startInterpreterUseCase.startInterpreter()
         _executionResult.emit(null)
         try {
             interpreterUseCases.interpretStartBlock.interpretStartBlock(start)
         } catch (error: InterpreterException) {
-            error.blockID = interpreterHelperUseCases.getCurrentIdVariableUseCase.getCurrentIdVariable()
-            error.msg = context.getString(errorStrings[error.errorCode.ordinal])
-            consoleUseCases.writeToConsoleUseCase.writeErrorToConsole(error.msg)
-            _executionResult.emit(error)
+            with(error) {
+                blockID =
+                    interpreterHelperUseCases.getCurrentIdVariableUseCase.getCurrentIdVariable()
+                msg = context.getString(errorStrings[errorCode.ordinal])
+                consoleUseCases.writeToConsoleUseCase.writeErrorToConsole(msg)
+                _executionResult.emit(this)
+            }
         }
 
+        consoleUseCases.flushUseCase.flush()
     }
 
 }

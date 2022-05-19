@@ -148,7 +148,7 @@ class InterpreterAuxiliaryRepositoryImplementation
                 block as IfBlock
             )
             else -> {
-//                TODO: throw InterpreterException()
+                throw InterpreterException(ExceptionType.INVALID_BLOCK)
             }
         }
 }

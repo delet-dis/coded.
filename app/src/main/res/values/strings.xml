@@ -99,7 +99,7 @@
     <string name="whileString">while</string>
     <string name="loopsOperators">Loops operators</string>
     <string name="elseString">else</string>
-
+  
     <string name="arraysOperators">Arrays operators</string>
     <string name="arrays">arrays</string>
     <string name="add">add</string>
@@ -110,4 +110,5 @@
     <string name="getLengthOf">get length of</string>
     <string name="remove">remove</string>
     <string name="from">from</string>
+    <string name="consoleText">Console text</string>
 </resources>

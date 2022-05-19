@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightBlack"
     android:fitsSystemWindows="true">
 
-    <com.jraska.console.Console
-        android:id="@+id/console"
-        android:layout_width="0dp"
+    <ScrollView
+        android:id="@+id/consoleScrollView"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:focusable="false"
+        android:background="#121212"
+        android:scrollbarThumbVertical="@drawable/console_scrollbar_handle"
         app:layout_constraintBottom_toTopOf="@+id/enteredText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/consoleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/consoleText"
+            android:textColor="#dddddd"
+            android:textIsSelectable="true"
+            android:typeface="monospace"
+            tools:ignore="TouchTargetSizeCheck" />
+    </ScrollView>
 
     <EditText
         android:id="@+id/enteredText"
@@ -23,6 +36,7 @@
         android:background="@null"
         android:ems="10"
         android:hint="@string/consoleInput"
+        android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:maxLines="1"
         android:textColor="@color/white"
@@ -31,5 +45,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:importantForAutofill="no" />
+        tools:ignore="TouchTargetSizeCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

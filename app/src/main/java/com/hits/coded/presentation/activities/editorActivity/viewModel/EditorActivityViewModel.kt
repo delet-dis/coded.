@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.hits.coded.data.models.codeBlocks.dataClasses.StartBlock
 import com.hits.coded.data.models.console.useCases.ConsoleUseCases
+import com.hits.coded.data.models.interpreter.useCases.helpers.StopInterpreterUseCases
 import com.hits.coded.data.models.interpreterCaller.useCases.InterpreterCallerUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class EditorActivityViewModel @Inject constructor(
     private val interpreterCallerUseCases: InterpreterCallerUseCases,
-    consoleUseCases: ConsoleUseCases,
+    private val consoleUseCases: ConsoleUseCases,
+    private val stopInterpreterUseCases: StopInterpreterUseCases
 ) :
     ViewModel() {
     private val _isBarsCollapsed = MutableLiveData(false)
@@ -44,15 +46,19 @@ class EditorActivityViewModel @Inject constructor(
 
     fun executeCode(startBlock: StartBlock) {
         _isCodeExecuting.postValue(true)
+
         processingJob = viewModelScope.launch(Dispatchers.IO) {
             interpreterCallerUseCases.callInterpreterUseCase.callInterpreter(startBlock)
-
-            _isCodeExecuting.postValue(false)
+            stopCodeExecution()
         }
     }
 
     fun stopCodeExecution() {
-        processingJob.cancel()
+        stopInterpreterUseCases.stopInterpreterUseCase.stopInterpreter()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            consoleUseCases.flushUseCase.flush()
+        }
 
         _isCodeExecuting.postValue(false)
     }
