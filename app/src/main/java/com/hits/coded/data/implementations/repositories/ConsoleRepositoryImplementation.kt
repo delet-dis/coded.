@@ -28,7 +28,7 @@ class ConsoleRepositoryImplementation @Inject constructor(
     private var outputBuffer = ArrayDeque<Pair<String, ConsoleMessageType>>(BUFFER_SIZE)
     private val inputBuffer =
         MutableSharedFlow<String>(0, 1, BufferOverflow.DROP_OLDEST)
-    override val isInputAvailable  = MutableStateFlow(false)
+    override val isInputAvailable = MutableStateFlow(false)
 
     private var mutex = Mutex()
 
