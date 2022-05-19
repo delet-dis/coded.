@@ -10,4 +10,8 @@ class StopInterpreterImplementation
     override fun stopInterpreter() {
         this.isInterpreting=false
     }
+
+    override fun startInterpreter() {
+        this.isInterpreting=true
+    }
 }
