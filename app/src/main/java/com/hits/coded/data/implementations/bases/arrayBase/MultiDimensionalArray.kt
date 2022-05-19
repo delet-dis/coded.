@@ -6,7 +6,7 @@ import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterEx
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
 
-class MultiDimensionalArray(): ArrayBase() {
+class MultiDimensionalArray : ArrayBase() {
 
     override fun parseArray(inputString: String): ArrayBase {
         val parsedArray = MultiDimensionalArray()
@@ -18,13 +18,9 @@ class MultiDimensionalArray(): ArrayBase() {
             if (char == '[') {
                 arrayFound = true
                 openedBrackets++
-            }
-
-            else if (char == ']') {
+            } else if (char == ']') {
                 openedBrackets--
-            }
-
-            else if (arrayFound) {
+            } else if (arrayFound) {
                 arrayString += char
             }
 
@@ -50,15 +46,12 @@ class MultiDimensionalArray(): ArrayBase() {
 
             if (char == '"')
                 return VariableType.STRING
-
             else if (char.isDigit()) {
                 isPrevDigit = true
                 if (char >= '2' || char <= '9') {
                     type = VariableType.INT
                 }
-            }
-
-            else if (isPrevDigit && char == '.')
+            } else if (isPrevDigit && char == '.')
                 type = VariableType.DOUBLE
         }
 

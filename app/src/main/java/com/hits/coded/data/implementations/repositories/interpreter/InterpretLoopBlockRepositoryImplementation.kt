@@ -29,7 +29,7 @@ class InterpretLoopBlockRepositoryImplementation
                     loopBlock.conditionBlock
                 )
             ) {
-                if(!stopInterpreter.isInterpreting){
+                if (!stopInterpreter.isInterpreting) {
                     break
                 }
                 it.forEach { blockBase ->

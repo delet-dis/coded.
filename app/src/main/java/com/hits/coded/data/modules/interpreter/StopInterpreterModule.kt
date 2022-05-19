@@ -1,7 +1,7 @@
 package com.hits.coded.data.modules.interpreter
 
 import com.hits.coded.data.implementations.helpers.StopInterpreterImplementation
-import com.hits.coded.data.models.interpreter.useCases.helpers.StopInterpreterUseCases
+import com.hits.coded.data.models.interpreter.useCases.helpers.ManageInterpreterStateUseCases
 import com.hits.coded.domain.repositories.interpreterRepositories.helpers.StopInterpreter
 import com.hits.coded.domain.useCases.interpreter.helpers.StartInterpreterUseCase
 import com.hits.coded.domain.useCases.interpreter.helpers.StopInterpreterUseCase
@@ -16,15 +16,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class StopInterpreterModule {
     @Binds
-    abstract fun bindStopInterpreter(stopInterpreter: StopInterpreterImplementation):StopInterpreter
+    abstract fun bindStopInterpreter(stopInterpreter: StopInterpreterImplementation): StopInterpreter
 
-    companion object{
+    companion object {
         @Provides
         @Singleton
-        fun provideStopInterpreterUseCases(stopInterpreter: StopInterpreter):StopInterpreterUseCases=
-            StopInterpreterUseCases(
-            StopInterpreterUseCase(stopInterpreter),
-            StartInterpreterUseCase(stopInterpreter)
-        )
+        fun provideStopInterpreterUseCases(stopInterpreter: StopInterpreter): ManageInterpreterStateUseCases =
+            ManageInterpreterStateUseCases(
+                StopInterpreterUseCase(stopInterpreter),
+                StartInterpreterUseCase(stopInterpreter)
+            )
     }
 }

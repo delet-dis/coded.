@@ -6,12 +6,12 @@ import javax.inject.Singleton
 
 @Singleton
 class StopInterpreterImplementation
-@Inject constructor():StopInterpreter(){
+@Inject constructor() : StopInterpreter() {
     override fun stopInterpreter() {
-        this.isInterpreting=false
+        this.isInterpreting = false
     }
 
     override fun startInterpreter() {
-        this.isInterpreting=true
+        this.isInterpreting = true
     }
 }

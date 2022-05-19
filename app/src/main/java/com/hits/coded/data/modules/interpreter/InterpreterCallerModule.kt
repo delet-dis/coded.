@@ -1,7 +1,7 @@
 package com.hits.coded.data.modules.interpreter
 
-import com.hits.coded.data.models.interpreterCaller.useCases.InterpreterCallerUseCases
 import com.hits.coded.data.implementations.repositories.InterpreterCallerRepositoryImplementation
+import com.hits.coded.data.models.interpreterCaller.useCases.InterpreterCallerUseCases
 import com.hits.coded.domain.repositories.InterpreterCallerRepository
 import com.hits.coded.domain.useCases.interpreterCaller.CallInterpreterUseCase
 import com.hits.coded.domain.useCases.interpreterCaller.GetExecutionResultsUseCase

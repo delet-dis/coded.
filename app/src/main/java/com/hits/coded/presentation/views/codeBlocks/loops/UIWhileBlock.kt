@@ -268,7 +268,7 @@ class UIWhileBlock @JvmOverloads constructor(
         firstVerticalGuideline.setGuidelineBegin(125)
     }
 
-    override fun hideError() =with(binding){
+    override fun hideError() = with(binding) {
         backgroundImage.setImageResource(R.drawable.while_block)
         firstVerticalGuideline.setGuidelineBegin(105)
     }

@@ -63,7 +63,8 @@ class VariableTypeChangerBottomSheetController(
 
     override fun show(navigationBarHeight: Int) {
         behaviour.isFitToContents = false
-        behaviour.expandedOffset = (navigationBarHeight.pxToDp(binding.root.context) + 50.dpToPx(binding.root.context)).toInt()
+        behaviour.expandedOffset =
+            (navigationBarHeight.pxToDp(binding.root.context) + 50.dpToPx(binding.root.context)).toInt()
 
         behaviour.state = BottomSheetBehavior.STATE_EXPANDED
 

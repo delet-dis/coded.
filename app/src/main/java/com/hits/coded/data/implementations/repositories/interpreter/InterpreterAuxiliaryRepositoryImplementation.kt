@@ -67,6 +67,7 @@ class InterpreterAuxiliaryRepositoryImplementation
 
         return currentVariable
     }
+
     @Throws(InterpreterException::class)
     override fun isVariable(value: String): Boolean {
         if (value.startsWith('"')) {
@@ -80,6 +81,7 @@ class InterpreterAuxiliaryRepositoryImplementation
 
         return true
     }
+
     @Throws(InterpreterException::class)
     override suspend fun getBaseType(value: Any?, canBeStringField: Boolean): Any {
         if (value == null || value == Unit)
@@ -123,6 +125,7 @@ class InterpreterAuxiliaryRepositoryImplementation
 
         return value
     }
+
     @Throws(InterpreterException::class)
     override suspend fun interpretBlock(block: BlockBase) =
         when (block.type) {
