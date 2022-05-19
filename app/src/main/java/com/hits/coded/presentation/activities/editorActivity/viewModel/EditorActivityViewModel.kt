@@ -44,18 +44,20 @@ class EditorActivityViewModel @Inject constructor(
 
     fun executeCode(startBlock: StartBlock) {
         _isCodeExecuting.postValue(true)
+
         processingJob = viewModelScope.launch(Dispatchers.IO) {
             interpreterCallerUseCases.callInterpreterUseCase.callInterpreter(startBlock)
-
-            _isCodeExecuting.postValue(false)
+            stopCodeExecution()
         }
     }
 
     fun stopCodeExecution() {
-        processingJob.cancel()
+//        TODO: interpreterCallerUseCases.stopInterpreterUseCase.stopInterpreter()
+
         viewModelScope.launch(Dispatchers.IO) {
             consoleUseCases.flushUseCase.flush()
         }
+
         _isCodeExecuting.postValue(false)
     }
 }

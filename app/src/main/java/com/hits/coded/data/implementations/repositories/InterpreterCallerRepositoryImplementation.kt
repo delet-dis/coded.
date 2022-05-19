@@ -56,10 +56,13 @@ class InterpreterCallerRepositoryImplementation
         try {
             interpreterUseCases.interpretStartBlock.interpretStartBlock(start)
         } catch (error: InterpreterException) {
-            error.blockID = interpreterHelperUseCases.getCurrentIdVariableUseCase.getCurrentIdVariable()
-            error.msg = context.getString(errorStrings[error.errorCode.ordinal])
-            consoleUseCases.writeToConsoleUseCase.writeErrorToConsole(error.msg)
-            _executionResult.emit(error)
+            with(error) {
+                blockID =
+                    interpreterHelperUseCases.getCurrentIdVariableUseCase.getCurrentIdVariable()
+                msg = context.getString(errorStrings[errorCode.ordinal])
+                consoleUseCases.writeToConsoleUseCase.writeErrorToConsole(msg)
+                _executionResult.emit(this)
+            }
         }
 
         consoleUseCases.flushUseCase.flush()
