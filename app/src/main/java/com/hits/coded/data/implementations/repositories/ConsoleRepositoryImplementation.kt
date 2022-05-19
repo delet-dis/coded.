@@ -2,17 +2,18 @@ package com.hits.coded.data.implementations.repositories
 
 import android.content.Context
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import com.hits.coded.data.models.console.enums.ConsoleMessageType
 import com.hits.coded.domain.repositories.ConsoleRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,52 +23,69 @@ class ConsoleRepositoryImplementation @Inject constructor(
 ) :
     ConsoleRepository() {
 
-    private val _bufferValue: ArrayDeque<SpannableString> = ArrayDeque(BUFFER_SIZE)
+    override val output =
+        MutableSharedFlow<SpannableStringBuilder>(1, 0, BufferOverflow.DROP_OLDEST)
+    private var outputBuffer = ArrayDeque<Pair<String, ConsoleMessageType>>(BUFFER_SIZE)
+    private val inputBuffer =
+        MutableSharedFlow<String>(0, 1, BufferOverflow.DROP_OLDEST)
+    override val isInputAvailable = MutableStateFlow(false)
 
-    private var _buffer: MutableSharedFlow<ArrayDeque<SpannableString>> =
-        MutableSharedFlow(1, 0, BufferOverflow.DROP_OLDEST)
-    override val buffer: Flow<ArrayDeque<SpannableString>>
-        get() = _buffer
-
-    private var _isInputAvailable: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    override val isInputAvailable: Flow<Boolean>
-        get() = _isInputAvailable
+    private var mutex = Mutex()
 
 
     init {
-        _buffer.tryEmit(_bufferValue)
+        output.tryEmit(SpannableStringBuilder(""))
     }
 
     override fun clear() {
-        _bufferValue.clear()
-        _buffer.tryEmit(_bufferValue)
+        outputBuffer.clear()
+        output.tryEmit(SpannableStringBuilder(""))
     }
 
     override suspend fun readFromConsole(): String {
-        _isInputAvailable.emit(true)
-        val input = buffer.drop(1).first().last()
-        _isInputAvailable.emit(false)
-        return input.toString()
+        flush()
+        isInputAvailable.emit(true)
+        val input = inputBuffer.first()
+        isInputAvailable.emit(false)
+        return input
+    }
+
+    override suspend fun flush() {
+        mutex.withLock {
+            val resultString = SpannableStringBuilder()
+            for (str in outputBuffer) {
+                resultString.append(
+                    SpannableString(str.first).apply {
+                        setSpan(
+                            ForegroundColorSpan(context.getColor(str.second.colorResourceId)),
+                            0,
+                            str.first.length,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
+                )
+            }
+
+            output.emit(resultString)
+        }
     }
 
     override fun writeToConsole(input: String, consoleMessageType: ConsoleMessageType) {
-        if (_bufferValue.size == BUFFER_SIZE) {
-            _bufferValue.removeFirst()
+        if (!mutex.tryLock())
+            return // flushing now
+
+        if (outputBuffer.size == BUFFER_SIZE) {
+            outputBuffer.removeFirst()
         }
 
-        _bufferValue.addLast(SpannableString(input).apply {
-            setSpan(
-                ForegroundColorSpan(context.getColor(consoleMessageType.colorResourceId)),
-                0,
-                input.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        })
-        _buffer.tryEmit(_bufferValue)
+        outputBuffer.add(Pair(input + '\n', consoleMessageType))
+        inputBuffer.tryEmit(input)
+
+        mutex.unlock()
     }
 
 
     private companion object {
-        const val BUFFER_SIZE = 100
+        const val BUFFER_SIZE = 200
     }
 }
