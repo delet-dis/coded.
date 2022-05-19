@@ -108,4 +108,6 @@
     <string name="index">index</string>
     <string name="thElementFrom">\'th element from</string>
     <string name="getLengthOf">get length of</string>
+    <string name="remove">remove</string>
+    <string name="from">from</string>
 </resources>
