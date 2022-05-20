@@ -2,15 +2,19 @@ package com.hits.coded.data.implementations.repositories.interpreter
 
 import com.hits.coded.data.models.arrays.bases.ArrayBase
 import com.hits.coded.data.models.codeBlocks.bases.subBlocks.ArrayBlockBase
+import com.hits.coded.data.models.codeBlocks.dataClasses.VariableBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.ArrayBlockType
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.VariableBlockType
 import com.hits.coded.data.models.heap.dataClasses.StoredVariable
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreter.useCases.helpers.InterpreterHelperUseCases
+import com.hits.coded.data.models.interpreter.useCases.repositories.InterpreterBlocksUseCases
 import com.hits.coded.data.models.interpreter.useCases.repositories.InterpreterConverterUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.domain.repositories.interpreterRepositories.InterpretArrayBlockRepository
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
@@ -18,7 +22,8 @@ class InterpretArrayBlockRepositoryImplementation
 @Inject constructor(
     private val heapUseCases: HeapUseCases,
     private val interpreterConverterUseCases: InterpreterConverterUseCases,
-    private val interpreterHelperUseCases: InterpreterHelperUseCases
+    private val interpreterHelperUseCases: InterpreterHelperUseCases,
+    private val interpreterBlocksUseCases: Provider<InterpreterBlocksUseCases>
 ) : InterpretArrayBlockRepository() {
     @Throws(InterpreterException::class)
     override suspend fun interpretArrayBlock(block: ArrayBlockBase): Any {
@@ -55,6 +60,13 @@ class InterpretArrayBlockRepositoryImplementation
                 )
             )
             ArrayBlockType.CONCAT -> array.concat(block.value as? ArrayBase)
+            ArrayBlockType.SET_ELEMENT -> interpreterBlocksUseCases.get().interpretVariableBlockUseCase.interpretVariableBlocks (
+                VariableBlock(
+                    variableBlockType = VariableBlockType.VARIABLE_SET,
+                    variableParams = block.array,
+                    valueToSet = block.value
+                )
+            )
         }
     }
 }
