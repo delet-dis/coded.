@@ -73,7 +73,46 @@ class UIArrayGetBlock @JvmOverloads constructor(
         }
 
     override fun initDragAndDropListener() {
-        binding.arrayName.setOnDragListener { _, _ ->
+        binding.arrayName.setOnDragListener { _, dragEvent ->
+            val draggableItem = dragEvent?.localState as View
+
+            (draggableItem as? UINestedableCodeBlock)?.let {
+                val itemParent = draggableItem.parent as? ViewGroup
+
+                itemParent?.let {
+                    when (dragEvent.action) {
+                        DragEvent.ACTION_DRAG_STARTED,
+                        DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
+
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            scalePlusAnimation(binding.secondCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            scaleMinusAnimation(binding.secondCard)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DROP -> {
+                            handleArrayNameDropEvent(itemParent, draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            handleDragEndedEvent(draggableItem)
+
+                            return@setOnDragListener true
+                        }
+
+                        else -> return@setOnDragListener false
+                    }
+                }
+            }
+
             true
         }
 
@@ -120,13 +159,40 @@ class UIArrayGetBlock @JvmOverloads constructor(
         }
     }
 
+    private fun handleArrayNameDropEvent(
+        itemParent: ViewGroup,
+        draggableItem: View
+    ) = with(binding) {
+        scaleMinusAnimation(binding.secondCard)
+
+        if (draggableItem != this@UIArrayGetBlock) {
+            itemParent.removeView(draggableItem)
+
+            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
+
+            arrayName.apply {
+                setText("")
+                visibility = INVISIBLE
+            }
+
+            clearNestedBlocksFromParent(secondCard)
+
+            nestedUIBlocks.add(draggableItem)
+            secondCard.addView(draggableItem)
+
+            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                _block.array = it
+            }
+        }
+    }
+
     private fun handleDropEvent(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        if (draggableItem != this@UIArrayGetBlock) {
-            scaleMinusAnimation(binding.firstCard)
+        scaleMinusAnimation(binding.firstCard)
 
+        if (draggableItem != this@UIArrayGetBlock) {
             itemParent.removeView(draggableItem)
 
             processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
@@ -155,7 +221,9 @@ class UIArrayGetBlock @JvmOverloads constructor(
                 UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
         }
 
-        if ((draggableItem as? UICodeBlockWithDataInterface)?.block == _block.value) {
+        val draggedBlock = (draggableItem as? UICodeBlockWithDataInterface)?.block
+
+        if (draggedBlock == _block.value || draggedBlock == _block.array) {
             draggableItem.x = 0f
             draggableItem.y = 0f
         }
@@ -164,16 +232,32 @@ class UIArrayGetBlock @JvmOverloads constructor(
     }
 
     override fun customRemoveView(view: View) {
-        nestedUIBlocks.remove(view)
-        binding.secondCard.removeView(view)
-
         view.tag = null
 
-        _block.value = null
+        nestedUIBlocks.remove(view)
 
-        binding.index.apply {
-            setText("")
-            visibility = VISIBLE
+        val removingViewBlock = (view as? UICodeBlockWithDataInterface)?.block
+
+        if (removingViewBlock == _block.array) {
+            binding.secondCard.removeView(view)
+
+            _block.array = null
+
+            binding.arrayName.apply {
+                setText("")
+                visibility = VISIBLE
+            }
+        }
+
+        if (removingViewBlock == _block.value) {
+            binding.firstCard.removeView(view)
+
+            _block.value = null
+
+            binding.index.apply {
+                setText("")
+                visibility = VISIBLE
+            }
         }
     }
 

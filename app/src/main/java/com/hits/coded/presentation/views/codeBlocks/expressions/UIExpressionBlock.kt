@@ -190,9 +190,9 @@ class UIExpressionBlock @JvmOverloads constructor(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        if (draggableItem != this@UIExpressionBlock) {
-            scaleMinusAnimation(parentCard)
+        scaleMinusAnimation(parentCard)
 
+        if (draggableItem != this@UIExpressionBlock) {
             itemParent.removeView(draggableItem)
 
             processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)

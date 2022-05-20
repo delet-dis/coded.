@@ -44,16 +44,17 @@ class VariablesItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInte
             removeAllViews()
 
             with(requireContext()) {
-                addView(getBlockInHorizontalScrollView(UIVariableCreationBlock(this).apply {
+                addView(UIVariableCreationBlock(this).apply {
                     initCallback(requireActivity() as UIEditorActivityShowBottomSheetCallback)
-                }))
+                })
 
-                addView(getBlockInHorizontalScrollView(UIVariableChangeBlock(this).apply {
+                addView(UIVariableChangeBlock(this).apply {
                     blockType = VariableBlockType.VARIABLE_SET
-                }))
-                addView(getBlockInHorizontalScrollView(UIVariableChangeBlock(this).apply {
+                })
+
+                addView(UIVariableChangeBlock(this).apply {
                     blockType = VariableBlockType.VARIABLE_CHANGE
-                }))
+                })
             }
         }
 }
