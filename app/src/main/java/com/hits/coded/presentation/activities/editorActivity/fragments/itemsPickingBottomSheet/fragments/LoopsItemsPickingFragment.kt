@@ -41,7 +41,7 @@ class LoopsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterfac
             removeAllViews()
 
             with(requireContext()) {
-                addView(UIWhileBlock(this))
+                addView(getBlockInHorizontalScrollView(UIWhileBlock(this)))
             }
         }
     }
