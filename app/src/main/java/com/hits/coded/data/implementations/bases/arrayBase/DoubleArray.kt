@@ -36,9 +36,9 @@ class DoubleArray() : ArrayBase() {
         if (newElement is String)
             newElement = parseSingleValue(newElement)
 
-        if (newElement !is Double)
+        if (newElement !is Number)
             throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
-        array.add(StoredVariable(null, VariableType.DOUBLE, false, newElement))
+        array.add(StoredVariable(null, VariableType.DOUBLE, false, newElement.toDouble()))
     }
 }
