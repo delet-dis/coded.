@@ -11,6 +11,7 @@ import com.hits.coded.presentation.views.codeBlocks.arrays.UIArrayAddBlock
 import com.hits.coded.presentation.views.codeBlocks.arrays.UIArrayGetBlock
 import com.hits.coded.presentation.views.codeBlocks.arrays.UIArrayGetLengthBlock
 import com.hits.coded.presentation.views.codeBlocks.arrays.UIArrayRemoveAtBlock
+import com.hits.coded.presentation.views.codeBlocks.arrays.UIArraySetBlock
 
 class ArraysItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterface {
     private lateinit var binding: FragmentArraysItemsPickingBinding
@@ -45,6 +46,8 @@ class ArraysItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterfa
                 addView(UIArrayAddBlock(this))
 
                 addView(UIArrayRemoveAtBlock(this))
+
+                addView(UIArraySetBlock(this))
 
                 addView(UIArrayGetBlock(this))
 

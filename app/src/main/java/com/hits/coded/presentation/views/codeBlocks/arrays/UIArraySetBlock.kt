@@ -21,9 +21,9 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
 import com.hits.coded.data.models.codeBlocks.dataClasses.ArrayBlock
 import com.hits.coded.data.models.codeBlocks.types.subBlocks.ArrayBlockType
-import com.hits.coded.databinding.ViewArrayGetBlockBinding
+import com.hits.coded.databinding.ViewArraySetBlockBinding
 
-class UIArrayGetBlock @JvmOverloads constructor(
+class UIArraySetBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -32,12 +32,12 @@ class UIArrayGetBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
     UIElementHandlesCustomRemoveViewProcessInterface, UIElementSavesNestedBlocksInterface,
-    UICodeBlockSupportsErrorDisplaying, UINestedableCodeBlock {
-    private val binding: ViewArrayGetBlockBinding
+    UICodeBlockSupportsErrorDisplaying {
+    private val binding: ViewArraySetBlockBinding
 
     override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
-    private var _block = ArrayBlock(ArrayBlockType.GET_ELEMENT)
+    private var _block = ArrayBlock(ArrayBlockType.SET_ELEMENT)
     override val block: BlockBase
         get() = _block
 
@@ -47,36 +47,29 @@ class UIArrayGetBlock @JvmOverloads constructor(
     init {
         inflate(
             context,
-            R.layout.view_array_get_block,
+            R.layout.view_array_set_block,
             this
         ).also { view ->
-            binding = ViewArrayGetBlockBinding.bind(view)
+            binding = ViewArraySetBlockBinding.bind(view)
         }
 
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initDragAndDropListener()
 
-        initIndexToGetListener()
-
-        initArrayNameChangeListener()
+        initValueToAddListener()
     }
 
-    private fun initIndexToGetListener() =
-        binding.index.addTextChangedListener {
+    private fun initValueToAddListener() =
+        binding.value.addTextChangedListener {
             _block.value = it.toString()
         }
 
-    private fun initArrayNameChangeListener() =
-        binding.arrayName.addTextChangedListener {
-            _block.array = it.toString()
-        }
-
     override fun initDragAndDropListener() {
-        binding.arrayName.setOnDragListener { _, dragEvent ->
+        binding.arrayElement.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            (draggableItem as? UINestedableCodeBlock)?.let {
+            (draggableItem as? UIArrayGetBlock)?.let {
                 val itemParent = draggableItem.parent as? ViewGroup
 
                 itemParent?.let {
@@ -97,7 +90,7 @@ class UIArrayGetBlock @JvmOverloads constructor(
                         }
 
                         DragEvent.ACTION_DROP -> {
-                            handleArrayNameDropEvent(itemParent, draggableItem)
+                            handleArrayElementDropEvent(itemParent, draggableItem)
 
                             return@setOnDragListener true
                         }
@@ -116,7 +109,7 @@ class UIArrayGetBlock @JvmOverloads constructor(
             true
         }
 
-        binding.index.setOnDragListener { _, dragEvent ->
+        binding.value.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             (draggableItem as? UINestedableCodeBlock)?.let {
@@ -159,21 +152,18 @@ class UIArrayGetBlock @JvmOverloads constructor(
         }
     }
 
-    private fun handleArrayNameDropEvent(
+    private fun handleArrayElementDropEvent(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
         scaleMinusAnimation(binding.secondCard)
 
-        if (draggableItem != this@UIArrayGetBlock) {
+        if (draggableItem != this@UIArraySetBlock) {
             itemParent.removeView(draggableItem)
 
             processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
 
-            arrayName.apply {
-                setText("")
-                visibility = INVISIBLE
-            }
+            arrayElement.visibility = INVISIBLE
 
             clearNestedBlocksFromParent(secondCard)
 
@@ -192,12 +182,12 @@ class UIArrayGetBlock @JvmOverloads constructor(
     ) = with(binding) {
         scaleMinusAnimation(binding.firstCard)
 
-        if (draggableItem != this@UIArrayGetBlock) {
+        if (draggableItem != this@UIArraySetBlock) {
             itemParent.removeView(draggableItem)
 
             processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
 
-            index.apply {
+            value.apply {
                 setText("")
                 visibility = INVISIBLE
             }
@@ -243,10 +233,7 @@ class UIArrayGetBlock @JvmOverloads constructor(
 
             _block.array = null
 
-            binding.arrayName.apply {
-                setText("")
-                visibility = VISIBLE
-            }
+            binding.arrayElement.visibility = VISIBLE
         }
 
         if (removingViewBlock == _block.value) {
@@ -254,7 +241,7 @@ class UIArrayGetBlock @JvmOverloads constructor(
 
             _block.value = null
 
-            binding.index.apply {
+            binding.value.apply {
                 setText("")
                 visibility = VISIBLE
             }
@@ -262,12 +249,12 @@ class UIArrayGetBlock @JvmOverloads constructor(
     }
 
     override fun displayError() =
-        binding.backgroundImage.setImageResource(R.drawable.error_small_block)
+        binding.backgroundImage.setImageResource(R.drawable.error_block)
 
     override fun hideError() =
-        binding.backgroundImage.setImageResource(R.drawable.array_small_block)
+        binding.backgroundImage.setImageResource(R.drawable.array_block)
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "ARRAY_GET_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "ARRAY_SET_BLOCK_"
     }
 }
