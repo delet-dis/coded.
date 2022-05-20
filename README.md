@@ -8,7 +8,7 @@
 
 [![codefactor](https://github.com/delet-dis/coded./actions/workflows/android.yml/badge.svg)](https://github.com/delet-dis/coded./actions/workflows/android.yml)
 
-coded. is an [Android](https://en.wikipedia.org/wiki/Android_(operating_system))  designed to teach children programming by building programs from blocks of code.
+coded. is an [Android](https://en.wikipedia.org/wiki/Android_(operating_system)) application designed to teach children programming by building programs from blocks of code.
 
 The goal of the project is to make an application that allows a child to build basic algorithms without knowledge of programming languages.
 
