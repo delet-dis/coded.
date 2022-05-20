@@ -20,7 +20,7 @@ class InterpreterConverterRepositoryImplementation
     @Throws(InterpreterException::class)
     override suspend fun convertAnyToDouble(value: Any?): Double {
         val processedValue =
-            interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value, true)
+            interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value)
         if (processedValue !is Number)
             throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
@@ -30,7 +30,7 @@ class InterpreterConverterRepositoryImplementation
     @Throws(InterpreterException::class)
     override suspend fun convertAnyToInt(value: Any?): Int {
         val processedValue =
-            interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value, true)
+            interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value)
         if (processedValue !is Number)
             throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
@@ -40,7 +40,7 @@ class InterpreterConverterRepositoryImplementation
     @Throws(InterpreterException::class)
     override suspend fun convertAnyToBoolean(value: Any?): Boolean {
         val processedValue =
-            interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value, true)
+            interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value)
         if (processedValue !is Boolean)
             throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
@@ -50,7 +50,11 @@ class InterpreterConverterRepositoryImplementation
     @Throws(InterpreterException::class)
     override suspend fun convertAnyToString(value: Any): String {
         val processedValue =
-            interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value, true)
+            interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(
+                value,
+                canBeVariableName = true,
+                castToNumber = false
+            )
         if (processedValue !is String)
             throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
@@ -60,7 +64,7 @@ class InterpreterConverterRepositoryImplementation
     @Throws(InterpreterException::class)
     override suspend fun convertAnyToStringIndulgently(value: Any): String =
         when (val processedValue =
-            interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value, true)) {
+            interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value)) {
             is ArrayBase -> {
                 var resultString = "[ "
                 for (i in 0 until processedValue.size)
