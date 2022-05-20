@@ -33,6 +33,18 @@ class InterpretArrayBlockRepositoryImplementation
             interpreterHelperUseCases.setCurrentIdVariableUseCase.setCurrentIdVariable(it)
         }
 
+        //redirect
+        if (block.arrayBlockType == ArrayBlockType.SET_ELEMENT) {
+            return interpreterBlocksUseCases.get().interpretVariableBlockUseCase.interpretVariableBlocks(
+                VariableBlock(
+                    variableBlockType = VariableBlockType.VARIABLE_SET,
+                    variableParams = block.array,
+                    valueToSet = block.value
+                )
+            )
+        }
+
+
         val storedArray = when (val arrayIdentifier = block.array) {
             is String -> heapUseCases.getVariableUseCase.getVariable(arrayIdentifier)
             is ArrayBlockBase -> (interpretArrayBlock(arrayIdentifier) as? StoredVariable)
@@ -42,14 +54,16 @@ class InterpretArrayBlockRepositoryImplementation
                 ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
             )
 
+        val type = block.arrayBlockType
 
         if (storedArray.isArray != true)
             throw InterpreterException(
                 ExceptionType.TYPE_MISMATCH
             )
 
+
         val array = storedArray.value!! as ArrayBase // array in heap -> it has been constructed
-        return when (block.arrayBlockType) {
+        return when (type) {
             ArrayBlockType.GET_SIZE -> array.size
             ArrayBlockType.GET_ELEMENT -> array[interpreterConverterUseCases.convertAnyToIntUseCase.convertAnyToInt(
                 block.value
@@ -70,13 +84,7 @@ class InterpretArrayBlockRepositoryImplementation
                     interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(block.value) as? ArrayBase
                 )
 
-            ArrayBlockType.SET_ELEMENT -> interpreterBlocksUseCases.get().interpretVariableBlockUseCase.interpretVariableBlocks(
-                VariableBlock(
-                    variableBlockType = VariableBlockType.VARIABLE_SET,
-                    variableParams = block.array,
-                    valueToSet = block.value
-                )
-            )
+            else -> throw InterpreterException(ExceptionType.WTF)
         }
     }
 }
