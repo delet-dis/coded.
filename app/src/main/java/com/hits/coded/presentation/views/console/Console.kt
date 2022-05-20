@@ -80,7 +80,7 @@ class Console @JvmOverloads constructor(
                 consoleText.text = it
 
                 consoleScrollView.post {
-                    consoleScrollView.scrollTo(0, consoleScrollView.bottom*12)
+                    consoleScrollView.scrollTo(0, consoleScrollView.bottom * 12)
                 }
             }
         }
