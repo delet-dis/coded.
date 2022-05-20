@@ -41,6 +41,22 @@ This project takes advantage of best practices, many popular libraries and tools
 * UI
     * [Material design](https://material.io/design)
 
+## Data flows
+### 🛬 OnboardingActivity
+<img src="https://user-images.githubusercontent.com/47276603/169473214-832f4c65-311d-4287-b5f2-a1f19d82d72a.png" width="600" hspace="5" vspace ="10">
+
+> <img src="https://user-images.githubusercontent.com/47276603/122640649-e3772500-d12a-11eb-98ae-43fc95d000ba.png" width="30" hspace="5"> - request </br>
+> <img src="https://user-images.githubusercontent.com/47276603/122640648-e2de8e80-d12a-11eb-869c-e20de1a1f773.png" width="30" hspace="5"> - response
+
+
+### ✏️ EditorActivity
+<img src="https://user-images.githubusercontent.com/47276603/169479030-4291adb8-2421-44c1-95fa-2ba3ebdebc67.png" width="600" hspace="5" vspace ="10">
+
+> <img src="https://user-images.githubusercontent.com/47276603/122640649-e3772500-d12a-11eb-98ae-43fc95d000ba.png" width="30" hspace="5"> - request </br>
+> <img src="https://user-images.githubusercontent.com/47276603/122640648-e2de8e80-d12a-11eb-869c-e20de1a1f773.png" width="30" hspace="5"> - response
+
+
+
 ## Architecture
 The entire application follows `clean architecture`.
 
