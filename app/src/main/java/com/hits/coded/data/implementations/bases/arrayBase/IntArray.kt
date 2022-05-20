@@ -36,9 +36,9 @@ class IntArray() : ArrayBase() {
         if (newElement is String)
             newElement = parseSingleValue(newElement)
 
-        if (newElement !is Int)
+        if (newElement !is Number)
             throw InterpreterException(ExceptionType.TYPE_MISMATCH)
 
-        array.add(StoredVariable(null, VariableType.INT, false, newElement))
+        array.add(StoredVariable(null, VariableType.INT, false, newElement.toInt()))
     }
 }

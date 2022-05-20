@@ -66,11 +66,12 @@ class InterpreterConverterRepositoryImplementation
         when (val processedValue =
             interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(value)) {
             is ArrayBase -> {
-                var resultString = "[ "
+                var resultString = "["
                 for (i in 0 until processedValue.size)
                     resultString += convertAnyToStringIndulgently(processedValue[i]) + ' '
-                resultString += " ]"
 
+                resultString = resultString.dropLast(1)
+                resultString += "]"
                 resultString
             }
 

@@ -42,9 +42,9 @@ class ExpressionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentIn
             removeAllViews()
 
             ExpressionBlockType.values().forEach {
-                addView(getBlockInHorizontalScrollView(UIExpressionBlock(requireContext()).apply {
+                addView(UIExpressionBlock(requireContext()).apply {
                     blockType = it
-                }))
+                })
             }
         }
 }

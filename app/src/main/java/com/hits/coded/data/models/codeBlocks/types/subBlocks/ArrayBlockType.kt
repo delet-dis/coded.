@@ -5,5 +5,6 @@ enum class ArrayBlockType {
     GET_SIZE,
     PUSH,
     REMOVE_AT,
-    CONCAT
+    CONCAT,
+    SET_ELEMENT
 }

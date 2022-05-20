@@ -39,20 +39,20 @@ class InterpretVariableBlockRepositoryImplementation
 
                 val currentStoredVariable =
                     interpreterAuxiliaryUseCases.getVariableUseCase.getVariable(variableParams)
-                currentStoredVariable.value = when (currentStoredVariable.type) {
-                    VariableType.STRING -> interpreterConverterUseCases.convertAnyToStringUseCase.convertAnyToString(
+                currentStoredVariable.value = when (currentStoredVariable.value) {
+                    is String -> interpreterConverterUseCases.convertAnyToStringUseCase.convertAnyToString(
                         valueToSet
                     )
-                    VariableType.INT -> interpreterConverterUseCases.convertAnyToIntUseCase.convertAnyToInt(
+                    is Int -> interpreterConverterUseCases.convertAnyToIntUseCase.convertAnyToInt(
                         valueToSet
                     )
-                    VariableType.DOUBLE -> interpreterConverterUseCases.convertAnyToDoubleUseCase.convertAnyToDouble(
+                    is Double -> interpreterConverterUseCases.convertAnyToDoubleUseCase.convertAnyToDouble(
                         valueToSet
                     )
-                    VariableType.BOOLEAN -> interpreterConverterUseCases.convertAnyToBooleanUseCase.convertAnyToBoolean(
+                    is Boolean -> interpreterConverterUseCases.convertAnyToBooleanUseCase.convertAnyToBoolean(
                         valueToSet
                     )
-                    VariableType.ARRAY -> interpreterConverterUseCases.convertAnyToArrayBaseUseCase.convertAnyToArrayBase(
+                    is ArrayBase -> interpreterConverterUseCases.convertAnyToArrayBaseUseCase.convertAnyToArrayBase(
                         valueToSet,
                         currentStoredVariable.value as ArrayBase
                     )

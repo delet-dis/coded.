@@ -1,4 +1,4 @@
-package com.hits.coded.presentation.views.codeBlocks.expressions
+package com.hits.coded.presentation.views.codeBlocks.arrays
 
 import android.content.Context
 import android.util.AttributeSet
@@ -19,11 +19,11 @@ import com.hits.coded.data.interfaces.ui.codeBlocks.UICodeBlockWithLastTouchInfo
 import com.hits.coded.data.interfaces.ui.codeBlocks.UIMoveableCodeBlockInterface
 import com.hits.coded.data.interfaces.ui.codeBlocks.UINestedableCodeBlock
 import com.hits.coded.data.models.codeBlocks.bases.BlockBase
-import com.hits.coded.data.models.codeBlocks.dataClasses.ExpressionBlock
-import com.hits.coded.data.models.codeBlocks.types.subBlocks.ExpressionBlockType
-import com.hits.coded.databinding.ViewExpressionBlockBinding
+import com.hits.coded.data.models.codeBlocks.dataClasses.ArrayBlock
+import com.hits.coded.data.models.codeBlocks.types.subBlocks.ArrayBlockType
+import com.hits.coded.databinding.ViewArraySetBlockBinding
 
-class UIExpressionBlock @JvmOverloads constructor(
+class UIArraySetBlock @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -32,78 +32,44 @@ class UIExpressionBlock @JvmOverloads constructor(
     UIElementHandlesDragAndDropInterface, UICodeBlockElementHandlesDragAndDropInterface,
     UICodeBlockWithCustomRemoveViewProcessInterface,
     UIElementHandlesCustomRemoveViewProcessInterface, UIElementSavesNestedBlocksInterface,
-    UINestedableCodeBlock, UICodeBlockSupportsErrorDisplaying {
-    private val binding: ViewExpressionBlockBinding
+    UICodeBlockSupportsErrorDisplaying {
+    private val binding: ViewArraySetBlockBinding
 
-    override val nestedUIBlocks: ArrayList<View?> = arrayListOf(null, null)
+    override val nestedUIBlocks: ArrayList<View?> = ArrayList()
 
-    private var leftSide: Any? = Any()
-        set(value) {
-            field = value
-
-            _block.leftSide = value
-        }
-
-    private var rightSide: Any? = Any()
-        set(value) {
-            field = value
-
-            _block.rightSide = value
-        }
-
-    private var _block = ExpressionBlock()
+    private var _block = ArrayBlock(ArrayBlockType.SET_ELEMENT)
     override val block: BlockBase
         get() = _block
 
     override var touchX: Int = 0
     override var touchY: Int = 0
 
-    var blockType: ExpressionBlockType? = null
-        set(value) {
-            field = value
-
-            value?.let {
-                changeBlockType(it)
-            }
-        }
-
     init {
         inflate(
             context,
-            R.layout.view_expression_block,
+            R.layout.view_array_set_block,
             this
         ).also { view ->
-            binding = ViewExpressionBlockBinding.bind(view)
+            binding = ViewArraySetBlockBinding.bind(view)
         }
 
         this.initDragAndDropGesture(this, DRAG_AND_DROP_TAG)
 
         initDragAndDropListener()
 
-        initCardsTextsListeners()
+        initValueToAddListener()
     }
 
-    private fun changeBlockType(blockType: ExpressionBlockType) {
-        _block.expressionBlockType = blockType
-
-        binding.centerText.setText(blockType.resourceId)
-    }
-
-    private fun initCardsTextsListeners() {
-        binding.leftCardText.addTextChangedListener {
-            leftSide = it.toString()
+    private fun initValueToAddListener() =
+        binding.value.addTextChangedListener {
+            _block.value = it.toString()
         }
-
-        binding.rightCardText.addTextChangedListener {
-            rightSide = it.toString()
-        }
-    }
 
     override fun initDragAndDropListener() {
-        binding.leftCardText.setOnDragListener { _, dragEvent ->
+        binding.arrayElement.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
-            (draggableItem as? UINestedableCodeBlock)?.let {
+            (draggableItem as? UIArrayGetBlock)?.let {
                 val itemParent = draggableItem.parent as? ViewGroup
 
                 itemParent?.let {
@@ -112,19 +78,19 @@ class UIExpressionBlock @JvmOverloads constructor(
                         DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
                         DragEvent.ACTION_DRAG_ENTERED -> {
-                            scalePlusAnimation(binding.leftCard)
+                            scalePlusAnimation(binding.secondCard)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DRAG_EXITED -> {
-                            scaleMinusAnimation(binding.leftCard)
+                            scaleMinusAnimation(binding.secondCard)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DROP -> {
-                            handleDropEvent(binding.leftCard, itemParent, draggableItem)
+                            handleArrayElementDropEvent(itemParent, draggableItem)
 
                             return@setOnDragListener true
                         }
@@ -135,14 +101,15 @@ class UIExpressionBlock @JvmOverloads constructor(
                             return@setOnDragListener true
                         }
 
-                        else -> return@setOnDragListener true
+                        else -> return@setOnDragListener false
                     }
                 }
             }
+
             true
         }
 
-        binding.rightCardText.setOnDragListener { _, dragEvent ->
+        binding.value.setOnDragListener { _, dragEvent ->
             val draggableItem = dragEvent?.localState as View
 
             (draggableItem as? UINestedableCodeBlock)?.let {
@@ -154,19 +121,19 @@ class UIExpressionBlock @JvmOverloads constructor(
                         DragEvent.ACTION_DRAG_LOCATION -> return@setOnDragListener true
 
                         DragEvent.ACTION_DRAG_ENTERED -> {
-                            scalePlusAnimation(binding.rightCard)
+                            scalePlusAnimation(binding.firstCard)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DRAG_EXITED -> {
-                            scaleMinusAnimation(binding.rightCard)
+                            scaleMinusAnimation(binding.firstCard)
 
                             return@setOnDragListener true
                         }
 
                         DragEvent.ACTION_DROP -> {
-                            handleDropEvent(binding.rightCard, itemParent, draggableItem)
+                            handleDropEvent(itemParent, draggableItem)
 
                             return@setOnDragListener true
                         }
@@ -177,7 +144,7 @@ class UIExpressionBlock @JvmOverloads constructor(
                             return@setOnDragListener true
                         }
 
-                        else -> return@setOnDragListener true
+                        else -> return@setOnDragListener false
                     }
                 }
             }
@@ -185,47 +152,54 @@ class UIExpressionBlock @JvmOverloads constructor(
         }
     }
 
-    private fun handleDropEvent(
-        parentCard: ViewGroup,
+    private fun handleArrayElementDropEvent(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        scaleMinusAnimation(parentCard)
+        scaleMinusAnimation(binding.secondCard)
 
-        if (draggableItem != this@UIExpressionBlock) {
+        if (draggableItem != this@UIArraySetBlock) {
             itemParent.removeView(draggableItem)
 
             processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
 
-            val draggableBlockWithData = draggableItem as? UICodeBlockWithDataInterface
+            arrayElement.visibility = INVISIBLE
 
-            if (parentCard == leftCard) {
-                leftCardText.apply {
-                    setText("")
-                    visibility = INVISIBLE
-                }
+            clearNestedBlocksFromParent(secondCard)
 
-                draggableBlockWithData?.block?.let {
-                    leftSide = it
-                }
+            nestedUIBlocks.add(draggableItem)
+            secondCard.addView(draggableItem)
 
-                nestedUIBlocks[0] = draggableItem
+            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                _block.array = it
+            }
+        }
+    }
+
+    private fun handleDropEvent(
+        itemParent: ViewGroup,
+        draggableItem: View
+    ) = with(binding) {
+        scaleMinusAnimation(binding.firstCard)
+
+        if (draggableItem != this@UIArraySetBlock) {
+            itemParent.removeView(draggableItem)
+
+            processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)
+
+            value.apply {
+                setText("")
+                visibility = INVISIBLE
             }
 
-            if (parentCard == rightCard) {
-                rightCardText.apply {
-                    setText("")
-                    visibility = INVISIBLE
-                }
+            clearNestedBlocksFromParent(firstCard)
 
-                draggableBlockWithData?.block?.let {
-                    rightSide = it
-                }
+            nestedUIBlocks.add(draggableItem)
+            firstCard.addView(draggableItem)
 
-                nestedUIBlocks[1] = draggableItem
+            (draggableItem as? UICodeBlockWithDataInterface)?.block?.let {
+                _block.value = it
             }
-
-            parentCard.addView(draggableItem)
         }
     }
 
@@ -237,9 +211,9 @@ class UIExpressionBlock @JvmOverloads constructor(
                 UIMoveableCodeBlockInterface.ITEM_APPEAR_ANIMATION_DURATION
         }
 
-        val draggableItemBlock = (draggableItem as? UICodeBlockWithDataInterface)?.block
+        val draggedBlock = (draggableItem as? UICodeBlockWithDataInterface)?.block
 
-        if (draggableItemBlock == _block.leftSide || draggableItemBlock == _block.rightSide) {
+        if (draggedBlock == _block.value || draggedBlock == _block.array) {
             draggableItem.x = 0f
             draggableItem.y = 0f
         }
@@ -248,40 +222,39 @@ class UIExpressionBlock @JvmOverloads constructor(
     }
 
     override fun customRemoveView(view: View) {
-        nestedUIBlocks[nestedUIBlocks.indexOf(view)] = null
+        view.tag = null
+
+        nestedUIBlocks.remove(view)
 
         val removingViewBlock = (view as? UICodeBlockWithDataInterface)?.block
 
-        if ((leftSide as? BlockBase) == removingViewBlock) {
-            binding.leftCard.removeView(view)
+        if (removingViewBlock == _block.array) {
+            binding.secondCard.removeView(view)
 
-            leftSide = null
+            _block.array = null
 
-            with(binding.leftCardText) {
-                setText("")
-                visibility = VISIBLE
-            }
+            binding.arrayElement.visibility = VISIBLE
         }
 
-        if ((rightSide as? BlockBase) == removingViewBlock) {
-            binding.rightCard.removeView(view)
+        if (removingViewBlock == _block.value) {
+            binding.firstCard.removeView(view)
 
-            rightSide = null
+            _block.value = null
 
-            with(binding.rightCardText) {
+            binding.value.apply {
                 setText("")
                 visibility = VISIBLE
             }
         }
     }
 
-    override fun hideError() =
-        binding.backgroundImage.setImageResource(R.drawable.expression_block)
-
     override fun displayError() =
-        binding.backgroundImage.setImageResource(R.drawable.error_small_block)
+        binding.backgroundImage.setImageResource(R.drawable.error_block)
+
+    override fun hideError() =
+        binding.backgroundImage.setImageResource(R.drawable.array_block)
 
     private companion object {
-        const val DRAG_AND_DROP_TAG = "EXPRESSION_BLOCK_"
+        const val DRAG_AND_DROP_TAG = "ARRAY_SET_BLOCK_"
     }
 }

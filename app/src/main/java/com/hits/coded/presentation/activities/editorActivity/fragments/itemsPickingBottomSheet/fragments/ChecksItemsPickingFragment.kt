@@ -43,9 +43,9 @@ class ChecksItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterfa
             removeAllViews()
 
             MathematicalBlockType.values().forEach {
-                addView(getBlockInHorizontalScrollView(UIConditionBlock(requireContext()).apply {
+                addView(UIConditionBlock(requireContext()).apply {
                     mathematicalBlockType = it
-                }))
+                })
             }
         }
 
@@ -53,9 +53,9 @@ class ChecksItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterfa
             removeAllViews()
 
             LogicalBlockType.values().forEach {
-                addView(getBlockInHorizontalScrollView(UIConditionBlock(requireContext()).apply {
+                addView(UIConditionBlock(requireContext()).apply {
                     logicalBlockType = it
-                }))
+                })
             }
         }
     }

@@ -221,9 +221,9 @@ class UIConditionBlock @JvmOverloads constructor(
         itemParent: ViewGroup,
         draggableItem: View
     ) = with(binding) {
-        if (draggableItem != this@UIConditionBlock) {
-            scaleMinusAnimation(parentCard)
+        scaleMinusAnimation(parentCard)
 
+        if (draggableItem != this@UIConditionBlock) {
             itemParent.removeView(draggableItem)
 
             processViewWithCustomRemoveProcessRemoval(itemParent, draggableItem)

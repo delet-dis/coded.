@@ -111,4 +111,6 @@
     <string name="remove">remove</string>
     <string name="from">from</string>
     <string name="consoleText">Console text</string>
+    <string name="in">in</string>
+    <string name="arrayElement">array element</string>
 </resources>

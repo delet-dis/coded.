@@ -2,7 +2,6 @@ package com.hits.coded.presentation.views.console
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.LifecycleOwner
@@ -80,7 +79,9 @@ class Console @JvmOverloads constructor(
             with(binding) {
                 consoleText.text = it
 
-                consoleScrollView.fullScroll(View.FOCUS_DOWN)
+                consoleScrollView.post {
+                    consoleScrollView.scrollTo(0, consoleScrollView.bottom*12)
+                }
             }
         }
     }

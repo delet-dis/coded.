@@ -16,9 +16,15 @@ class MultiDimensionalArray : ArrayBase() {
 
         for (char in inputString) {
             if (char == '[') {
+                if (openedBrackets >= 1) {
+                    arrayString += char
+                }
                 arrayFound = true
                 openedBrackets++
             } else if (char == ']') {
+                if (openedBrackets >= 2 ) {
+                    arrayString += char
+                }
                 openedBrackets--
             } else if (arrayFound) {
                 arrayString += char
