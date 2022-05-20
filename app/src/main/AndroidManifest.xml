@@ -13,12 +13,12 @@
         android:theme="@style/Theme.Coded">
         <activity
             android:name=".presentation.activities.editorActivity.EditorActivity"
-            android:configChanges="screenSize|orientation"
+            android:configChanges="density|fontScale|keyboard|keyboardHidden|locale|orientation|screenLayout|screenSize"
             android:exported="false"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".presentation.activities.onboardingActivity.OnboardingActivity"
-            android:configChanges="screenSize|orientation"
+            android:configChanges="density|fontScale|keyboard|keyboardHidden|locale|orientation|screenLayout|screenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
