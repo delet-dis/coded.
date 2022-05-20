@@ -43,7 +43,7 @@
             app:transformationGravity="auto"
             app:twoFingersScrollEnabled="true"
             app:verticalPanEnabled="true"
-            app:zoomEnabled="true"/>
+            app:zoomEnabled="true" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/topBarWrapper"

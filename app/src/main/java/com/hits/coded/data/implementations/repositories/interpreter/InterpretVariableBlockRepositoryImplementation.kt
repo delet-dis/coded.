@@ -22,8 +22,8 @@ class InterpretVariableBlockRepositoryImplementation
     private val interpreterAuxiliaryUseCases: InterpreterAuxiliaryUseCases,
     private val heapUseCases: HeapUseCases,
     private val interpreterHelperUseCases: InterpreterHelperUseCases
-) : InterpretVariableBlockRepository(){
-@Throws(InterpreterException::class)
+) : InterpretVariableBlockRepository() {
+    @Throws(InterpreterException::class)
     override suspend fun interpretVariableBlocks(variable: VariableBlockBase) {
         variable.id?.let {
             interpreterHelperUseCases.setCurrentIdVariableUseCase.setCurrentIdVariable(it)

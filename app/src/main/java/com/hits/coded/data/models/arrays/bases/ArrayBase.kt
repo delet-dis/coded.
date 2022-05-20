@@ -10,7 +10,7 @@ import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterEx
 import com.hits.coded.data.models.sharedTypes.ExceptionType
 import com.hits.coded.data.models.sharedTypes.VariableType
 
-abstract class ArrayBase() {
+abstract class ArrayBase {
     protected val array = ArrayList<StoredVariable>()
 
     abstract fun parseArray(inputString: String): ArrayBase

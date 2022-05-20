@@ -42,8 +42,8 @@ class ConditionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInt
             removeAllViews()
 
             with(requireContext()) {
-                addView(UIIfBlock(this))
-                addView(UIIfElseBlock(this))
+                addView(getBlockInHorizontalScrollView(UIIfBlock(this)))
+                addView(getBlockInHorizontalScrollView(UIIfElseBlock(this)))
             }
         }
     }

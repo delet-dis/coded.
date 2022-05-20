@@ -42,8 +42,8 @@ class ActionsItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterf
             removeAllViews()
 
             with(requireContext()) {
-                addView(UIConsoleWriteBlock(this))
-                addView(UIConsoleReadBlock(this))
+                addView(getBlockInHorizontalScrollView(UIConsoleWriteBlock(this)))
+                addView(getBlockInHorizontalScrollView(UIConsoleReadBlock(this)))
             }
         }
     }

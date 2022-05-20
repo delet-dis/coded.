@@ -26,6 +26,7 @@ class InterpreterConverterRepositoryImplementation
 
         return processedValue.toDouble()
     }
+
     @Throws(InterpreterException::class)
     override suspend fun convertAnyToInt(value: Any?): Int {
         val processedValue =
@@ -35,6 +36,7 @@ class InterpreterConverterRepositoryImplementation
 
         return processedValue.toInt()
     }
+
     @Throws(InterpreterException::class)
     override suspend fun convertAnyToBoolean(value: Any?): Boolean {
         val processedValue =
@@ -44,6 +46,7 @@ class InterpreterConverterRepositoryImplementation
 
         return processedValue
     }
+
     @Throws(InterpreterException::class)
     override suspend fun convertAnyToString(value: Any): String {
         val processedValue =
@@ -53,6 +56,7 @@ class InterpreterConverterRepositoryImplementation
 
         return processedValue
     }
+
     @Throws(InterpreterException::class)
     override suspend fun convertAnyToStringIndulgently(value: Any): String =
         when (val processedValue =
@@ -69,6 +73,7 @@ class InterpreterConverterRepositoryImplementation
             is String -> processedValue
             else -> processedValue.toString()
         }
+
     @Throws(InterpreterException::class)
     override suspend fun convertAnyToArrayBase(value: Any, array: ArrayBase): ArrayBase {
         var canBeStringField = true

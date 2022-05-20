@@ -7,7 +7,7 @@ import com.hits.coded.data.models.console.useCases.ConsoleUseCases
 import com.hits.coded.data.models.heap.useCases.HeapUseCases
 import com.hits.coded.data.models.interpreter.useCases.InterpreterUseCases
 import com.hits.coded.data.models.interpreter.useCases.helpers.InterpreterHelperUseCases
-import com.hits.coded.data.models.interpreter.useCases.helpers.StopInterpreterUseCases
+import com.hits.coded.data.models.interpreter.useCases.helpers.ManageInterpreterStateUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.domain.repositories.InterpreterCallerRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -26,7 +26,7 @@ class InterpreterCallerRepositoryImplementation
     private val interpreterHelperUseCases: InterpreterHelperUseCases,
     private val consoleUseCases: ConsoleUseCases,
     private val heapUseCases: HeapUseCases,
-    private val stopInterpreterUseCases: StopInterpreterUseCases
+    private val manageInterpreterStateUseCases: ManageInterpreterStateUseCases
 ) : InterpreterCallerRepository() {
 
     private val errorStrings =
@@ -54,8 +54,9 @@ class InterpreterCallerRepositoryImplementation
 
     override suspend fun callInterpreter(start: StartBlock) {
         heapUseCases.clearUseCase.clear()
-        stopInterpreterUseCases.startInterpreterUseCase.startInterpreter()
+        manageInterpreterStateUseCases.startInterpreterUseCase.startInterpreter()
         _executionResult.emit(null)
+
         try {
             interpreterUseCases.interpretStartBlock.interpretStartBlock(start)
         } catch (error: InterpreterException) {
@@ -70,5 +71,4 @@ class InterpreterCallerRepositoryImplementation
 
         consoleUseCases.flushUseCase.flush()
     }
-
 }

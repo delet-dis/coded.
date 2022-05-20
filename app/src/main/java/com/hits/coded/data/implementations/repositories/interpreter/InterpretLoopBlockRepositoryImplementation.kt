@@ -6,7 +6,7 @@ import com.hits.coded.data.models.interpreter.useCases.repositories.InterpreterA
 import com.hits.coded.data.models.interpreter.useCases.repositories.InterpreterConverterUseCases
 import com.hits.coded.data.models.interpreterException.dataClasses.InterpreterException
 import com.hits.coded.domain.repositories.interpreterRepositories.InterpretLoopBlockRepository
-import com.hits.coded.domain.repositories.interpreterRepositories.helpers.StopInterpreter
+import com.hits.coded.domain.repositories.interpreterRepositories.helpers.InterpreterManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,7 +16,7 @@ class InterpretLoopBlockRepositoryImplementation
     private val interpreterConverterUseCases: InterpreterConverterUseCases,
     private val interpreterAuxiliaryUseCases: InterpreterAuxiliaryUseCases,
     private val interpreterHelperUseCases: InterpreterHelperUseCases,
-    private val stopInterpreter: StopInterpreter
+    private val interpreterManager: InterpreterManager
 ) : InterpretLoopBlockRepository() {
     @Throws(InterpreterException::class)
     override suspend fun interpretLoopBlock(loopBlock: LoopBlockBase) {
@@ -29,7 +29,7 @@ class InterpretLoopBlockRepositoryImplementation
                     loopBlock.conditionBlock
                 )
             ) {
-                if(!stopInterpreter.isInterpreting){
+                if (!interpreterManager.isInterpreting) {
                     break
                 }
                 it.forEach { blockBase ->

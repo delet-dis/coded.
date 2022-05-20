@@ -42,13 +42,13 @@ class ArraysItemsPickingFragment : Fragment(), UIBottomSheetItemsFragmentInterfa
             removeAllViews()
 
             with(requireContext()) {
-                addView(UIArrayAddBlock(this))
+                addView(getBlockInHorizontalScrollView(UIArrayAddBlock(this)))
 
-                addView(UIArrayRemoveAtBlock(this))
+                addView(getBlockInHorizontalScrollView(UIArrayRemoveAtBlock(this)))
 
-                addView(UIArrayGetBlock(this))
+                addView(getBlockInHorizontalScrollView(UIArrayGetBlock(this)))
 
-                addView(UIArrayGetLengthBlock(this))
+                addView(getBlockInHorizontalScrollView(UIArrayGetLengthBlock(this)))
             }
         }
     }
