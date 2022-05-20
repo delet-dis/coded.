@@ -83,7 +83,11 @@ class InterpreterAuxiliaryRepositoryImplementation
     }
 
     @Throws(InterpreterException::class)
-    override suspend fun getBaseType(value: Any?, canBeVariableName: Boolean, castToNumber: Boolean): Any {
+    override suspend fun getBaseType(
+        value: Any?,
+        canBeVariableName: Boolean,
+        castToNumber: Boolean
+    ): Any {
         if (value == null || value == Unit)
             throw InterpreterException(ExceptionType.INVALID_BLOCK)
 

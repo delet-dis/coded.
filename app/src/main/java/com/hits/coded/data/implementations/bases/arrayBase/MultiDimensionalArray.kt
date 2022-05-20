@@ -22,7 +22,7 @@ class MultiDimensionalArray : ArrayBase() {
                 arrayFound = true
                 openedBrackets++
             } else if (char == ']') {
-                if (openedBrackets >= 2 ) {
+                if (openedBrackets >= 2) {
                     arrayString += char
                 }
                 openedBrackets--
