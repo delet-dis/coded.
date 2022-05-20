@@ -33,7 +33,6 @@ class InterpretConditionBlockRepositoryImplementation
         val leftSide =
             interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(
                 conditionBlock.leftSide,
-                true
             )
 
         var rightSide: Any? = null
@@ -41,7 +40,6 @@ class InterpretConditionBlockRepositoryImplementation
         if (conditionBlock.logicalBlock?.logicalBlockType != LogicalBlockType.NOT) {
             rightSide = interpreterAuxiliaryUseCases.getBaseTypeUseCase.getBaseType(
                 conditionBlock.rightSide,
-                true
             )
         }
 

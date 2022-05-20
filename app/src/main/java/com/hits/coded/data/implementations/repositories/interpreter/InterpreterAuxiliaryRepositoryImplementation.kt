@@ -81,44 +81,47 @@ class InterpreterAuxiliaryRepositoryImplementation
         return true
     }
     @Throws(InterpreterException::class)
-    override suspend fun getBaseType(value: Any?, canBeStringField: Boolean): Any {
+    override suspend fun getBaseType(value: Any?, canBeVariableName: Boolean, castToNumber: Boolean): Any {
         if (value == null || value == Unit)
             throw InterpreterException(ExceptionType.INVALID_BLOCK)
 
         when (value) {
             is String -> {
-                if (!canBeStringField) {
-                    return value
+                if (castToNumber) {
+                    value.toDoubleOrNull()?.let {
+                        return it
+                    }
+
+                    value.toBooleanStrictOrNull()?.let {
+                        return it
+                    }
                 }
 
-                value.toDoubleOrNull()?.let {
-                    return it
+                if (canBeVariableName) {
+                    return if (isVariable(value)) {
+                        val foundedStoredVariable =
+                            heapUseCases.getVariableUseCase.getVariable(value)
+                                ?: throw InterpreterException(
+                                    ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
+                                )
+
+                        foundedStoredVariable.value!!
+                    } else {
+                        value.drop(1).dropLast(1)
+                    }
                 }
 
-                value.toBooleanStrictOrNull()?.let {
-                    return it
-                }
-
-                return if (isVariable(value)) {
-                    val foundedStoredVariable =
-                        heapUseCases.getVariableUseCase.getVariable(value)
-                            ?: throw InterpreterException(
-                                ExceptionType.ACCESSING_A_NONEXISTENT_VARIABLE
-                            )
-
-                    foundedStoredVariable.value!!
-                } else {
-                    value.drop(1).dropLast(1)
-                }
+                return value
             }
 
             is StoredVariable -> return value.value!! //default init
             is IOBlockBase -> return getBaseType(
                 interpreterBlocksUseCases.get().interpretIOBlockUseCase.interpretIOBlocks(
                     value
-                ), true
+                ), false,
+                castToNumber
             )
-            is BlockBase -> return getBaseType(interpretBlock(value), false)
+            is BlockBase -> return getBaseType(interpretBlock(value), false, castToNumber)
         }
 
         return value
