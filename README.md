@@ -4,9 +4,9 @@
 
 [![Android CI](https://github.com/delet-dis/coded./actions/workflows/android.yml/badge.svg)](https://github.com/delet-dis/coded./actions/workflows/android.yml)
 
-[![codebeat badge](https://github.com/delet-dis/coded./actions/workflows/android.yml/badge.svg)](https://github.com/delet-dis/coded./actions/workflows/android.yml)
+[![codebeat badge](https://codebeat.co/badges/7b21e96f-4c19-43a7-b103-013c7785ccc8)](https://codebeat.co/projects/github-com-delet-dis-coded-main)
 
-[![codefactor](https://github.com/delet-dis/coded./actions/workflows/android.yml/badge.svg)](https://github.com/delet-dis/coded./actions/workflows/android.yml)
+[![CodeFactor](https://www.codefactor.io/repository/github/delet-dis/coded./badge)](https://www.codefactor.io/repository/github/delet-dis/coded.)
 
 coded. is an [Android](https://en.wikipedia.org/wiki/Android_(operating_system)) application designed to teach children programming by building programs from blocks of code.
 
